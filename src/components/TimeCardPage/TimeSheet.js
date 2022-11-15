@@ -3,29 +3,40 @@ import TimeTable from './TimeTable'
 import Card from 'react-bootstrap/Card';
 import DatePicker from 'react-date-picker';
 
+//TODO - Refactor to backend calls once setup to pull rows, etc. 
+const defaultColumns = ['Date','Clock-in','Clock-Out','Hours','Comment']
 
-const columns = ['Date','Clock-in','Clock-Out','Hours','Comment']
-//Api calls somewhere to actually populate this? 
-/*
-    Rows is an array of arrays: 
-    Refactor later to pull this and format from db 
-*/
-const rows = [
-    ["11/01", "9:00", "5:00", "8", ""],
-    ["11/02", "9:00", "5:00", "8", "Showed up late"],
-    ["11/03", "9:00", "5:00", "8", "Left early"],
-    ["11/04", "9:00", "5:00", "8", "Missed part of shift "],
-    ["11/05", "9:00", "5:00", "8", "Incident with customer "],
+const defaultRows = [
+    {"Date":"11/01", "Clock-in":"9:00", "Clock-Out":"3:00", "Hours":"6", "Comment":"Left early"},
+    {"Date":"11/02", "Clock-in":"10:00", "Clock-Out":"3:00", "Hours":"5", "Comment":"Arrived Late"},
+    {"Date":"11/03", "Clock-in":"7:00", "Clock-Out":"3:00", "Hours":"8", "Comment":"Behavioral incident"},
+   
 
 ] 
 
 const user = 'Example User'
 
-
+/*
+    TODO - Setup some kind of useEffect to calculate hours -> Unsure of where to put in pipeline 
+    - Plus button for menu or just adding a new row? 
+*/
 
 
 export default function Page() {
     const [date, onDateChange] = useState(new Date())
+
+    const columns = defaultColumns
+
+    const [rows,setRows] = useState(defaultRows) 
+
+
+    const addRow = (row) => {
+        console.log("Adding row: " + row);  
+        setRows([
+            ...rows, 
+            row
+        ])
+    }
 
     return (
         <div>
@@ -46,7 +57,7 @@ export default function Page() {
                
             </div>
 
-            <TimeTable columns={columns} rows={rows}/>
+            <TimeTable columns={columns} rows={rows} addRow={addRow}/>
         </div>
     )
 }

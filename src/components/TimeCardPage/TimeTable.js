@@ -1,10 +1,15 @@
 import Table from 'react-bootstrap/Table' 
 import TimecardPopup from './AddTimecardEntryPopup'
 
+//Can expand upon this further by specifying input types - to allow only dates, numbers, etc for the input https://www.w3schools.com/bootstrap/bootstrap_forms_inputs.asp 
+
 
 function TimeTable(props) {
+
+
+
     return (
-    <Table striped borderd hover>
+    <Table striped bordered hover>
         <thead>
             <tr>
                 <th></th>
@@ -19,12 +24,19 @@ function TimeTable(props) {
             {props.rows.map(
                 (row) => ( 
                     <tr>
-                        <td><TimecardPopup trigger={<button>+</button>}/></td>
-                        {row.map(
+                        <td ><TimecardPopup trigger={<button>+</button>} columns={props.columns} row={row} addRow={props.addRow}/></td>
+                        {
+                            props.columns.map(
+                                (colKey) => (
+                                    <td contentEditable={true}>{row[colKey]}</td> 
+                                )
+                            ) 
+                        }
+                        {/* {row.map(
                             (entry) => (
-                                <td>{entry}</td>
+                                <td contentEditable="true">{entry}</td>
                             )
-                        )}
+                        )} */}
                     </tr>
                 )
             )}
