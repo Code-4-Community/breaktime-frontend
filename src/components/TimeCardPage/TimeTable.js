@@ -28,15 +28,11 @@ function TimeTable(props) {
                         {
                             props.columns.map(
                                 (colKey) => (
-                                    <td contentEditable={true}>{row[colKey]}</td> 
+                                    <td >{row[colKey]}</td> 
                                 )
                             ) 
                         }
-                        {/* {row.map(
-                            (entry) => (
-                                <td contentEditable="true">{entry}</td>
-                            )
-                        )} */}
+                    
                     </tr>
                 )
             )}
