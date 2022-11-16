@@ -2,6 +2,9 @@ import React, {useState} from 'react';
 import TimeTable from './TimeTable'
 import Card from 'react-bootstrap/Card';
 import DatePicker from 'react-date-picker';
+import { useEffect } from 'react';
+import SubmitCard from './SubmitCard'; 
+import DateSelectorCard from './SelectWeekCard'
 
 //TODO - Refactor to backend calls once setup to pull rows, etc. 
 const defaultColumns = ['Date','Clock-in','Clock-Out','Hours','Comment']
@@ -16,11 +19,6 @@ const defaultRows = [
 
 const user = 'Example User'
 
-/*
-    TODO - Setup some kind of useEffect to calculate hours -> Unsure of where to put in pipeline 
-    - Plus button for menu or just adding a new row? 
-*/
-
 
 export default function Page() {
     const [date, onDateChange] = useState(new Date())
@@ -30,7 +28,19 @@ export default function Page() {
     const [rows,setRows] = useState(defaultRows) 
 
 
+    useEffect(() => {
+        //TODO define handling logic for when rows has been modified? Update db? 
+
+        //TODO - Refactor this to be a useeffect on a button press 
+        console.log("Rows has updated!"); 
+    },[rows])
+
+
     const addRow = (row) => {
+        /*
+            TODO - Add in logic for nicely adding the row to where it should show up based on the representation of the table. Could do something like 
+            based on how many non-empty values it has, etc. 
+        */
         console.log("Adding row: " + row);  
         setRows([
             ...rows, 
@@ -38,26 +48,29 @@ export default function Page() {
         ])
     }
 
+    const updateCell = (rowIndex, colKey, value) => {
+        /*
+            Updates provided tables data references for a given index, column, and value 
+            @param rowIndex: The row index we are modifying 
+            @param colKey: The column we are modifying 
+            @param value: The new value of this cell row table[rowIndex][colKey] 
+        */
+       rows[rowIndex][colKey] = value 
+       setRows(rows) 
+       console.log(rows) 
+    }
+
     return (
         <div>
-            <h3>Timecard for {user}:</h3>
-
-            <div style={{"display":'flex'}}>
-                <Card>
-                    <Card.Body>
-                        <DatePicker onChange={onDateChange} value={date}/>
-                        <p>Selected Week:</p>
-                    </Card.Body>
-                </Card>
-                <Card style={{'position':'absolute','right':'50%'}}> 
-                    <Card.Body>
-                        <p>Status: Not Submitted</p> 
-                    </Card.Body> 
-                </Card>
+            <div  style={{"display":'flex'}}>
+                <DateSelectorCard onDateChange={onDateChange} date={date} user={user}/>
+                <div className="col-md-5"></div>
+                <SubmitCard/>
+                
                
             </div>
 
-            <TimeTable columns={columns} rows={rows} addRow={addRow}/>
+            <TimeTable columns={columns} rows={rows} addRow={addRow} setRows={setRows} updateCell = {updateCell}/>
         </div>
     )
 }

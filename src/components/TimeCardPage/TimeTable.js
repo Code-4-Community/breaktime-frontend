@@ -6,7 +6,9 @@ import TimecardPopup from './AddTimecardEntryPopup'
 
 function TimeTable(props) {
 
-
+    const onCellChange = (event, rowIndex, colKey) => {
+        props.updateCell(rowIndex, colKey, event.target.value)
+    }
 
     return (
     <Table striped bordered hover>
@@ -22,13 +24,15 @@ function TimeTable(props) {
         </thead>
         <tbody>
             {props.rows.map(
-                (row) => ( 
-                    <tr>
-                        <td ><TimecardPopup trigger={<button>+</button>} columns={props.columns} row={row} addRow={props.addRow}/></td>
+                (row, index) => ( 
+                    <tr >
+                        <td><TimecardPopup trigger={<button>+</button>} columns={props.columns} row={row} addRow={props.addRow}/></td>
                         {
                             props.columns.map(
                                 (colKey) => (
-                                    <td >{row[colKey]}</td> 
+                                    <td>
+                                        <input defaultValue={row[colKey]} onChange={(event) => onCellChange(event, index, colKey)}/>
+                                    </td>
                                 )
                             ) 
                         }
