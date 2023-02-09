@@ -5,6 +5,7 @@ import DatePicker from 'react-date-picker';
 import { useEffect } from 'react';
 import SubmitCard from './SubmitCard'; 
 import DateSelectorCard from './SelectWeekCard'
+import moment from 'moment';
 
 //TODO - Refactor to backend calls once setup to pull rows, etc. 
 const defaultColumns = ['Date','Clock-in','Clock-Out','Hours','Comment']
@@ -21,10 +22,20 @@ const user = 'Example User'
 
 
 export default function Page() {
-    const [date, onDateChange] = useState(new Date())
+    const today = moment(); 
+    const [startDate, setStartDate] = useState(new Date(today.startOf('week').format())); 
+    const [endDate, setEndDate] = useState(new Date(today.endOf('week').format())); 
 
-    const columns = defaultColumns
 
+    const updateDateRange = (start, end) => {
+        // Callback for date-range picker - does any pre-processing when grabbing a new date 
+        setStartDate(startDate); 
+        setEndDate(endDate); 
+        //TODO - remove once we are finished setting up API calls for  this 
+        console.log("New date range has been selceted:\n\t %s \nto \n\t%s", start, end); 
+    }
+
+    const columns = defaultColumns 
     const [rows,setRows] = useState(defaultRows) 
 
 
@@ -63,7 +74,7 @@ export default function Page() {
     return (
         <div>
             <div  style={{"display":'flex'}}>
-                <DateSelectorCard onDateChange={onDateChange} date={date} user={user}/>
+                <DateSelectorCard onDateChange={updateDateRange} startDate = {startDate} endDate={endDate}/>
                 <div className="col-md-5"></div>
                 <SubmitCard/>
                 
