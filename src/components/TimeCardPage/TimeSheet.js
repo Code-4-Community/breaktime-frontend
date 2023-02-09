@@ -23,18 +23,19 @@ const user = 'Example User'
 
 export default function Page() {
     const today = moment(); 
-    
     const [startDate, setStartDate] = useState(new Date(today.startOf('week').format())); 
     const [endDate, setEndDate] = useState(new Date(today.endOf('week').format())); 
 
+
     const updateDateRange = (start, end) => {
+        // Callback for date-range picker - does any pre-processing when grabbing a new date 
         setStartDate(startDate); 
         setEndDate(endDate); 
+        //TODO - remove once we are finished setting up API calls for  this 
         console.log("New date range has been selceted:\n\t %s \nto \n\t%s", start, end); 
     }
 
     const columns = defaultColumns 
-
     const [rows,setRows] = useState(defaultRows) 
 
 
