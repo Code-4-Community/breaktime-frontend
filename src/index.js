@@ -5,7 +5,9 @@ import reportWebVitals from './reportWebVitals';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import ReactDOM from "react-dom/client";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-
+import 'react-date-range/dist/styles.css'; // main style file
+import 'react-date-range/dist/theme/default.css'; // theme css file
+ 
 
 import TimeSheet from './components/TimeCardPage/TimeSheet'
 import 'bootstrap/dist/css/bootstrap.css';
