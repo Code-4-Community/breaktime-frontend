@@ -6,17 +6,23 @@ import { useEffect } from 'react';
 import SubmitCard from './SubmitCard'; 
 import DateSelectorCard from './SelectWeekCard'
 import moment from 'moment';
+import TimeEntry from './TimeEntry'
 
 //TODO - Refactor to backend calls once setup to pull rows, etc. 
 const defaultColumns = ['Date','Clock-in','Clock-Out','Hours','Comment']
 
-const defaultRows = [
-    {"Date":"11/01", "Clock-in":"9:00", "Clock-Out":"3:00", "Hours":"6", "Comment":"Left early"},
-    {"Date":"11/02", "Clock-in":"10:00", "Clock-Out":"3:00", "Hours":"5", "Comment":"Arrived Late"},
-    {"Date":"11/03", "Clock-in":"7:00", "Clock-Out":"3:00", "Hours":"8", "Comment":"Behavioral incident"},
-   
+// const defaultRows = [
+//     {"Date":"11/01", "Clock-in":"9:00", "Clock-Out":"3:00", "Hours":"6", "Comment":"Left early"},
+//     {"Date":"11/02", "Clock-in":"10:00", "Clock-Out":"3:00", "Hours":"5", "Comment":"Arrived Late"},
+//     {"Date":"11/03", "Clock-in":"7:00", "Clock-Out":"3:00", "Hours":"8", "Comment":"Behavioral incident"},
+// ] 
 
-] 
+const exampleApiCall = [
+    {'startDate':"Tue Feb 14 2023 9:00:00 GMT-0500", 'endDate':"Tue Feb 14 2023 15:00:00 GMT-0500"},
+    {'startDate':"Wed Feb 15 2023 8:01:00 GMT-0500", 'endDate':"Wed Feb 15 2023 13:00:00 GMT-0500"},
+    {'startDate':"Thu Feb 16 2023 7:30:00 GMT-0500", 'endDate':"Thu Feb 16 2023 14:20:00 GMT-0500"},
+    {'startDate':"Fri Feb 17 2023 5:00:00 GMT-0500", 'endDate':"Fri Feb 17 2023 19:33:00 GMT-0500"},
+]
 
 const user = 'Example User'
 
@@ -35,8 +41,23 @@ export default function Page() {
         console.log("New date range has been selceted:\n\t %s \nto \n\t%s", start, end); 
     }
 
-    const columns = defaultColumns 
-    const [rows,setRows] = useState(defaultRows) 
+    const columns = defaultColumns ; 
+    const [rows,setRows] = useState([]); 
+
+    
+
+    useEffect(() => {
+        const fetchedData = []; 
+        //API call for this user to grab their timesheet -> Currently stubbed to just default json file 
+        for (let idx = 0; idx < exampleApiCall.length; idx++ ) {        
+            const row_dictionary = new TimeEntry(exampleApiCall[idx].startDate, exampleApiCall[idx].endDate).exportValues(); 
+            fetchedData.push(row_dictionary); 
+        }
+        console.log(fetchedData); 
+        setRows(fetchedData); 
+    }, [])
+
+    
 
 
     useEffect(() => {
