@@ -12,13 +12,13 @@ export default class TimeEntry {
         const startDate = new Date(startTime); 
         const endDate = new Date(endTime); 
 
-        this.day = startDate.getDay(); 
-        this.month = startDate.getMonth(); 
+        this.day = startDate.getDate(); 
+        this.month = startDate.getMonth() + 1; 
 
         this.startHM = `${String(startDate.getHours()).padStart(2, '0')}:${String(startDate.getMinutes()).padStart(2,'0')}`
         this.endHM = `${String(endDate.getHours()).padStart(2, '0')}:${String(endDate.getMinutes()).padStart(2,"0")}`
-
-        this.totalTime = (endDate.getTime() - startDate.getTime()) / 60000 ; 
+        //Total time is absolute time difference in minutes  
+        this.totalTime = Math.round((endDate.getTime() - startDate.getTime()) / 60000); 
     }
 
     startTime() {
