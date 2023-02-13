@@ -10,12 +10,21 @@ import moment from 'moment';
 //TODO - Refactor to backend calls once setup to pull rows, etc. 
 const defaultColumns = ['Date','Clock-in','Clock-Out','Hours','Comment']
 
+const example_api_call = {
+    '12/06-12/10':{
+        'editable':false,
+        'companyId':'XXXXXX',
+        'state':'Completed / In-Review (Employer or Breaktime) / Unsubmitted / Rejected',
+        'report_type':{'Type':'Comment', 'Message':'', 'UUID':'XXXX','Timestamp':''},
+        'hours':[{'uuid':'XXXXXXX','startDate':"February 14 2023 9:00:00 GMT-0500", 'endDate':"February 14 2023 15:00:00 GMT-0500", 'report_type':{'Type':'Comment / Report', 'Message':'', 'UUID':'XXXX','Timestamp':''}}]},
+    '12/10-15':[],
+}
+
+
 const defaultRows = [
     {"Date":"11/01", "Clock-in":"9:00", "Clock-Out":"3:00", "Hours":"6", "Comment":"Left early"},
     {"Date":"11/02", "Clock-in":"10:00", "Clock-Out":"3:00", "Hours":"5", "Comment":"Arrived Late"},
     {"Date":"11/03", "Clock-in":"7:00", "Clock-Out":"3:00", "Hours":"8", "Comment":"Behavioral incident"},
-   
-
 ] 
 
 const user = 'Example User'
