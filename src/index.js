@@ -13,10 +13,12 @@ import NavBar from "./components/NavBar/NavBar"
 import TimeSheet from './components/TimeCardPage/TimeSheet'
 import 'bootstrap/dist/css/bootstrap.css';
 
+
+
 export default function Landing() {
     return (
       <BrowserRouter>
-      <NavBar />
+      <NavBar/>
       <Routes>
         <Route path="/" element={<HomePage />}/>
         <Route path="/timecard" element={<TimeSheet />} />
