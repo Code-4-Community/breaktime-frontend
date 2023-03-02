@@ -1,7 +1,7 @@
 import React, {useState} from 'react'; 
 import TimeTable from './TimeTable'
 import Card from 'react-bootstrap/Card';
-import DatePicker from 'react-date-picker';
+import DatePicker from 'react-datepicker';
 import { useEffect } from 'react';
 import SubmitCard from './SubmitCard'; 
 import DateSelectorCard from './SelectWeekCard'
