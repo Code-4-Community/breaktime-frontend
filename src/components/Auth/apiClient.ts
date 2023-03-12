@@ -26,11 +26,15 @@ export class ApiClient {
           const modifiedConfig = config;
           const session = await Auth.currentSession();
           const jwt = session.getIdToken().getJwtToken();
+          console.log(session);
+          console.log(jwt); 
           if (modifiedConfig.headers !== undefined) {
             modifiedConfig.headers.Authorization = `Bearer ${jwt}`;
           } 
           return modifiedConfig;
         } catch (error) {
+          console.log("Thing broken :("); 
+          console.log(error); 
           return config;
         }
       });

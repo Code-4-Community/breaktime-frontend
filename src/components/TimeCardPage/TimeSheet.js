@@ -7,6 +7,8 @@ import SubmitCard from './SubmitCard';
 import DateSelectorCard from './SelectWeekCard'
 import moment from 'moment';
 
+import apiClient from '../Auth/apiClient';
+
 //TODO - Refactor to backend calls once setup to pull rows, etc. 
 const defaultColumns = ['Date','Clock-in','Clock-Out','Hours','Comment']
 
@@ -35,6 +37,7 @@ export default function Page() {
     const [startDate, setStartDate] = useState(new Date(today.startOf('week').format())); 
     const [endDate, setEndDate] = useState(new Date(today.endOf('week').format())); 
 
+    const test = apiClient.getPasswordTest(); 
 
     const updateDateRange = (start, end) => {
         // Callback for date-range picker - does any pre-processing when grabbing a new date 

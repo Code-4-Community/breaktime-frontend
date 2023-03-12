@@ -8,22 +8,24 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import 'react-date-range/dist/styles.css'; // main style file
 import 'react-date-range/dist/theme/default.css'; // theme css file
 import NavBar from "./components/NavBar/NavBar"
- 
+import {Amplify} from 'aws-amplify';
+import awsmobile from './aws-exports'
 
 import TimeSheet from './components/TimeCardPage/TimeSheet'
 import 'bootstrap/dist/css/bootstrap.css';
 
+Amplify.configure(awsmobile); 
 
 
 export default function Landing() {
     return (
       <BrowserRouter>
-      <NavBar/>
+      <NavBar/> 
       <Routes>
         <Route path="/" element={<HomePage />}/>
         <Route path="/timecard" element={<TimeSheet />} />
       </Routes>
-    </BrowserRouter>
+    </BrowserRouter> 
     );
   }
 const root = ReactDOM.createRoot(document.getElementById('root'));
