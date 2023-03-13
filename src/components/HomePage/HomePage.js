@@ -1,3 +1,6 @@
+import { withAuthenticator, Button, Heading } from '@aws-amplify/ui-react';
+
+
 function HomePage() {
   return (
     <div className="App"> 
@@ -8,4 +11,4 @@ function HomePage() {
   ); 
 }
 
-export default HomePage;
+export default withAuthenticator(HomePage);

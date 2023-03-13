@@ -14,6 +14,8 @@ import awsmobile from './aws-exports'
 import TimeSheet from './components/TimeCardPage/TimeSheet'
 import 'bootstrap/dist/css/bootstrap.css';
 
+import '@aws-amplify/ui-react/styles.css';
+
 Amplify.configure(awsmobile); 
 
 
