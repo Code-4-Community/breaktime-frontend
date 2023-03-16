@@ -25,7 +25,7 @@ export class ApiClient {
         try {
           const modifiedConfig = config;
           const session = await Auth.currentSession();
-          const jwt = session.getIdToken().getJwtToken();
+          const jwt = session.getAccessToken().getJwtToken();
           console.log(session);
           console.log(jwt); 
           if (modifiedConfig.headers !== undefined) {
