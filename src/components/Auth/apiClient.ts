@@ -40,6 +40,13 @@ export class ApiClient {
       });
     }
   }
+  public async signout() {
+    try {
+      await Auth.signOut(); 
+    } catch (error) {
+      console.log("Could not sign out: ", error); 
+    }
+  }
 
   private async get(path: string): Promise<unknown> {
     return this.axiosInstance.get(path).then((response) => response.data);
@@ -56,6 +63,8 @@ export class ApiClient {
   public async getPasswordTest(): Promise<string> {
     return this.get('/auth/me') as Promise<string>;
   }
+
+
 }
  
 export default new ApiClient(); 
