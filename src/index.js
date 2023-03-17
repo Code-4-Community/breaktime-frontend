@@ -11,7 +11,10 @@ import NavBar from "./components/NavBar/NavBar"
 import {Amplify} from 'aws-amplify';
 import awsmobile from './aws-exports'
 
+import AuthedApp from './components/Auth/AuthWrapper'
+
 import TimeSheet from './components/TimeCardPage/TimeSheet'
+import Signout from './components/SignOut/Signout'
 import 'bootstrap/dist/css/bootstrap.css';
 
 import '@aws-amplify/ui-react/styles.css';
@@ -24,8 +27,10 @@ export default function Landing() {
       <BrowserRouter>
       <NavBar/> 
       <Routes>
-        <Route path="/" element={<HomePage />}/>
-        <Route path="/timecard" element={<TimeSheet />} />
+        <Route path="/" element={<AuthedApp page={<HomePage/>}/>}/>
+        <Route path="/timecard" element={<AuthedApp page={<TimeSheet />}/>} />
+        <Route path="/logout" element={<Signout/>} />
+
       </Routes>
     </BrowserRouter> 
     );
