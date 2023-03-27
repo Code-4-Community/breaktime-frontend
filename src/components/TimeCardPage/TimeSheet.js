@@ -25,6 +25,16 @@ const defaultRows = [
     
 ] 
 
+const testingTimesheetResp = {
+    "UserID":"77566d69-3b61-452a-afe8-73dcda96f876", 
+    "TimesheetID":22222, 
+    "Company":"Breaktime",
+    "StartDate":1679918400,
+    "Status":"Accepted",
+    "TableData":defaultRows
+
+}
+
 
 const formatRows = (providedRows) => {
     const updatedRows = [] 
@@ -63,10 +73,12 @@ export default function Page() {
     const [rows,setRows] = useState([]) 
 
     useEffect(() => {
-        apiClient.getUserTimesheets().then(response => {
-            console.log(response); 
-        }); 
-        // apiClient.updateUserTimesheet({}); 
+        //IF YOU WANT TO TEST READING 
+        // apiClient.getUserTimesheets().then(response => {
+        //     console.log(response); 
+        // }); 
+        //IF YOU WANT TO TEST WRITING UNCOMMENT THIS
+        // apiClient.updateUserTimesheet(testingTimesheetResp); 
         //TODO - Make API call here to download the rows! 
         setRows(formatRows(defaultRows)); 
     }, [])

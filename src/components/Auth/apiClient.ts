@@ -67,7 +67,7 @@ export class ApiClient {
 
   public async updateUserTimesheet(updatedEntry): Promise<Boolean> {
     //TODO - Format json? 
-    return this.post('/auth/timesheet', {}) as Promise<Boolean>; 
+    return this.post('/auth/timesheet', {timesheet:updatedEntry}) as Promise<Boolean>; 
   }
 
   public async getPasswordTest(): Promise<string> {
