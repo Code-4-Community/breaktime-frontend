@@ -60,11 +60,21 @@ export class ApiClient {
     return this.axiosInstance.patch(path, body).then((response) => response.data);
   }
 
-  public async getPasswordTest(): Promise<string> {
-    return this.get('/auth/me') as Promise<string>;
+
+  public async getUserTimesheets(): Promise<JSON> {
+    return this.get('auth/timesheet') as Promise<JSON>; 
   }
 
+  public async updateUserTimesheet(updatedEntry): Promise<Boolean> {
+    //TODO - Format json? 
+    return this.post('/auth/timesheet', {}) as Promise<Boolean>; 
+  }
 
+  public async getPasswordTest(): Promise<string> {
+    return this.get('/auth/timesheet') as Promise<string>;
+  }
+
+ 
 }
  
 export default new ApiClient(); 

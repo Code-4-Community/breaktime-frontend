@@ -12,22 +12,36 @@ import apiClient from '../Auth/apiClient';
 //TODO - Refactor to backend calls once setup to pull rows, etc. 
 const defaultColumns = ['Date','Clock-in','Clock-Out','Hours','Comment']
 
-const example_api_call = {
-    '12/06-12/10':{
-        'editable':false,
-        'companyId':'XXXXXX',
-        'state':'Completed / In-Review (Employer or Breaktime) / Unsubmitted / Rejected',
-        'report_type':{'Type':'Comment', 'Message':'', 'UUID':'XXXX','Timestamp':''},
-        'hours':[{'uuid':'XXXXXXX','startDate':"February 14 2023 9:00:00 GMT-0500", 'endDate':"February 14 2023 15:00:00 GMT-0500", 'report_type':{'Type':'Comment / Report', 'Message':'', 'UUID':'XXXX','Timestamp':''}}]},
-    '12/10-15':[],
-}
 
 
 const defaultRows = [
-    {"Date":"11/01", "Clock-in":"9:00", "Clock-Out":"3:00", "Hours":"6", "Comment":"Left early"},
-    {"Date":"11/02", "Clock-in":"10:00", "Clock-Out":"3:00", "Hours":"5", "Comment":"Arrived Late"},
-    {"Date":"11/03", "Clock-in":"7:00", "Clock-Out":"3:00", "Hours":"8", "Comment":"Behavioral incident"},
+    {"StartDate":"1679918400", "Duration":"132", 
+    "Comment":{
+        "AuthorUUID":"XXXX", 
+        "Type":"Report / Comment, etc", 
+        "Timestamp":"", 
+        "Content":":)" 
+    }}, 
+    
 ] 
+
+
+const formatRows = (providedRows) => {
+    const updatedRows = [] 
+    providedRows.forEach(item => {
+        const timeObject = moment.unix(item.StartDate); 
+        const minutes = Number(item.Duration)
+        timeObject.add()
+        updatedRows.push({
+            "Date":timeObject.format("MM/DD/YYYY"), 
+            "Clock-in": timeObject.format("hh:MM A"), 
+            "Clock-Out": timeObject.add(minutes, "minutes").format("h:mm A"), 
+            "Hours":minutes / 60, 
+            "Comment": item.Comment.Content
+        })
+    })
+    return updatedRows; 
+}
 
 const user = 'Example User'
 
@@ -36,8 +50,6 @@ export default function Page() {
     const today = moment(); 
     const [startDate, setStartDate] = useState(new Date(today.startOf('week').format())); 
     const [endDate, setEndDate] = useState(new Date(today.endOf('week').format())); 
-
-    const test = apiClient.getPasswordTest(); 
 
     const updateDateRange = (start, end) => {
         // Callback for date-range picker - does any pre-processing when grabbing a new date 
@@ -48,13 +60,19 @@ export default function Page() {
     }
 
     const columns = defaultColumns 
-    const [rows,setRows] = useState(defaultRows) 
-
+    const [rows,setRows] = useState([]) 
 
     useEffect(() => {
-        //TODO define handling logic for when rows has been modified? Update db? 
+        apiClient.getUserTimesheets().then(response => {
+            console.log(response); 
+        }); 
+        // apiClient.updateUserTimesheet({}); 
+        //TODO - Make API call here to download the rows! 
+        setRows(formatRows(defaultRows)); 
+    }, [])
 
-        //TODO - Refactor this to be a useeffect on a button press 
+    useEffect(() => {
+        //TODO - Define logic of adding a new row - What do we do? 
         console.log("Rows has updated!"); 
     },[rows])
 
