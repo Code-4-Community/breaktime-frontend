@@ -16,7 +16,7 @@ export default function Messages() {
   };
 
   const deleteMessage = (delMessage) => {
-    messages.filter(message => (message.body !== delMessage.body));
+    setMessages(messages.filter(message => (message.body !== delMessage.body)));
   };
 
   return (
@@ -33,12 +33,12 @@ export default function Messages() {
             <div>
               {messages.map((message, index) => (
                 <Alert key={index}>
-                  <CloseButton onClick={deleteMessage}/>
+                  <CloseButton />
                   {message.type + ': ' + message.body}
                   <Button href={message.url} style={{ 'backgroundColor': BREAKTIME_BLUE, 'borderWidth': '0px' }}>View</Button>
                 </Alert>))}
             </div>
-            : 'No announcements'}
+            : 'No messages'}
         </Card.Body>
       </Card>
     </div>);
