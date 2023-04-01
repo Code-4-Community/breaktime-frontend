@@ -1,13 +1,18 @@
-import { withAuthenticator, Button, Heading } from '@aws-amplify/ui-react';
+// import { withAuthenticator, Button, Heading } from '@aws-amplify/ui-react';
 
-import AuthWrapper from "../Auth/AuthWrapper"; 
+// import AuthWrapper from "../Auth/AuthWrapper";
+
+import Announcements from './Announcements';
+import Messages from './Messages';
 
 export default function HomePage() {
+
   return (
-    <div className="App"> 
+    <div style={{ 'display': 'flex' }}>
       <header className="App-header">
-        <a href="/timecard">Timesheet</a>
+        <Announcements/>
+        <Messages/>
       </header>
     </div>
-  ); 
+  );
 }
