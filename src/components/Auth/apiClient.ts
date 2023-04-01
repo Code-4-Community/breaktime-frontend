@@ -18,23 +18,18 @@ export class ApiClient {
     this.axiosInstance = axios.create({
       baseURL,
     });
-    console.log("Preparing auth"); 
     if (!options.skipAuth) {
-      console.log("Adding interceptors"); 
       this.axiosInstance.interceptors.request.use(async (config) => {
-        try {
+        try { 
           const modifiedConfig = config;
           const session = await Auth.currentSession();
           const jwt = session.getAccessToken().getJwtToken();
-          console.log(session);
-          console.log(jwt); 
           if (modifiedConfig.headers !== undefined) {
             modifiedConfig.headers.Authorization = `Bearer ${jwt}`;
           } 
           return modifiedConfig;
         } catch (error) {
-          console.log("Thing broken :("); 
-          console.log(error); 
+          console.log("Frontend Auth has a problem", error); 
           return config;
         }
       });

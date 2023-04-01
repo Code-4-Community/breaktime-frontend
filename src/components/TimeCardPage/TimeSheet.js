@@ -24,7 +24,7 @@ const defaultRows = [
     }}, 
     
 ] 
-
+// Example timesheet we are parsing out 
 const testingTimesheetResp = {
     "UserID":"77566d69-3b61-452a-afe8-73dcda96f876", 
     "TimesheetID":22222, 
@@ -32,8 +32,11 @@ const testingTimesheetResp = {
     "StartDate":1679918400,
     "Status":"Accepted",
     "TableData":defaultRows
-
 }
+//To test uploading a timesheet 
+// apiClient.updateUserTimesheet(testingTimesheetResp); 
+
+
 
 
 const formatRows = (providedRows) => {
@@ -49,7 +52,7 @@ const formatRows = (providedRows) => {
             "Hours":minutes / 60, 
             "Comment": item.Comment.Content
         })
-    })
+    }) 
     return updatedRows; 
 }
 
@@ -68,50 +71,29 @@ export default function Page() {
         //TODO - remove once we are finished setting up API calls for  this 
         console.log("New date range has been selceted:\n\t %s \nto \n\t%s", start, end); 
     }
-
+    
+    const [userTimesheets,setTimesheets] = useState([]); 
+    const [selectedTimesheet, setTimesheet] = useState(); 
     const columns = defaultColumns 
-    const [rows,setRows] = useState([]) 
 
+    //Pulls user timesheets, marking first returned as the active one
     useEffect(() => {
-        //IF YOU WANT TO TEST READING 
-        // apiClient.getUserTimesheets().then(response => {
-        //     console.log(response); 
-        // }); 
-        //IF YOU WANT TO TEST WRITING UNCOMMENT THIS
-        // apiClient.updateUserTimesheet(testingTimesheetResp); 
-        //TODO - Make API call here to download the rows! 
-        setRows(formatRows(defaultRows)); 
+        setTimesheet(testingTimesheetResp)
+        // apiClient.getUserTimesheets().then(timesheets => {
+        //     setTimesheets(timesheets); 
+        //     //By Default just render / select the first timesheet 
+        //     if (timesheets.length > 0) {
+        //         setTimesheet(timesheets[0])
+        //     }  
+        // });  
     }, [])
 
-    useEffect(() => {
-        //TODO - Define logic of adding a new row - What do we do? 
-        console.log("Rows has updated!"); 
-    },[rows])
-
-
-    const addRow = (row) => {
-        /*
-            TODO - Add in logic for nicely adding the row to where it should show up based on the representation of the table. Could do something like 
-            based on how many non-empty values it has, etc. 
-        */
-        console.log("Adding row: " + row);  
-        setRows([
-            ...rows, 
-            row
-        ])
+    const processTimesheetChange = (timesheet) => {
+        //Adding the time entry to the table 
+        apiClient.addTimeEntry(timesheet); 
     }
 
-    const updateCell = (rowIndex, colKey, value) => {
-        /*
-            Updates provided tables data references for a given index, column, and value 
-            @param rowIndex: The row index we are modifying 
-            @param colKey: The column we are modifying 
-            @param value: The new value of this cell row table[rowIndex][colKey] 
-        */
-       rows[rowIndex][colKey] = value 
-       setRows(rows) 
-       console.log(rows) 
-    }
+
 
     return (
         <div>
@@ -119,11 +101,8 @@ export default function Page() {
                 <DateSelectorCard onDateChange={updateDateRange} startDate = {startDate} endDate={endDate}/>
                 <div className="col-md-5"></div>
                 <SubmitCard/>
-                
-               
             </div>
-
-            <TimeTable columns={columns} rows={rows} addRow={addRow} setRows={setRows} updateCell = {updateCell}/>
+            <TimeTable columns={columns} timesheet={selectedTimesheet} onTimesheetChange={processTimesheetChange}/>
         </div>
     )
 }
