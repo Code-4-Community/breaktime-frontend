@@ -9,8 +9,8 @@ import MonthAtAGlance from './MonthAtAGlance';
 export default function HomePage() {
 
   return (
-    <div style={{ 'display': 'flex', 'flexDirection': 'row', 'justifyContext': 'spaceBetween'}}>
-      <div style={{ 'display': 'flex', 'flexDirection': 'column', 'justifyContext': 'spaceBetween' }}>
+    <div style={{ 'display': 'flex', 'flexDirection': 'row', 'justifyContext': 'spaceBetween', 'width': '100%' }}>
+      <div style={{ 'display': 'flex', 'flexDirection': 'column', 'justifyContext': 'spaceBetween', 'width': '50%' }}>
         <MonthAtAGlance />
         <Announcements />
       </div>
