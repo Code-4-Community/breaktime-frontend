@@ -15,7 +15,7 @@ Chart.register(CategoryScale);
 export default function MonthAtAGlance() {
 
   return (
-    <div className='monthAtAGlance' style={{ 'display': 'flex' }}>
+    <div className='monthAtAGlance' style={{ 'display': 'flex', 'width': '50%' }}>
       <Card>
         <Card.Header as='h5' style={{ 'backgroundColor': BREAKTIME_BLUE, 'color': 'white' }}>
           <IconContext.Provider value={{ color: 'white' }}>
