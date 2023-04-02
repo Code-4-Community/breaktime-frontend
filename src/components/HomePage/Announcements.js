@@ -29,7 +29,7 @@ export default function Announcements() {
             <div>
               {events.map((event, index) => (
                 <Alert key={index}>
-                  <Image src={event.photo} alt='img failed' rounded={true} style={{ 'width': '25%', 'height': 'auto' }} />
+                  <Image src={event.photo} alt='img failed' rounded={true} style={{ 'width': '10%', 'height': 'auto' }} />
                   {event.date + ': ' + event.name}
                   <Button target='_blank' href={event.url} style={{ 'backgroundColor': BREAKTIME_BLUE, 'borderWidth': '0px' }}>Register</Button>
                 </Alert>))}
