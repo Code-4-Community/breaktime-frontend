@@ -9,12 +9,12 @@ import MonthAtAGlance from './MonthAtAGlance';
 export default function HomePage() {
 
   return (
-    <div style={{ 'display': 'flex' }}>
-      <header className="App-header">
+    <div style={{ 'display': 'flex', 'flexDirection': 'row', 'justifyContext': 'spaceBetween'}}>
+      <div style={{ 'display': 'flex', 'flexDirection': 'column', 'justifyContext': 'spaceBetween' }}>
         <MonthAtAGlance />
         <Announcements />
-        <Messages />
-      </header>
+      </div>
+      <Messages />
     </div>
   );
 }
