@@ -22,6 +22,7 @@ const createTimeSheetEntry = (date,inTime,outTime,hours,comment) => {
     }
 }
 
+// Converts the provided data into our columns / adds entries for days that are missing default ones 
 const formatRows = (providedRows, startDate) => {
     const updatedRows = [] 
 
@@ -32,16 +33,13 @@ const formatRows = (providedRows, startDate) => {
         const timeObject = moment.unix(item.StartDate); 
         //If we are missing a day - add it to the json before we process the next day 
         while (timeObject.isAfter(currentDate, 'day')) {
-            console.log("After!"); 
             updatedRows.push(createTimeSheetEntry(currentDate.format("MM/DD/YYYY"), "-","-","-","-")); 
             currentDate = currentDate.add(1, 'day'); 
         }
-        
         if (timeObject.isSame(currentDate)) {
             currentDate = currentDate.add(1, 'day'); 
-        }
+        } 
         const minutes = Number(item.Duration)
-        timeObject.add() 
         updatedRows.push(createTimeSheetEntry(
             timeObject.format("MM/DD/YYYY"), 
             timeObject.format("hh:MM A"), 
@@ -51,7 +49,6 @@ const formatRows = (providedRows, startDate) => {
         )); 
     }) 
     while (!currentDate.isSame(moment.unix(startDate).add(7,'day'))) {
-        console.log("Here!"); 
         updatedRows.push(createTimeSheetEntry(currentDate.format("MM/DD/YYYY"), "-","-","-","-")); 
         currentDate = currentDate.add(1, 'day'); 
     }
@@ -98,7 +95,6 @@ function TimeTable(props) {
             updatedRows[index].Date = rowDate; 
         }
         setRows(updatedRows); 
-        // setRows(rows.filter((_, idx)=>{return index !== idx})); 
     }
     const [rows,setRows] = useState([]); 
 

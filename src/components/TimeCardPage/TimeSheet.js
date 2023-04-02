@@ -37,25 +37,6 @@ const testingTimesheetResp = {
 // apiClient.updateUserTimesheet(testingTimesheetResp); 
 
 
-
-
-const formatRows = (providedRows) => {
-    const updatedRows = [] 
-    providedRows.forEach(item => {
-        const timeObject = moment.unix(item.StartDate); 
-        const minutes = Number(item.Duration)
-        timeObject.add()
-        updatedRows.push({
-            "Date":timeObject.format("MM/DD/YYYY"), 
-            "Clock-in": timeObject.format("hh:MM A"), 
-            "Clock-Out": timeObject.add(minutes, "minutes").format("h:mm A"), 
-            "Hours":minutes / 60, 
-            "Comment": item.Comment.Content
-        })
-    }) 
-    return updatedRows; 
-}
-
 const user = 'Example User'
 
 
@@ -78,14 +59,15 @@ export default function Page() {
 
     //Pulls user timesheets, marking first returned as the active one
     useEffect(() => {
-        setTimesheet(testingTimesheetResp)
-        // apiClient.getUserTimesheets().then(timesheets => {
-        //     setTimesheets(timesheets); 
-        //     //By Default just render / select the first timesheet 
-        //     if (timesheets.length > 0) {
-        //         setTimesheet(timesheets[0])
-        //     }  
-        // });  
+        // Uncomment this if you want the default one loaded 
+        // setTimesheet(testingTimesheetResp)
+        apiClient.getUserTimesheets().then(timesheets => {
+            setTimesheets(timesheets); 
+            //By Default just render / select the first timesheet for now  
+            if (timesheets.length > 0) {
+                setTimesheet(timesheets[0])
+            }  
+        });  
     }, [])
 
     const processTimesheetChange = (timesheet) => {
