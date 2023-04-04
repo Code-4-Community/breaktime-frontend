@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Card, Alert, Button, CloseButton } from 'react-bootstrap';
-import BREAKTIME_BLUE from '../../utils';
+import { defaultColors } from '../../utils';
 import { IconContext } from 'react-icons';
 import { BiMessageDetail } from 'react-icons/bi';
 
@@ -22,7 +22,7 @@ export default function Messages() {
   return (
     <div className='messages' style={{ 'display': 'flex' }}>
       <Card>
-        <Card.Header as='h5' style={{ 'backgroundColor': BREAKTIME_BLUE, 'color': 'white' }}>
+        <Card.Header as='h5' style={{ 'backgroundColor': defaultColors.BREAKTIME_BLUE, 'color': 'white' }}>
           <IconContext.Provider value={{ color: 'white' }}>
             <BiMessageDetail />
           </IconContext.Provider>
@@ -35,7 +35,7 @@ export default function Messages() {
                 <Alert key={index}>
                   <CloseButton />
                   {message.type + ': ' + message.body}
-                  <Button href={message.url} style={{ 'backgroundColor': BREAKTIME_BLUE, 'borderWidth': '0px' }}>View</Button>
+                  <Button href={message.url} style={{ 'backgroundColor': defaultColors.BREAKTIME_BLUE, 'borderWidth': '0px' }}>View</Button>
                 </Alert>))}
             </div>
             : 'No messages'}

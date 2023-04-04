@@ -1,7 +1,3 @@
-// import { withAuthenticator, Button, Heading } from '@aws-amplify/ui-react';
-
-// import AuthWrapper from "../Auth/AuthWrapper";
-
 import Announcements from './Announcements';
 import Messages from './Messages';
 import MonthAtAGlance from './MonthAtAGlance';

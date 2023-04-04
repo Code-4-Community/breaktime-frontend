@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Card, Alert, Image, Button } from 'react-bootstrap';
-import BREAKTIME_BLUE from '../../utils';
+import { defaultColors } from '../../utils';
 import { IconContext } from 'react-icons';
 import { TfiAnnouncement } from 'react-icons/tfi';
 
@@ -18,7 +18,7 @@ export default function Announcements() {
   return (
     <div className='announcements' style={{ 'display': 'flex' }}>
       <Card>
-        <Card.Header as='h5' style={{ 'backgroundColor': BREAKTIME_BLUE, 'color': 'white' }}>
+        <Card.Header as='h5' style={{ 'backgroundColor': defaultColors.BREAKTIME_BLUE, 'color': 'white' }}>
           <IconContext.Provider value={{ color: 'white' }}>
             <TfiAnnouncement />
           </IconContext.Provider>
@@ -29,9 +29,9 @@ export default function Announcements() {
             <div>
               {events.map((event, index) => (
                 <Alert key={index}>
-                  <Image src={event.photo} alt='img failed' rounded={true} style={{ 'width': '10%', 'height': 'auto' }} />
-                  {event.date + ': ' + event.name}
-                  <Button target='_blank' href={event.url} style={{ 'backgroundColor': BREAKTIME_BLUE, 'borderWidth': '0px' }}>Register</Button>
+                  <Image src={event.photo} alt={event.name} rounded={true} style={{ 'width': '10%', 'height': 'auto' }} />
+                  {'${event.date}: ${event.name}'}
+                  <Button target='_blank' href={event.url} style={{ 'backgroundColor': defaultColors.BREAKTIME_BLUE, 'borderWidth': '0px' }}>Register</Button>
                 </Alert>))}
             </div>
             : 'No announcements'}
