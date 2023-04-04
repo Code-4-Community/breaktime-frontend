@@ -18,23 +18,18 @@ export class ApiClient {
     this.axiosInstance = axios.create({
       baseURL,
     });
-    console.log("Preparing auth"); 
     if (!options.skipAuth) {
-      console.log("Adding interceptors"); 
       this.axiosInstance.interceptors.request.use(async (config) => {
-        try {
+        try { 
           const modifiedConfig = config;
           const session = await Auth.currentSession();
           const jwt = session.getAccessToken().getJwtToken();
-          console.log(session);
-          console.log(jwt); 
           if (modifiedConfig.headers !== undefined) {
             modifiedConfig.headers.Authorization = `Bearer ${jwt}`;
           } 
           return modifiedConfig;
         } catch (error) {
-          console.log("Thing broken :("); 
-          console.log(error); 
+          console.log("Frontend Auth has a problem", error); 
           return config;
         }
       });
@@ -60,11 +55,21 @@ export class ApiClient {
     return this.axiosInstance.patch(path, body).then((response) => response.data);
   }
 
-  public async getPasswordTest(): Promise<string> {
-    return this.get('/auth/me') as Promise<string>;
+
+  public async getUserTimesheets(): Promise<JSON> {
+    return this.get('auth/timesheet') as Promise<JSON>; 
   }
 
+  public async updateUserTimesheet(updatedEntry): Promise<Boolean> {
+    //TODO - Format json? 
+    return this.post('/auth/timesheet', {timesheet:updatedEntry}) as Promise<Boolean>; 
+  }
 
+  public async getPasswordTest(): Promise<string> {
+    return this.get('/auth/timesheet') as Promise<string>;
+  }
+
+ 
 }
  
 export default new ApiClient(); 
