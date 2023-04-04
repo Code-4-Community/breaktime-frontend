@@ -36,7 +36,7 @@ const formatRows = (providedRows, startDate) => {
             updatedRows.push(createTimeSheetEntry(currentDate.format("MM/DD/YYYY"), "-","-","-","-")); 
             currentDate = currentDate.add(1, 'day'); 
         }
-        if (timeObject.isSame(currentDate)) {
+        if (timeObject.isSame(currentDate, 'day')) {
             currentDate = currentDate.add(1, 'day'); 
         } 
         const minutes = Number(item.Duration)
@@ -48,7 +48,7 @@ const formatRows = (providedRows, startDate) => {
             item.Comment.Content
         )); 
     }) 
-    while (!currentDate.isSame(moment.unix(startDate).add(7,'day'))) {
+    while (!currentDate.isAfter(moment.unix(startDate).add(6,'day'), 'day')) {
         updatedRows.push(createTimeSheetEntry(currentDate.format("MM/DD/YYYY"), "-","-","-","-")); 
         currentDate = currentDate.add(1, 'day'); 
     }
@@ -104,7 +104,7 @@ function TimeTable(props) {
         if (timesheet !== undefined) {
             setRows(formatRows(timesheet.TableData, timesheet.StartDate)); 
         } 
-    }, [props.timesheet])
+    }, [props.timesheet]) 
 
     return (
     <Table striped bordered hover>
