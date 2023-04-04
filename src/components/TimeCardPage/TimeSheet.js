@@ -64,7 +64,6 @@ export default function Page() {
         apiClient.getUserTimesheets().then(timesheets => {
             setTimesheets(timesheets); 
             //By Default just render / select the first timesheet for now 
-            console.log(userTimesheets) 
             if (timesheets.length > 0) {
                 setTimesheet(timesheets[0])
             }  
