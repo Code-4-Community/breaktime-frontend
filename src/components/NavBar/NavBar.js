@@ -21,7 +21,7 @@ const items =
 
 function NavBar() {
   return (
-    <Navbar>
+    <Navbar bg="light">
       <Container>
         <Navbar.Brand href="/"><img src="https://static.wixstatic.com/media/1193ef_371853f9145b445fb883f16ed7741b60~mv2.jpg/v1/crop/x_0,y_2,w_1842,h_332/fill/w_233,h_42,al_c,q_80,usm_0.66_1.00_0.01,enc_auto/Breaktime%20Logo%20Comfortaa-2.jpg" alt="Breaktime"/></Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
