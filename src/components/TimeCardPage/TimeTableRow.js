@@ -65,7 +65,7 @@ function Row(props) {
             const diff = moment.duration(endTime.diff(startTime))
             const minutes = diff.asHours(); 
             
-            setDur(minutes); 
+            setDur(minutes.toFixed(2)); 
             
             // Calculate and trigger callback that the row has been updated 
             timeObject.hour(startTime.hour()); 

@@ -6,6 +6,8 @@
 .pnp.js
 .env
 
+.vscode/
+
 .package-lock.json 
 
 # testing
