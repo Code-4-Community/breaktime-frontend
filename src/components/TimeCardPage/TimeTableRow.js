@@ -62,6 +62,7 @@ function Row(props) {
             var startTime = moment(startHour, "HH:mm") 
             var endTime = moment(endHour, "HH:mm") 
 
+            // If end time is before start time, swap them 
             if (endTime.isBefore(startTime)) {
                 const swap = endTime; 
                 setStart(endHour); 
@@ -72,9 +73,9 @@ function Row(props) {
             }
 
             const diff = moment.duration(endTime.diff(startTime))
-            const minutes = diff.asHours(); 
+            const hours = diff.asHours(); 
             
-            setDur(minutes.toFixed(2)); 
+            setDur(hours.toFixed(2)); 
             
             // Calculate and trigger callback that the row has been updated 
             timeObject.hour(startTime.hour()); 
