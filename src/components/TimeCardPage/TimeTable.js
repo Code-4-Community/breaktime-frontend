@@ -11,14 +11,12 @@ const TIMESHEET_DURATION = 7;
 
 
 
-const createTimeSheetEntry = (date,inTime,outTime,hours,comment) => {
+const createEmptyRow = (date) => {
     return {
-        "Id": uuidv4(), 
-        "Date":date, 
-        "Clock-in": inTime, 
-        "Clock-Out": outTime, 
-        "Hours":hours, 
-        "Comment": comment
+        id: uuidv4(), 
+        "StartDate":date, 
+        "Duration":undefined, 
+        "Comment":undefined 
     }
 }
 
@@ -33,51 +31,43 @@ const formatRows = (providedRows, startDate) => {
         const timeObject = moment.unix(item.StartDate); 
         //If we are missing a day - add it to the json before we process the next day 
         while (timeObject.isAfter(currentDate, 'day')) {
-            updatedRows.push(createTimeSheetEntry(currentDate.format("MM/DD/YYYY"), "-","-","-","-")); 
+            updatedRows.push(createEmptyRow(currentDate.unix())); 
             currentDate = currentDate.add(1, 'day'); 
         }
         if (timeObject.isSame(currentDate, 'day')) {
             currentDate = currentDate.add(1, 'day'); 
         } 
-        const minutes = Number(item.Duration)
-        updatedRows.push(createTimeSheetEntry(
-            timeObject.format("MM/DD/YYYY"), 
-            timeObject.format("hh:MM A"), 
-            timeObject.add(minutes, "minutes").format("h:mm A"), 
-            minutes / 60, 
-            item.Comment.Content
-        )); 
+        updatedRows.push(
+            { 
+            id:uuidv4(), 
+            ...item 
+            }
+        ); 
     }) 
+    //Fill in remaining days if we do not have days that go up to start date + total duration 
     while (!currentDate.isAfter(moment.unix(startDate).add(6,'day'), 'day')) {
-        updatedRows.push(createTimeSheetEntry(currentDate.format("MM/DD/YYYY"), "-","-","-","-")); 
+        updatedRows.push(createEmptyRow(currentDate.unix())); 
         currentDate = currentDate.add(1, 'day'); 
     }
     return updatedRows; 
 }
 
 function TimeTable(props) {
-    // When a cell gets edited, update the field for that appropriate entry in the rows 
-    const onCellChange = (event, rowIndex, colKey) => {
-        const updatedRow = rows[rowIndex]; 
-        updatedRow[colKey] = event.target.value; 
+
+    //When a row is updated, replace it in our list of rows 
+    const onRowChange = (row, rowIndex) => {
         setRows(
             [
                 ...rows.slice(0, rowIndex), 
-                updatedRow, 
-                ...rows.slice(rowIndex + 1)
+                row, 
+                ...rows.slice(rowIndex+1) 
             ]
-        );
-    }
+        ); 
+    } 
+
     //Adds a row to the specified index 
     const addRow = (row, index) => {
-        const newRow = {
-            "Id": uuidv4(), 
-            "Date":"-", 
-            "Clock-in": "-", 
-            "Clock-Out": "-", 
-            "Hours":"-", 
-            "Comment": "-"
-        }; 
+        const newRow = createEmptyRow(rows[index].StartDate)
         setRows(
             [
                 ...rows.slice(0, index + 1), 
@@ -88,12 +78,7 @@ function TimeTable(props) {
     }
 
     const delRow = (row, index) => {
-        const rowDate = rows[index].Date; 
-
         const updatedRows = rows.filter((_, idx)=>{return index !== idx}); 
-        if (index < updatedRows.length && updatedRows[index].Date == "-") {
-            updatedRows[index].Date = rowDate; 
-        }
         setRows(updatedRows); 
     }
     const [rows,setRows] = useState([]); 
@@ -105,6 +90,8 @@ function TimeTable(props) {
             setRows(formatRows(timesheet.TableData, timesheet.StartDate)); 
         } 
     }, [props.timesheet]) 
+    
+    var prevDate = undefined; 
 
     return (
     <Table striped bordered hover>
@@ -120,17 +107,21 @@ function TimeTable(props) {
         </thead>
         <tbody>
             {rows.map(
-                (row, index) => ( 
-                    <tr key={row.Id}>
+                (row, index) => {
+                    // Let the row know the day of the date before it to know if we should display its start date or not 
+                    const dateToSend = prevDate; 
+                    prevDate = row.StartDate; 
+                    return (
+                    <tr key={row.id}>
                         <td>
                             <button onClick={() => {addRow(row, index)}}>+</button>
                             <button onClick={() => {delRow(row, index)}}>-</button>
                         </td>
                         {
-                            <TimeTableRow columns={props.columns} row={row} index={index} onChange={onCellChange}/>
+                            <TimeTableRow row={row}  onRowChange={(row) => onRowChange(row, index)} prevDate={dateToSend}/>
                         }
-                    </tr>
-                )
+                    </tr>); 
+                }
             )}
         </tbody>
     </Table>
