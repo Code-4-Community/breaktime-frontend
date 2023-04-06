@@ -6,13 +6,14 @@ import { useEffect } from 'react';
 import SubmitCard from './SubmitCard'; 
 import DateSelectorCard from './SelectWeekCard'
 import moment from 'moment';
+import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
+import 'react-tabs/style/react-tabs.css'
+
 
 import apiClient from '../Auth/apiClient';
 
 //TODO - Refactor to backend calls once setup to pull rows, etc. 
 const defaultColumns = ['Date','Clock-in','Clock-Out','Hours','Comment']
-
-
 
 const defaultRows = [
     {"StartDate":"1679918400", "Duration":"132", 
@@ -60,10 +61,10 @@ export default function Page() {
     //Pulls user timesheets, marking first returned as the active one
     useEffect(() => {
         // Uncomment this if you want the default one loaded 
-        // setTimesheet(testingTimesheetResp)
+        //setTimesheet(testingTimesheetResp)
         apiClient.getUserTimesheets().then(timesheets => {
             setTimesheets(timesheets); 
-            //By Default just render / select the first timesheet for now  
+            //By Default just render / select the first timesheet for now 
             if (timesheets.length > 0) {
                 setTimesheet(timesheets[0])
             }  
@@ -75,8 +76,6 @@ export default function Page() {
         apiClient.addTimeEntry(timesheet); 
     }
 
-
-
     return (
         <div>
             <div  style={{"display":'flex'}}>
@@ -84,6 +83,15 @@ export default function Page() {
                 <div className="col-md-5"></div>
                 <SubmitCard/>
             </div>
+            <Tabs>
+            <TabList>
+                {userTimesheets.map(
+                    (sheet) => (
+                        <Tab onClick={() => setTimesheet(sheet)}>{sheet.Company}</Tab>
+                    ) 
+                )}
+            </TabList>
+            </Tabs>
             <TimeTable columns={columns} timesheet={selectedTimesheet} onTimesheetChange={processTimesheetChange}/>
         </div>
     )
