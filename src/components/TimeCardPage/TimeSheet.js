@@ -22,7 +22,7 @@ const defaultRows = [
         "Type":"Report / Comment, etc", 
         "Timestamp":"", 
         "Content":":)" 
-    }}, 
+    }},  
     
 ] 
 // Example timesheet we are parsing out 
@@ -91,7 +91,7 @@ export default function Page() {
                     ) 
                 )}
             </TabList>
-            </Tabs>
+            </Tabs> 
             <TimeTable columns={columns} timesheet={selectedTimesheet} onTimesheetChange={processTimesheetChange}/>
         </div>
     )
