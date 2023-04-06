@@ -15,14 +15,16 @@ export default function Messages() {
     setMessages(messages.push(message));
   };
 
-  const deleteMessage = (delMessage) => {
-    setMessages(messages.filter(message => (message.body !== delMessage.body)));
+  const deleteMessage = (index) => {
+    const delMessage = [...messages];
+    delMessage.splice(index, 1);
+    setMessages(delMessage)
   };
 
   return (
     <div className='messages' style={{ 'display': 'flex', 'gridColumnStart': 2, 'gridRowStart': 1, 'gridRowEnd': 3 }}>
-      <Card>
-        <Card.Header as='h5' style={{ 'backgroundColor': defaultColors.BREAKTIME_BLUE, 'color': 'white' }}>
+      <Card style={{ 'width': '100%' }}>
+        <Card.Header as='h5' style={{ 'backgroundColor': defaultColors.BREAKTIME_BLUE, 'color': 'white', 'display': 'flex', 'gap': '1%', 'alignItems': 'center' }}>
           <IconContext.Provider value={{ color: 'white' }}>
             <BiMessageDetail />
           </IconContext.Provider>
@@ -32,8 +34,8 @@ export default function Messages() {
           {messages[0] ?
             <div>
               {messages.map((message, index) => (
-                <Alert key={index}>
-                  <CloseButton />
+                <Alert key={index} style={{ 'display': 'flex', 'gap': '1%', 'alignItems': 'center' }}>
+                  <CloseButton onClick={() => deleteMessage(index)}/>
                   {message.type + ': ' + message.body}
                   <Button href={message.url} style={{ 'backgroundColor': defaultColors.BREAKTIME_BLUE, 'borderWidth': '0px' }}>View</Button>
                 </Alert>))}

@@ -5,7 +5,7 @@ import MonthAtAGlance from './MonthAtAGlance';
 export default function HomePage() {
 
   return (
-    <div style={{ 'display': 'grid', 'gridTemplateRows': 'minmax(max-content, 1fr) minmax(max-content, 1fr)', 'gridTemplateColumns': 'minmax(max-content, 1fr) minmax(max-content, 1fr)', 'gap': '1%' }}>
+    <div style={{ 'display': 'grid', 'gridTemplateRows': '1fr 1 fr', 'gridTemplateColumns': '1fr 1 fr', 'gap': '1%' }}>
       <MonthAtAGlance />
       <Announcements />
       <Messages />
