@@ -16,7 +16,7 @@ export default function Announcements() {
   };
 
   return (
-    <div className='announcements' style={{ 'display': 'flex' }}>
+    <div className='announcements' style={{ 'display': 'flex', 'gridColumnStart': 1, 'gridRowStart': 2 }}>
       <Card>
         <Card.Header as='h5' style={{ 'backgroundColor': defaultColors.BREAKTIME_BLUE, 'color': 'white' }}>
           <IconContext.Provider value={{ color: 'white' }}>
@@ -30,7 +30,7 @@ export default function Announcements() {
               {events.map((event, index) => (
                 <Alert key={index}>
                   <Image src={event.photo} alt={event.name} rounded={true} style={{ 'width': '10%', 'height': 'auto' }} />
-                  {'${event.date}: ${event.name}'}
+                  {`${event.date}: ${event.name}`}
                   <Button target='_blank' href={event.url} style={{ 'backgroundColor': defaultColors.BREAKTIME_BLUE, 'borderWidth': '0px' }}>Register</Button>
                 </Alert>))}
             </div>

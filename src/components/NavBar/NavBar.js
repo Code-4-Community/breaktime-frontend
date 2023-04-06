@@ -2,22 +2,7 @@ import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import NavDropdown from 'react-bootstrap/NavDropdown';
-
-const items =
-  [{
-    "title": "TimeSheets",
-    "link": "/timecard"
-  },
-  {
-    "title": "Search",
-    "link": ""
-  },
-  {
-    "title": "Home",
-    "link": "/"
-  }]
-
-
+import { routes } from '../../utils';
 
 function NavBar() {
   return (
@@ -28,7 +13,7 @@ function NavBar() {
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="ms-auto">
             <NavDropdown title="Menu" id="basic-nav-dropdown">
-              {items.map(
+              {routes.map(
                 (dropDownItem, index) =>
                 (
                   <NavDropdown.Item key={index} href={dropDownItem.link}>

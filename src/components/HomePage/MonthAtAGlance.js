@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Card, Alert, Button } from 'react-bootstrap';
+import React from 'react';
+import { Card } from 'react-bootstrap';
 import { defaultColors } from '../../utils';
 import {data, dataBar} from './dummyData';
 
@@ -15,7 +15,7 @@ Chart.register(CategoryScale);
 export default function MonthAtAGlance() {
 
   return (
-    <div className='monthAtAGlance' style={{ 'display': 'flex', 'width': '50%' }}>
+    <div className='monthAtAGlance' style={{ 'gridColumnStart': 1, 'gridRowStart': 1 }}>
       <Card>
         <Card.Header as='h5' style={{ 'backgroundColor': defaultColors.BREAKTIME_BLUE, 'color': 'white' }}>
           <IconContext.Provider value={{ color: 'white' }}>

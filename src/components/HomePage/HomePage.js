@@ -5,11 +5,9 @@ import MonthAtAGlance from './MonthAtAGlance';
 export default function HomePage() {
 
   return (
-    <div style={{ 'display': 'flex', 'flexDirection': 'row', 'justifyContext': 'spaceBetween', 'width': '100%' }}>
-      <div style={{ 'display': 'flex', 'flexDirection': 'column', 'justifyContext': 'spaceBetween', 'width': '50%' }}>
-        <MonthAtAGlance />
-        <Announcements />
-      </div>
+    <div style={{ 'display': 'grid', 'gridTemplateRows': 'minmax(max-content, 1fr) minmax(max-content, 1fr)', 'gridTemplateColumns': 'minmax(max-content, 1fr) minmax(max-content, 1fr)', 'gap': '1%' }}>
+      <MonthAtAGlance />
+      <Announcements />
       <Messages />
     </div>
   );

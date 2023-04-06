@@ -20,7 +20,7 @@ export default function Messages() {
   };
 
   return (
-    <div className='messages' style={{ 'display': 'flex' }}>
+    <div className='messages' style={{ 'display': 'flex', 'gridColumnStart': 2, 'gridRowStart': 1, 'gridRowEnd': 3 }}>
       <Card>
         <Card.Header as='h5' style={{ 'backgroundColor': defaultColors.BREAKTIME_BLUE, 'color': 'white' }}>
           <IconContext.Provider value={{ color: 'white' }}>
