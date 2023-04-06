@@ -12,6 +12,7 @@ const TIMESHEET_DURATION = 7;
 
 
 const createEmptyRow = (date) => {
+    // We assign uuid to provide a unique key identifier to each row for reacts rendering 
     return {
         id: uuidv4(), 
         "StartDate":date, 
