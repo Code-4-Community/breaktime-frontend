@@ -59,8 +59,17 @@ function Row(props) {
     //Calculate hours whenever it is updated here
     useEffect(() => { 
         if (startHour !== "" && endHour !== "" && startHour !== null && endHour !== null) {
-            const startTime = moment(startHour, "HH:mm") 
-            const endTime = moment(endHour, "HH:mm") 
+            var startTime = moment(startHour, "HH:mm") 
+            var endTime = moment(endHour, "HH:mm") 
+
+            if (endTime.isBefore(startTime)) {
+                const swap = endTime; 
+                setStart(endHour); 
+                setEnd(startHour);  
+                endTime = startTime; 
+                startTime = swap;  
+
+            }
 
             const diff = moment.duration(endTime.diff(startTime))
             const minutes = diff.asHours(); 
