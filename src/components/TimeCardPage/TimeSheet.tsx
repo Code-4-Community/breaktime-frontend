@@ -16,8 +16,8 @@ const defaultColumns = ['Date','Clock-in','Clock-Out','Hours','Comment']
 
 
 const defaultRows = [
-    {   "row_id":"<UUID of the row - for rendering and for tracking other things>", 
-        "type":'Regular | PTO, etc', 
+    {   
+        "Type":'Regular | PTO, etc', 
         "StartDate":"1679918400", "Duration":"132", 
         "Comment":{
             "Author":"<Name of author>", 
@@ -27,6 +27,12 @@ const defaultRows = [
         }}, 
      
 ] 
+
+const TimeSheetWeek = {
+    "UserID":"", 
+    "StartDate":"", 
+
+}
 // Example timesheet we are parsing out 
 const testingTimesheetResp = {
     "UserID":"77566d69-3b61-452a-afe8-73dcda96f876", 
@@ -38,15 +44,13 @@ const testingTimesheetResp = {
         "Timestamp":"<Epoch of when it was accepted>"
     },
     "TableData":defaultRows, 
-    "ManagerVC":[],
-    "BreaktimeVC":[], 
-    "ExpectedData":[],
+    "ExpectedData":[], 
     "Comments":[]
 }
 
 //Example entry in VC jsons: 
 const example_vs_entry = [
-    {row_id:"<Row UUID>", col_key:"StartTime", value:"<A different epoch"}
+    {row_id:"<Row UUID>", col_key:"StartTime", value:"<A different epoch>"}
 ]
 
 //To test uploading a timesheet 
