@@ -18,10 +18,10 @@ const defaultColumns = ['Date','Clock-in','Clock-Out','Hours','Comment']
 const defaultRows = [
     {"StartDate":"1679918400", "Duration":"132", 
     "Comment":{
-        "AuthorUUID":"XXXX", 
+        "Author":"<Name Of Author>", 
         "Type":"Report / Comment, etc", 
-        "Timestamp":"", 
-        "Content":":)" 
+        "Timestamp":"<Epoch of Timestamp>", 
+        "Content":"<Content of Message>" 
     }},  
     
 ] 
@@ -31,8 +31,15 @@ const testingTimesheetResp = {
     "TimesheetID":22222, 
     "Company":"Breaktime",
     "StartDate":1679918400,
-    "Status":"Accepted",
-    "TableData":defaultRows
+    "Status": {
+        "Value":"Unsubmitted | In-Review (Manager) | In-Review (Breaktime) | Accepted",
+        "Timestamp":"<Epoch of date submitted for last stage>", 
+        "Comment": "<See Comment structure in rows>", 
+    }, 
+    "TableData":defaultRows, 
+    "ManagerVC":[{'<row_uuid>':{'col_key_x':'val_changed_to'}}],
+    "BreaktimeVC":{}, 
+    "ExpectedHours":{}, 
 }
 //To test uploading a timesheet 
 // apiClient.updateUserTimesheet(testingTimesheetResp); 
