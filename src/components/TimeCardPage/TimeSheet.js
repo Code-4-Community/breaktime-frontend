@@ -12,7 +12,12 @@ import apiClient from '../Auth/apiClient';
 //TODO - Refactor to backend calls once setup to pull rows, etc. 
 const defaultColumns = ['Date','Clock-in','Clock-Out','Hours','Comment']
 
-
+const model = {
+    AuthorUUID: "XXXX",
+    Type: "Report / Comment, etc",
+    Timestamp: "",
+    Content: "invalid hours"
+}
 
 const defaultRows = [
     {"StartDate":"1679918400", "Duration":"132", 
@@ -82,7 +87,7 @@ export default function Page() {
             <div  style={{"display":'flex'}}>
                 <DateSelectorCard onDateChange={updateDateRange} startDate = {startDate} endDate={endDate}/>
                 <div className="col-md-5"></div>
-                <SubmitCard/>
+                <SubmitCard comment={selectedTimesheet.comment}/>
             </div>
             <TimeTable columns={columns} timesheet={selectedTimesheet} onTimesheetChange={processTimesheetChange}/>
         </div>
