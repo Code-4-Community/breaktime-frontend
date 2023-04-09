@@ -4,6 +4,7 @@ import moment from 'moment';
 import { v4 as uuidv4 } from 'uuid';
 
 import TimeTableRow from "./TimeTableRow"; 
+import { Fragment } from 'react';
 
 //Can expand upon this further by specifying input types - to allow only dates, numbers, etc for the input https://www.w3schools.com/bootstrap/bootstrap_forms_inputs.asp 
 
@@ -94,6 +95,8 @@ function TimeTable(props) {
     
     var prevDate = undefined; 
 
+
+
     return (
     <Table striped bordered hover>
         <thead>
@@ -120,9 +123,9 @@ function TimeTable(props) {
                         </td>
                         {
                             <TimeTableRow row={row}  onRowChange={(row) => onRowChange(row, index)} prevDate={dateToSend}/>
-                        }
-                    </tr>); 
-                }
+                        }  
+                    </tr>);  
+                } 
             )}
         </tbody>
     </Table>

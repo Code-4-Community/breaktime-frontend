@@ -5,6 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
 import TimePicker from 'react-time-picker';
 import 'react-time-picker/dist/TimePicker.css';
 import 'react-clock/dist/Clock.css';
+import { Fragment } from 'react';
 
 
 const renderUneditableCell = (entry) => {
@@ -23,7 +24,7 @@ const renderClockTime = (clockTime, updateClockTime) => {
 const renderComment = (comment, setComment) => {
     return <input defaultValue={comment} onChange={(event) => {setComment(event.target.value)}} />
 
-}
+} 
 
 /* Props overview:
     row: A dictionary of the row we are creating - it must contain keys matching columns 
@@ -97,7 +98,9 @@ function Row(props) {
     }, [comment])
 
 
-    return [
+    return (
+    <Fragment>{
+        [
         <td key="date">
             {renderUneditableCell(date)}
         </td>, 
@@ -113,8 +116,8 @@ function Row(props) {
         <td key="Comment">
             {renderComment(comment, setComment)}
         </td> 
-
-        ]
+        ]}
+        </Fragment>)
 
 }
 

@@ -6,6 +6,7 @@ import { useEffect } from 'react';
 import SubmitCard from './SubmitCard'; 
 import DateSelectorCard from './SelectWeekCard'
 import moment from 'moment';
+import {TimeSheetSchema} from '../../schemas/TimesheetSchema'
 
 import apiClient from '../Auth/apiClient';
 
@@ -15,24 +16,39 @@ const defaultColumns = ['Date','Clock-in','Clock-Out','Hours','Comment']
 
 
 const defaultRows = [
-    {"StartDate":"1679918400", "Duration":"132", 
-    "Comment":{
-        "AuthorUUID":"XXXX", 
-        "Type":"Report / Comment, etc", 
-        "Timestamp":"", 
-        "Content":":)" 
-    }}, 
-    
+    {   "row_id":"<UUID of the row - for rendering and for tracking other things>", 
+        "type":'Regular | PTO, etc', 
+        "StartDate":"1679918400", "Duration":"132", 
+        "Comment":{
+            "Author":"<Name of author>", 
+            "Type":"Report / Comment, etc", 
+            "Timestamp":"", 
+            "Content":":)" 
+        }}, 
+     
 ] 
 // Example timesheet we are parsing out 
 const testingTimesheetResp = {
     "UserID":"77566d69-3b61-452a-afe8-73dcda96f876", 
     "TimesheetID":22222, 
-    "Company":"Breaktime",
+    "Company":"Breaktime", 
     "StartDate":1679918400,
-    "Status":"Accepted",
-    "TableData":defaultRows
+    "Status":{
+        "Stage":"Accepted",
+        "Timestamp":"<Epoch of when it was accepted>"
+    },
+    "TableData":defaultRows, 
+    "ManagerVC":[],
+    "BreaktimeVC":[], 
+    "ExpectedData":[],
+    "Comments":[]
 }
+
+//Example entry in VC jsons: 
+const example_vs_entry = [
+    {row_id:"<Row UUID>", col_key:"StartTime", value:"<A different epoch"}
+]
+
 //To test uploading a timesheet 
 // apiClient.updateUserTimesheet(testingTimesheetResp); 
 
@@ -54,7 +70,7 @@ export default function Page() {
     }
     
     const [userTimesheets,setTimesheets] = useState([]); 
-    const [selectedTimesheet, setTimesheet] = useState(); 
+    const [selectedTimesheet, setTimesheet] = useState(undefined); 
     const columns = defaultColumns 
 
     //Pulls user timesheets, marking first returned as the active one
@@ -62,6 +78,7 @@ export default function Page() {
         // Uncomment this if you want the default one loaded 
         // setTimesheet(testingTimesheetResp)
         apiClient.getUserTimesheets().then(timesheets => {
+
             setTimesheets(timesheets); 
             //By Default just render / select the first timesheet for now  
             if (timesheets.length > 0) {
@@ -72,7 +89,8 @@ export default function Page() {
 
     const processTimesheetChange = (timesheet) => {
         //Adding the time entry to the table 
-        apiClient.addTimeEntry(timesheet); 
+        // apiClient.addTimeEntry(timesheet); 
+        //TODO - Upload timesheet to DB 
     }
 
 
