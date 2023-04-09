@@ -11,7 +11,7 @@ export default function DateCard(props) {
         key: 'selection',
         showDateDisplay: false   
       }); 
-   
+    
     const selectDateRange = (interval) => {
         const selectedRange = interval.selection; 
         props.onDateChange(selectedRange.startDate, selectedRange.endDate); 
