@@ -19,14 +19,12 @@ export default function SubmitCard(props) {
     const [submitDate, setSubmitDate] = useState(null); 
     const [state, setState] = useState<CardState>(CardState.Rejected); 
     const [rejected, setRejected] = useState(true);
-    const [reportType, setReportType] = useState<String>('this is rejected'); 
 
 
     useEffect(() => {
         //TODO - API Call to determine if the table has been submitted or not.
-        //Will set submitted? here and also submitDate if it was submitted to grab the date 
-        setReportType(props.comment)        
-    },[])
+        //Will set submitted? here and also submitDate if it was submitted to grab the date     
+    },[props.comment])
 
     const submitAction = () => {
         setSubmitted(!submitted); 
@@ -47,7 +45,7 @@ export default function SubmitCard(props) {
                     <Button variant={submitted?'light':'light'} onClick={submitAction}>{submitted? "Resubmit" : "Submit!"}</Button>
                 </Card.Body>
                 {(submitted && rejected) && <Card.Footer text="white">
-                    {reportType}
+                    {props.content}
                         
                     </Card.Footer>}
                 {submitted && <Card.Footer text="white">
