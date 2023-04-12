@@ -67,10 +67,11 @@ export default function Page() {
         // Uncomment this if you want the default one loaded 
         // setTimesheet(testingTimesheetResp)
         apiClient.getUserTimesheets().then(timesheets => {
-            setTimesheets(timesheets); 
+            const modifyTimesheet = timesheets.map((timesheet) => {return {...timesheet, comment:model}});
+            setTimesheets(modifyTimesheet); 
             //By Default just render / select the first timesheet for now  
             if (timesheets.length > 0) {
-                setTimesheet(timesheets[0])
+                setTimesheet(modifyTimesheet[0])
             }  
         });  
     }, [])
@@ -87,7 +88,7 @@ export default function Page() {
             <div  style={{"display":'flex'}}>
                 <DateSelectorCard onDateChange={updateDateRange} startDate = {startDate} endDate={endDate}/>
                 <div className="col-md-5"></div>
-                <SubmitCard comment={selectedTimesheet.comment}/>
+                {selectedTimesheet && <SubmitCard comment={selectedTimesheet.comment}/>}
             </div>
             <TimeTable columns={columns} timesheet={selectedTimesheet} onTimesheetChange={processTimesheetChange}/>
         </div>
