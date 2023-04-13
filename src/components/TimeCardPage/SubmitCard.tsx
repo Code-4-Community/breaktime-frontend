@@ -5,26 +5,17 @@ import Button from 'react-bootstrap/Button';
 //https://react-bootstrap.github.io/components/cards/
 
 
-export default function SubmitCard(props) {
 
-    const CardState = {
-        Rejected: "Rejected",
-        InReviewEmployer: "In Review - Employer",
-        InReviewBreaktime: "In Review - Breaktime",
-        Completed: "Completed"
-    }
-      
+export default function SubmitCard(props) {
 
     const [submitted, setSubmitted] = useState(false); 
     const [submitDate, setSubmitDate] = useState(null); 
-    const [state, setState] = useState<CardState>(CardState.Rejected); 
-    const [rejected, setRejected] = useState(true);
-
 
     useEffect(() => {
         //TODO - API Call to determine if the table has been submitted or not.
-        //Will set submitted? here and also submitDate if it was submitted to grab the date     
-    },[props.comment])
+        //Will set submitted? here and also submitDate if it was submitted to grab the date 
+        
+    },[])
 
     const submitAction = () => {
         setSubmitted(!submitted); 
@@ -33,9 +24,9 @@ export default function SubmitCard(props) {
     }
 
     return (
-        <div class="col-md-2" style={{ display: "flex", justifyContent: 'flex-end'}}>
+        <div className="col-md-2" style={{ display: "flex", justifyContent: 'flex-end'}}>
             <Card 
-                bg={(state === CardState.Completed) ? 'success' : ((state === CardState.InReviewBreaktime|| state === CardState.InReviewEmployer) ? 'warning' : 'danger') }
+                bg={submitted ? 'success' : 'secondary'}
                 text="white"
                 key="submit_description"
                 className="mb-2 text-center"
@@ -44,16 +35,11 @@ export default function SubmitCard(props) {
                 <Card.Body>
                     <Button variant={submitted?'light':'light'} onClick={submitAction}>{submitted? "Resubmit" : "Submit!"}</Button>
                 </Card.Body>
-                {(submitted && rejected) && <Card.Footer text="white">
-                    {props.content}
-                        
-                    </Card.Footer>}
-                {submitted && <Card.Footer text="white">
+                {submitted && <Card.Footer>
                     {submitDate}
                         
                     </Card.Footer>}
             </Card>  
-
         </div>
     )
 
