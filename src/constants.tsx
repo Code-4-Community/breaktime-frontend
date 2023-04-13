@@ -3,6 +3,7 @@ export const TIMESHEET_DURATION = 7;
 export const TIMEZONE = "America/New_York"; 
 
 
+//TODO - Refactor the example data to also be held here 
 // export const exampleRows = [
 //     {   
 //         "Type":'Regular', 
@@ -12,7 +13,7 @@ export const TIMEZONE = "America/New_York";
 //             "Author":"Ryan", 
 //             "Type":"Report", 
 //             "Timestamp":"", 
-//             "Content":":)" 
+//             "Content":"This is an example report comment" 
 //     }}, 
 // ]
 
@@ -20,12 +21,12 @@ export const TIMEZONE = "America/New_York";
 //     "UserID":"77566d69-3b61-452a-afe8-73dcda96f876", 
 //     "TimesheetID":22222, 
 //     "Company":"Breaktime", 
-//     "StartDate":1679918400,
+//     "StartDate":1680322882,
 //     "Status":{
 //         "Stage":"Accepted",
 //         "Timestamp":"<Epoch of when it was accepted>"
 //     },
-//     "TableData":defaultRows, 
+//     "TableData":exampleRows, 
 //     "ExpectedData":[], 
 //     "Comments":[]
 // }
