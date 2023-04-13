@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 import TimeTableRow from "./TimeTableRow"; 
 import { Fragment } from 'react';
-import { TIMESHEET_DURATION } from 'src/constants';
+import { TIMESHEET_DURATION, TIMEZONE } from 'src/constants';
 
 //Can expand upon this further by specifying input types - to allow only dates, numbers, etc for the input https://www.w3schools.com/bootstrap/bootstrap_forms_inputs.asp 
 
@@ -26,11 +26,11 @@ const createEmptyRow = (date) => {
 const formatRows = (providedRows, startDate) => {
     const updatedRows = [] 
 
-    var currentDate = moment.unix(startDate); 
+    var currentDate = moment.unix(startDate).tz(TIMEZONE); 
 
     //This assumes each row is in sorted order by Date / StartTime - if this is not the case things will break 
     providedRows.forEach(item => {
-        const timeObject = moment.unix(item.StartDate); 
+        const timeObject = moment.unix(item.StartDate).tz(TIMEZONE); 
         //If we are missing a day - add it to the json before we process the next day 
         while (timeObject.isAfter(currentDate, 'day')) {
             updatedRows.push(createEmptyRow(currentDate.unix())); 
@@ -47,7 +47,7 @@ const formatRows = (providedRows, startDate) => {
         ); 
     }) 
     //Fill in remaining days if we do not have days that go up to start date + total duration 
-    while (!currentDate.isAfter(moment.unix(startDate).add(6,'day'), 'day')) {
+    while (!currentDate.isAfter(moment.unix(startDate).tz(TIMEZONE).add(TIMESHEET_DURATION - 1,'day'), 'day')) {
         updatedRows.push(createEmptyRow(currentDate.unix())); 
         currentDate = currentDate.add(1, 'day'); 
     }

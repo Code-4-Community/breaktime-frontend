@@ -7,7 +7,8 @@ import 'react-time-picker/dist/TimePicker.css';
 import 'react-clock/dist/Clock.css';
 import { Fragment } from 'react';
 
-import { Select } from '@chakra-ui/react'
+import { Select } from '@chakra-ui/react'; 
+import {TIMEZONE} from 'src/constants'; 
 
 
 enum CellType {
@@ -58,9 +59,9 @@ function Row(props) {
     const [comment,setComment] = useState(""); 
     const [cellType, setType] = useState(CellType.Regular); 
 
-    const timeObject = moment.unix(dbRow.StartDate); 
+    const timeObject = moment.unix(dbRow.StartDate).tz(TIMEZONE); 
     var date = timeObject.format("MM/DD/YYYY")
-    if (props.prevDate !== undefined && timeObject.isSame(moment.unix(props.prevDate), 'day')) {
+    if (props.prevDate !== undefined && timeObject.isSame(moment.unix(props.prevDate).tz(TIMEZONE), 'day')) {
         date = "-"; 
     }
 

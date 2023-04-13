@@ -6,6 +6,8 @@ import { useEffect } from 'react';
 import SubmitCard from './SubmitCard'; 
 import DateSelectorCard from './SelectWeekCard'
 import moment from 'moment';
+import 'moment-timezone';
+
 import {TimeSheetSchema} from '../../schemas/TimesheetSchema'
 import {
     Alert,
@@ -14,7 +16,7 @@ import {
     AlertDescription,
   } from '@chakra-ui/react'
 
-  import { TIMESHEET_DURATION } from 'src/constants';
+  import { TIMESHEET_DURATION, TIMEZONE } from 'src/constants';
 
 
 
@@ -104,9 +106,9 @@ export default function Page() {
     }
 
     const renderWarning = () => {
-        const currentDate = moment(); 
-        if (selectedTimesheet !== undefined) {
-            const startDate = moment.unix(selectedTimesheet.StartDate); 
+        const currentDate = moment().tz(TIMEZONE);  
+        if (selectedTimesheet !== undefined) { 
+            const startDate = moment.unix(selectedTimesheet.StartDate).tz(TIMEZONE); 
             startDate.add(TIMESHEET_DURATION, 'days'); 
             
             if (currentDate.isAfter(startDate,'days')) {
