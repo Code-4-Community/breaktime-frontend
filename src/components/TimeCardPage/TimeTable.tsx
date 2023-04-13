@@ -5,10 +5,10 @@ import { v4 as uuidv4 } from 'uuid';
 
 import TimeTableRow from "./TimeTableRow"; 
 import { Fragment } from 'react';
+import { TIMESHEET_DURATION } from 'src/constants';
 
 //Can expand upon this further by specifying input types - to allow only dates, numbers, etc for the input https://www.w3schools.com/bootstrap/bootstrap_forms_inputs.asp 
 
-const TIMESHEET_DURATION = 7; 
 
 
 

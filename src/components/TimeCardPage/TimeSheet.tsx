@@ -7,11 +7,21 @@ import SubmitCard from './SubmitCard';
 import DateSelectorCard from './SelectWeekCard'
 import moment from 'moment';
 import {TimeSheetSchema} from '../../schemas/TimesheetSchema'
+import {
+    Alert,
+    AlertIcon,
+    AlertTitle,
+    AlertDescription,
+  } from '@chakra-ui/react'
+
+  import { TIMESHEET_DURATION } from 'src/constants';
+
+
 
 import apiClient from '../Auth/apiClient';
 
 //TODO - Refactor to backend calls once setup to pull rows, etc. 
-const defaultColumns = ['Date','Clock-in','Clock-Out','Hours','Comment']
+const defaultColumns = ['Type', 'Date','Clock-in','Clock-Out','Hours','Comment']
 
 
 
@@ -48,10 +58,6 @@ const testingTimesheetResp = {
     "Comments":[]
 }
 
-//Example entry in VC jsons: 
-const example_vs_entry = [
-    {row_id:"<Row UUID>", col_key:"StartTime", value:"<A different epoch>"}
-]
 
 //To test uploading a timesheet 
 // apiClient.updateUserTimesheet(testingTimesheetResp); 
@@ -97,7 +103,42 @@ export default function Page() {
         //TODO - Upload timesheet to DB 
     }
 
+    const renderWarning = () => {
+        const currentDate = moment(); 
 
+        if (selectedTimesheet !== undefined) {
+            const startDate = moment.unix(selectedTimesheet.StartDate); 
+            console.log(startDate); 
+            startDate.add(TIMESHEET_DURATION, 'days'); 
+            console.log(startDate.format("YYYY-MM-DD")); 
+            console.log(currentDate.format("YYYY-MM-DD")); 
+
+            if (currentDate.isAfter(startDate,'days')) {
+                console.log("Late!"); 
+                return <Alert status='error'>
+                        <AlertIcon />
+                        <AlertTitle>Your timesheet is late!</AlertTitle>
+                        <AlertDescription>Please submit this as soon as possible</AlertDescription>
+                    </Alert>
+            } else {
+                const dueDuration = startDate.diff(currentDate,'days'); 
+                return <Alert status='info'>
+                    <AlertIcon />
+                    <AlertTitle>Your timesheet is due in {dueDuration} days!</AlertTitle>
+                    <AlertDescription>If it is not submitted by then it will be late</AlertDescription>
+                </Alert>
+            }
+        }
+        
+        
+        // return <Alert status='error'>
+        //         <AlertIcon />
+        //         <AlertTitle></AlertTitle>
+        //         <AlertDescription>Your Chakra experience may be degraded.</AlertDescription>
+        //     </Alert>
+    }
+
+    
 
     return (
         <div>
@@ -106,6 +147,7 @@ export default function Page() {
                 <div className="col-md-5"></div>
                 <SubmitCard/>
             </div>
+            {renderWarning()}
             <TimeTable columns={columns} timesheet={selectedTimesheet} onTimesheetChange={processTimesheetChange}/>
         </div>
     )

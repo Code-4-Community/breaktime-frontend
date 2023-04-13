@@ -7,6 +7,14 @@ import 'react-time-picker/dist/TimePicker.css';
 import 'react-clock/dist/Clock.css';
 import { Fragment } from 'react';
 
+import { Select } from '@chakra-ui/react'
+
+
+enum CellType {
+    Regular="Regular", 
+    PTO="PTO" 
+}
+
 
 const renderUneditableCell = (entry) => {
     return entry 
@@ -26,6 +34,16 @@ const renderComment = (comment, setComment) => {
 
 } 
 
+const renderCellType = (value:CellType, setValue) => {
+    return <Select onChange={(event) => {setValue(CellType[event.target.value])}} value={value}>
+        {Object.values(CellType).map((entry) => (
+            <option>{entry}</option>
+        ))}
+    </Select>
+    // return value
+}
+
+
 /* Props overview:
     row: A dictionary of the row we are creating - it must contain keys matching columns 
     onChange: Callback to when a column entry of the cell is modified 
@@ -38,6 +56,7 @@ function Row(props) {
     const [endHour, setEnd] = useState(""); 
     const [dur, setDur] = useState(""); 
     const [comment,setComment] = useState(""); 
+    const [cellType, setType] = useState(CellType.Regular); 
 
     const timeObject = moment.unix(dbRow.StartDate); 
     var date = timeObject.format("MM/DD/YYYY")
@@ -101,18 +120,22 @@ function Row(props) {
     return (
     <Fragment>{
         [
+        <td key="Type">
+        {renderCellType(cellType, setType)}
+         </td>, 
         <td key="date">
             {renderUneditableCell(date)}
         </td>, 
         <td key="Clock-in">
-            {renderClockTime(startHour, setStart)}
+            {renderClockTime(startHour, setStart)} 
         </td>, 
         <td key="Clock-out">
             {renderClockTime(endHour, setEnd)}
         </td>,
-        <td key="Hours">
-            {renderUneditableCell(dur)}
-         </td>, 
+         <td key="Hours">
+         {renderUneditableCell(dur)}
+        </td>, 
+        
         <td key="Comment">
             {renderComment(comment, setComment)}
         </td> 

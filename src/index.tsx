@@ -19,20 +19,25 @@ import 'bootstrap/dist/css/bootstrap.css';
 
 import '@aws-amplify/ui-react/styles.css';
 
+import { ChakraProvider } from '@chakra-ui/react'
+
+
 Amplify.configure(awsmobile); 
 
 
 export default function Landing() {
     return (
-      <BrowserRouter>
-      <NavBar/> 
-      <Routes>
-        <Route path="/" element={<AuthedApp page={<HomePage/>}/>}/>
-        <Route path="/timecard" element={<AuthedApp page={<TimeSheet />}/>} />
-        <Route path="/logout" element={<Signout/>} />
+      <ChakraProvider>
+        <BrowserRouter>
+        <NavBar/> 
+        <Routes>
+          <Route path="/" element={<AuthedApp page={<HomePage/>}/>}/>
+          <Route path="/timecard" element={<AuthedApp page={<TimeSheet />}/>} />
+          <Route path="/logout" element={<Signout/>} />
 
-      </Routes>
-    </BrowserRouter> 
+        </Routes>
+      </BrowserRouter> 
+    </ChakraProvider>
     );
   }
 const root = ReactDOM.createRoot(document.getElementById('root'));
