@@ -86,7 +86,7 @@ export default function Page() {
                             });
 
         if (currentTimesheets.length < 1){
-            currentTimesheets.push(testingTimesheetResp); // TODO: change
+            currentTimesheets.push(testingTimesheetResp); // TODO: change to make correct timesheets for the week
         }
 
         if (currentTimesheets.length > 1){
@@ -97,18 +97,17 @@ export default function Page() {
             // set all to 0
             // iterate through each sheet and increment accordingly
 
-            for (let start = moment(startDate); start.diff(endDate, 'days') <= 0; start.add(1, 'days')){
+            for (let start = moment(startDate); start.isBefore(endDate); start.add(1, 'days')){
                 totalHoursForEachDay[start] = 0;
             }
 
             currentTimesheets.forEach(sheet => {
                 sheet.TableData.forEach(entry => {
-                    // duration in minutes for each day
                     totalHoursForEachDay[moment.unix(entry.StartDate).set({'minutes':0, 'hours':0, 'seconds':0})] += Number(entry.Duration);
                 });
             });
 
-            const shouldBeActualAggregatedRows = Object.entries(totalHoursForEachDay).map(entry =>
+            const aggregatedRows = Object.entries(totalHoursForEachDay).map(entry =>
                 ({  "StartDate":String(moment(entry[0]).unix()), 
                     "Duration":String(entry[1]), 
                     "Comment":{
@@ -119,25 +118,6 @@ export default function Page() {
                     }
                 }));
 
-            console.log("a", shouldBeActualAggregatedRows);
-
-            const aggregatedRows = [
-                {"StartDate":"1679918400", "Duration":"132", 
-                "Comment":{
-                    "AuthorUUID":"XXXX", 
-                    "Type":"Report / Comment, etc", 
-                    "Timestamp":"", 
-                    "Content":":)" 
-                }},{"StartDate":"1679918400", "Duration":"132", 
-                "Comment":{
-                    "AuthorUUID":"XXXX", 
-                    "Type":"Report / Comment, etc", 
-                    "Timestamp":"", 
-                    "Content":":)" 
-                }} 
-            ];
-            console.log("b",aggregatedRows);
-
             const aggregatedCol = {
                 "UserID":currentTimesheets[0].UserID, 
                 "TimesheetID":22222, 
@@ -147,12 +127,9 @@ export default function Page() {
                 "TableData":aggregatedRows
             };
 
-            
-
             currentTimesheets.push(aggregatedCol);
 
         }
-
 
         setCurrentTimesheets(currentTimesheets);
         setTimesheet(currentTimesheets[0]);
