@@ -6,10 +6,11 @@ import { useEffect } from 'react';
 import SubmitCard from './SubmitCard'; 
 import DateSelectorCard from './SelectWeekCard'
 import moment from 'moment';
-import { Tab, Tabs, TabList } from 'react-tabs';
+import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css'
 
 import apiClient from '../Auth/apiClient';
+import { TabPane } from 'react-bootstrap';
 
 //TODO - Refactor to backend calls once setup to pull rows, etc. 
 const defaultColumns = ['Date','Clock-in','Clock-Out','Hours','Comment']
@@ -82,76 +83,73 @@ export default function Page() {
                                     sheet.TableData = defaultRows;
                                 } 
                                return sheet;
-                            })
-    
+                            });
+
         if (currentTimesheets.length < 1){
             currentTimesheets.push(testingTimesheetResp); // TODO: change
         }
 
         if (currentTimesheets.length > 1){
 
-            const TotalHours = currentTimesheets.map(sheet => 
-                sheet.TableData.map(rows => Number(rows.Duration)));
+            const totalHoursForEachDay = {};
 
-            // how do i do this with reduce
-            let lengthOfLongestSubArray = 0;
-            for (let i = 0; i < TotalHours.length; i += 1) {
-                lengthOfLongestSubArray = Math.max(TotalHours[i].length, lengthOfLongestSubArray)
+            // add the days in that stretch to dictionary 
+            // set all to 0
+            // iterate through each sheet and increment accordingly
+
+            for (let start = moment(startDate); start.diff(endDate, 'days') <= 0; start.add(1, 'days')){
+                totalHoursForEachDay[start] = 0;
             }
 
-            TotalHours.map(row => 
-                {
-                    if (row.length < lengthOfLongestSubArray) {
-                        for (let x = 0; x < lengthOfLongestSubArray - row.length; x += 1) {
-                            row.push(0);
-                        }
-                    }
-                    return row;
-                })
-            
-            // TODO: Rewrite
-            let transpose = function(arr){
-                let m = arr.length;
-                let n = arr[0].length;
-                let f = [];
-                let t = [];
-                for (let j=0;j<n; j++){
-                  t = [];
-                  for (let i=0;i<m; i++){
-                    t.push(arr[i][j]);
-                  }
-                  f.push(t);
-                }
-                return f;
-            } 
-            const TotalHourRows = transpose(TotalHours).map(row => row.reduce((acc, val) => acc + val, 0)).map(hours => 
-                {   
-                    return {"StartDate":"1679918400", "Duration":hours, 
+            currentTimesheets.forEach(sheet => {
+                sheet.TableData.forEach(entry => {
+                    // duration in minutes for each day
+                    totalHoursForEachDay[moment.unix(entry.StartDate).set({'minutes':0, 'hours':0, 'seconds':0})] += Number(entry.Duration);
+                });
+            });
+
+            const shouldBeActualAggregatedRows = Object.entries(totalHoursForEachDay).map(entry =>
+                ({  "StartDate":String(moment(entry[0]).unix()), 
+                    "Duration":String(entry[1]), 
                     "Comment":{
                         "AuthorUUID":"XXXX", 
                         "Type":"Report / Comment, etc", 
                         "Timestamp":"", 
                         "Content":":)" 
-                    }}
-                }
-                );
+                    }
+                }));
 
-            // find largest sub array size
-            // make every array have same amt of elements, fill in with 0s
-            // transpose
-            // reduce 
-            // done
+            console.log("a", shouldBeActualAggregatedRows);
 
-                const aggregationSheet = {
-                    "UserID":"77566d69-3b61-452a-afe8-73dcda96f876", 
-                    "TimesheetID":22222, 
-                    "Company":"Breaktime",
-                    "StartDate":1679918400,
-                    "Status":"Accepted",
-                    "TableData":TotalHourRows
-                }
+            const aggregatedRows = [
+                {"StartDate":"1679918400", "Duration":"132", 
+                "Comment":{
+                    "AuthorUUID":"XXXX", 
+                    "Type":"Report / Comment, etc", 
+                    "Timestamp":"", 
+                    "Content":":)" 
+                }},{"StartDate":"1679918400", "Duration":"132", 
+                "Comment":{
+                    "AuthorUUID":"XXXX", 
+                    "Type":"Report / Comment, etc", 
+                    "Timestamp":"", 
+                    "Content":":)" 
+                }} 
+            ];
+            console.log("b",aggregatedRows);
 
-            currentTimesheets.push(aggregationSheet);
+            const aggregatedCol = {
+                "UserID":currentTimesheets[0].UserID, 
+                "TimesheetID":22222, 
+                "Company":"Total",
+                "StartDate":moment(startDate).unix(),
+                "Status":"Accepted",
+                "TableData":aggregatedRows
+            };
+
+            
+
+            currentTimesheets.push(aggregatedCol);
 
         }
 
@@ -176,6 +174,7 @@ export default function Page() {
                 )}
             </TabList>
             </Tabs>
+            
             <TimeTable columns={columns} timesheet={selectedTimesheet} onTimesheetChange={processTimesheetChange}/>
         </div>
     )
