@@ -105,16 +105,11 @@ export default function Page() {
 
     const renderWarning = () => {
         const currentDate = moment(); 
-
         if (selectedTimesheet !== undefined) {
             const startDate = moment.unix(selectedTimesheet.StartDate); 
-            console.log(startDate); 
             startDate.add(TIMESHEET_DURATION, 'days'); 
-            console.log(startDate.format("YYYY-MM-DD")); 
-            console.log(currentDate.format("YYYY-MM-DD")); 
-
+            
             if (currentDate.isAfter(startDate,'days')) {
-                console.log("Late!"); 
                 return <Alert status='error'>
                         <AlertIcon />
                         <AlertTitle>Your timesheet is late!</AlertTitle>
@@ -125,20 +120,11 @@ export default function Page() {
                 return <Alert status='info'>
                     <AlertIcon />
                     <AlertTitle>Your timesheet is due in {dueDuration} days!</AlertTitle>
-                    <AlertDescription>If it is not submitted by then it will be late</AlertDescription>
+                    <AlertDescription>Remember to press the submit button!</AlertDescription>
                 </Alert>
             }
         }
-        
-        
-        // return <Alert status='error'>
-        //         <AlertIcon />
-        //         <AlertTitle></AlertTitle>
-        //         <AlertDescription>Your Chakra experience may be degraded.</AlertDescription>
-        //     </Alert>
     }
-
-    
 
     return (
         <div>
