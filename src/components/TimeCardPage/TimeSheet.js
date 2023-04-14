@@ -6,11 +6,9 @@ import { useEffect } from 'react';
 import SubmitCard from './SubmitCard'; 
 import DateSelectorCard from './SelectWeekCard'
 import moment from 'moment';
-import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
-import 'react-tabs/style/react-tabs.css'
+import { Tabs, TabList, Tab } from '@chakra-ui/react'
 
 import apiClient from '../Auth/apiClient';
-import { TabPane } from 'react-bootstrap';
 
 //TODO - Refactor to backend calls once setup to pull rows, etc. 
 const defaultColumns = ['Date','Clock-in','Clock-Out','Hours','Comment']
