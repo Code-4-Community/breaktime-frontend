@@ -75,7 +75,7 @@ export default function Page() {
 
     const currentTimesheetsToDisplay = (timesheets, currentStartDate) => {
         // refactor with moment
-        const currentTimesheets = timesheets.filter(sheet => new Date(sheet.StartDate * 1000).toDateString() === currentStartDate.toDateString());
+        const currentTimesheets = timesheets.filter(sheet => moment.unix(sheet.StartDate).isSame(currentStartDate, 'day'));
         currentTimesheets.map(sheet => {
                                 if (sheet.TableData.length === 0){
                                     sheet.TableData = defaultRows;
