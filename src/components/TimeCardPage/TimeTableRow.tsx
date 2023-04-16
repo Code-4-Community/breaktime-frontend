@@ -10,11 +10,7 @@ import { Fragment } from 'react';
 import { Select } from '@chakra-ui/react'; 
 import {TIMEZONE} from 'src/constants'; 
 
-
-enum CellType {
-    Regular="Regular", 
-    PTO="PTO" 
-}
+import {CellType} from './types' 
 
 
 const renderUneditableCell = (entry) => {
