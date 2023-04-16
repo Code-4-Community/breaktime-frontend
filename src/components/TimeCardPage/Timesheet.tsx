@@ -9,6 +9,7 @@ import moment from 'moment';
 import { Tabs, TabList, Tab } from '@chakra-ui/react'
 
 import apiClient from '../Auth/apiClient';
+import { start } from 'repl';
 
 //TODO - Refactor to backend calls once setup to pull rows, etc. 
 const defaultColumns = ['Date','Clock-in','Clock-Out','Hours','Comment']
@@ -39,9 +40,9 @@ const testingTimesheetResp = {
 const user = 'Example User'
 
 export default function Page() {
-    const today = moment(); 
-    const [startDate, setStartDate] = useState(new Date(today.startOf('week').format())); 
-    const [endDate, setEndDate] = useState(new Date(today.endOf('week').format())); 
+    //const today = moment(); 
+    const [startDate, setStartDate] = useState(moment().startOf('week').day(0)); 
+    const [endDate, setEndDate] = useState(moment().endOf('week').day(0)); 
 
     const updateDateRange = (start, end) => {
         // Callback for date-range picker - does any pre-processing when grabbing a new date 
@@ -90,17 +91,21 @@ export default function Page() {
 
             const totalHoursForEachDay = {};
 
+            console.log(startDate);
+
             // add the days in that stretch to dictionary 
             // set all to 0
             // iterate through each sheet and increment accordingly
 
-            for (let start = moment(startDate); start.isBefore(endDate); start.add(1, 'days')){
-                totalHoursForEachDay[String(start)] = 0;
+            for (let start = moment(startDate); start.add(7,'days'); start.add(1, 'days')){
+                totalHoursForEachDay[start.format("MM/DD/YY")] = 0;
             }
+
+            console.log(totalHoursForEachDay);
 
             newCurrentTimesheets.forEach(sheet => {
                 sheet.TableData.forEach(entry => {
-                    totalHoursForEachDay[String(moment.unix(entry.StartDate).set({'minutes':0, 'hours':0, 'seconds':0}))] += Number(entry.Duration);
+                    totalHoursForEachDay[moment.unix(entry.StartDate).set({'minutes':0, 'hours':0, 'seconds':0}).format("MM/DD/YY")] += Number(entry.Duration);
                 });
             });
 
@@ -128,14 +133,14 @@ export default function Page() {
 
         }
 
-        setCurrentTimesheets(newCurrentTimesheets );
+        setCurrentTimesheets(newCurrentTimesheets);
         setTimesheet(newCurrentTimesheets[0]);
     }
 
     return (
         <div>
             <div  style={{"display":'flex'}}>
-                <DateSelectorCard onDateChange={updateDateRange} startDate = {startDate} endDate={endDate}/>
+                <DateSelectorCard onDateChange={updateDateRange} startDate = {startDate}/>
                 <div className="col-md-5"></div>
                 <SubmitCard/>
             </div>
