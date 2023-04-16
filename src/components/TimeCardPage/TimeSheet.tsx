@@ -16,49 +16,14 @@ import {
     AlertDescription,
   } from '@chakra-ui/react'
 
-  import { TIMESHEET_DURATION, TIMEZONE } from 'src/constants';
+import { TIMESHEET_DURATION, TIMEZONE } from 'src/constants';
 
-
+import { TABLE_COLUMNS } from './types';
 
 import apiClient from '../Auth/apiClient';
 
 //TODO - Refactor to backend calls once setup to pull rows, etc. 
-const defaultColumns = ['Type', 'Date','Clock-in','Clock-Out','Hours','Comment']
 
-
-
-const defaultRows = [
-    {   
-        "Type":'Regular | PTO, etc', 
-        "StartDate":"1679918400", "Duration":"132", 
-        "Comment":{
-            "Author":"<Name of author>", 
-            "Type":"Report / Comment, etc", 
-            "Timestamp":"", 
-            "Content":":)" 
-        }}, 
-     
-] 
-
-const TimeSheetWeek = {
-    "UserID":"", 
-    "StartDate":"", 
-
-}
-// Example timesheet we are parsing out 
-const testingTimesheetResp = {
-    "UserID":"77566d69-3b61-452a-afe8-73dcda96f876", 
-    "TimesheetID":22222, 
-    "Company":"Breaktime", 
-    "StartDate":1679918400,
-    "Status":{
-        "Stage":"Accepted",
-        "Timestamp":"<Epoch of when it was accepted>"
-    },
-    "TableData":defaultRows, 
-    "ExpectedData":[], 
-    "Comments":[]
-}
 
 
 //To test uploading a timesheet 
@@ -75,20 +40,19 @@ export default function Page() {
 
     const updateDateRange = (start, end) => {
         // Callback for date-range picker - does any pre-processing when grabbing a new date 
-        setStartDate(startDate); 
-        setEndDate(endDate); 
+        setStartDate(start); 
+        setEndDate(end); 
         //TODO - remove once we are finished setting up API calls for  this 
         console.log("New date range has been selceted:\n\t %s \nto \n\t%s", start, end); 
     }
     
     const [userTimesheets,setTimesheets] = useState([]); 
     const [selectedTimesheet, setTimesheet] = useState(undefined); 
-    const columns = defaultColumns 
+    
 
     //Pulls user timesheets, marking first returned as the active one
     useEffect(() => {
         // Uncomment this if you want the default one loaded 
-        // setTimesheet(testingTimesheetResp)
         apiClient.getUserTimesheets().then(timesheets => {
 
             setTimesheets(timesheets); 
@@ -136,7 +100,7 @@ export default function Page() {
                 <SubmitCard/>
             </div>
             {renderWarning()}
-            <TimeTable columns={columns} timesheet={selectedTimesheet} onTimesheetChange={processTimesheetChange}/>
+            <TimeTable columns={TABLE_COLUMNS} timesheet={selectedTimesheet} onTimesheetChange={processTimesheetChange}/>
         </div>
     )
 }
