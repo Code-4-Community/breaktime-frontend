@@ -24,7 +24,7 @@ export default function SubmitCard(props) {
     }
 
     return (
-        <div class="col-md-2" style={{ display: "flex", justifyContent: 'flex-end'}}>
+        <div className="col-md-2" style={{ display: "flex", justifyContent: 'flex-end'}}>
             <Card 
                 bg={submitted ? 'success' : 'secondary'}
                 text="white"
@@ -35,7 +35,7 @@ export default function SubmitCard(props) {
                 <Card.Body>
                     <Button variant={submitted?'light':'light'} onClick={submitAction}>{submitted? "Resubmit" : "Submit!"}</Button>
                 </Card.Body>
-                {submitted && <Card.Footer text="white">
+                {submitted && <Card.Footer>
                     {submitDate}
                         
                     </Card.Footer>}

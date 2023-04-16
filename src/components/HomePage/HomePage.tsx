@@ -1,6 +1,4 @@
-import { withAuthenticator, Button, Heading } from '@aws-amplify/ui-react';
-
-import AuthWrapper from "../Auth/AuthWrapper"; 
+import React from 'react';
 
 export default function HomePage() {
   return (
