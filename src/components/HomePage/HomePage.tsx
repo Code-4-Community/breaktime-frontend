@@ -1,6 +1,7 @@
 import Announcements from './Announcements';
 import Messages from './Messages';
 import MonthAtAGlance from './MonthAtAGlance';
+import React from 'react';
 
 export default function HomePage() {
 

@@ -1,9 +1,13 @@
 import { Auth } from 'aws-amplify';
 import axios, { AxiosInstance } from 'axios';
+import {TimeSheetSchema} from '../../schemas/TimesheetSchema'
+
 
 const defaultBaseUrl = process.env.REACT_APP_API_BASE_URL ?? 'http://localhost:3000';
 // Required to use nock with axios (note: do not use nock, just use jest to mock the apiClient)
 axios.defaults.adapter = require('axios/lib/adapters/http');
+
+
 
 interface ApiClientOptions {
   /**
@@ -56,8 +60,8 @@ export class ApiClient {
   }
 
 
-  public async getUserTimesheets(): Promise<JSON> {
-    return this.get('auth/timesheet') as Promise<JSON>; 
+  public async getUserTimesheets(): Promise<TimeSheetSchema[]> {
+    return this.get('auth/timesheet') as Promise<TimeSheetSchema[]>; 
   }
 
   public async updateUserTimesheet(updatedEntry): Promise<Boolean> {
