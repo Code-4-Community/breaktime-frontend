@@ -96,7 +96,6 @@ function TimeTable(props) {
     var prevDate = undefined; 
 
 
-
     return (
     <Table striped bordered hover>
         <thead>

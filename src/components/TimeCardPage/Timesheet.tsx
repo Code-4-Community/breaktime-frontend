@@ -97,13 +97,12 @@ export default function Page() {
             // iterate through each sheet and increment accordingly
             
             const finalDate = moment(currentStartDate).add(7, 'days'); 
-            const currentDate = currentStartDate; 
+            const currentDate = moment(currentStartDate); 
             while (currentDate.isBefore(finalDate, 'days')) {
                 totalHoursForEachDay[currentDate.format("MM/DD/YY")] = 0; 
                 currentDate.add(1, 'day'); 
                 console.log("Date: ", currentDate.format("MM/DD/YY")); 
             }
-            console.log(totalHoursForEachDay); 
  
             newCurrentTimesheets.forEach(sheet => {
                 sheet.TableData.forEach(entry => {
@@ -121,11 +120,12 @@ export default function Page() {
                         "Content":":)" 
                     }
                 }));
+          
             const aggregatedCol = {
                 "UserID":newCurrentTimesheets[0].UserID, 
                 "TimesheetID":22222, 
-                "Company":"Total",
-                "StartDate":moment(startDate).unix(),
+                "Company":"Total", 
+                "StartDate":currentStartDate.unix(),
                 "Status":"Accepted", 
                 "TableData":aggregatedRows
             };
