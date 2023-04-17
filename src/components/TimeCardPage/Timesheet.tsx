@@ -5,11 +5,12 @@ import DatePicker from 'react-datepicker';
 import { useEffect } from 'react';
 import SubmitCard from './SubmitCard'; 
 import DateSelectorCard from './SelectWeekCard'
-import moment from 'moment';
+import moment, {Moment} from 'moment';
 import { Tabs, TabList, Tab } from '@chakra-ui/react'
 
 import apiClient from '../Auth/apiClient';
 import { start } from 'repl';
+
 
 //TODO - Refactor to backend calls once setup to pull rows, etc. 
 const defaultColumns = ['Date','Clock-in','Clock-Out','Hours','Comment']
@@ -42,15 +43,14 @@ const user = 'Example User'
 export default function Page() {
     //const today = moment(); 
     const [startDate, setStartDate] = useState(moment().startOf('week').day(0)); 
-    const [endDate, setEndDate] = useState(moment().endOf('week').day(0)); 
+    const [endDate, setEndDate] = useState(moment(startDate).add(7, 'days')); 
 
-    const updateDateRange = (start, end) => {
-        // Callback for date-range picker - does any pre-processing when grabbing a new date 
-        setStartDate(start); 
-        setEndDate(end); 
-        setCurrentTimesheetsToDisplay (userTimesheets, start); 
-        //TODO - remove once we are finished setting up API calls for  this 
-        console.log("New date range has been selceted:\n\t %s \nto \n\t%s", start, end); 
+    const updateDateRange = (date:Moment) => {
+        setStartDate(date); 
+        //TODO - Refactor this to use the constant in merge with contants branch 
+        setEndDate(date.add(7, 'days')); 
+
+        setCurrentTimesheetsToDisplay (userTimesheets, date); 
     }
     
     const [userTimesheets, setUserTimesheets] = useState([]); 
@@ -65,7 +65,7 @@ export default function Page() {
         apiClient.getUserTimesheets().then(timesheets => {
             setUserTimesheets(timesheets); 
             //By Default just render / select the first timesheet for now 
-            setCurrentTimesheetsToDisplay (timesheets, startDate); 
+            // setCurrentTimesheetsToDisplay (timesheets, startDate); 
         });
     }, [])
 
@@ -74,8 +74,9 @@ export default function Page() {
         //apiClient.addTimeEntry(timesheet); 
     }
 
-    const setCurrentTimesheetsToDisplay  = (timesheets, currentStartDate) => {
+    const setCurrentTimesheetsToDisplay  = (timesheets, currentStartDate:Moment) => {
         const newCurrentTimesheets  = timesheets.filter(sheet => moment.unix(sheet.StartDate).isSame(currentStartDate, 'day'));
+        
         newCurrentTimesheets.map(sheet => {
                                 if (sheet.TableData.length === 0){
                                     sheet.TableData = defaultRows;
@@ -91,27 +92,28 @@ export default function Page() {
 
             const totalHoursForEachDay = {};
 
-            console.log(startDate);
-
             // add the days in that stretch to dictionary 
             // set all to 0
             // iterate through each sheet and increment accordingly
-
-            for (let start = moment(startDate); start.add(7,'days'); start.add(1, 'days')){
-                totalHoursForEachDay[start.format("MM/DD/YY")] = 0;
+            
+            const finalDate = moment(currentStartDate).add(7, 'days'); 
+            const currentDate = currentStartDate; 
+            while (currentDate.isBefore(finalDate, 'days')) {
+                totalHoursForEachDay[currentDate.format("MM/DD/YY")] = 0; 
+                currentDate.add(1, 'day'); 
+                console.log("Date: ", currentDate.format("MM/DD/YY")); 
             }
-
-            console.log(totalHoursForEachDay);
-
+            console.log(totalHoursForEachDay); 
+ 
             newCurrentTimesheets.forEach(sheet => {
                 sheet.TableData.forEach(entry => {
-                    totalHoursForEachDay[moment.unix(entry.StartDate).set({'minutes':0, 'hours':0, 'seconds':0}).format("MM/DD/YY")] += Number(entry.Duration);
+                    totalHoursForEachDay[moment.unix(entry.StartDate).format("MM/DD/YY")] += Number(entry.Duration);
                 });
             });
 
             const aggregatedRows = Object.entries(totalHoursForEachDay).map(entry =>
-                ({  "StartDate":String(moment(entry[0]).unix()), 
-                    "Duration":String(entry[1]), 
+                ({  "StartDate":moment(entry[0]).unix(), 
+                    "Duration":Number(entry[1]), 
                     "Comment":{
                         "AuthorUUID":"XXXX", 
                         "Type":"Report / Comment, etc", 
@@ -119,20 +121,18 @@ export default function Page() {
                         "Content":":)" 
                     }
                 }));
-
             const aggregatedCol = {
                 "UserID":newCurrentTimesheets[0].UserID, 
                 "TimesheetID":22222, 
                 "Company":"Total",
                 "StartDate":moment(startDate).unix(),
-                "Status":"Accepted",
+                "Status":"Accepted", 
                 "TableData":aggregatedRows
             };
 
             newCurrentTimesheets.push(aggregatedCol);
 
         }
-
         setCurrentTimesheets(newCurrentTimesheets);
         setTimesheet(newCurrentTimesheets[0]);
     }
@@ -140,7 +140,7 @@ export default function Page() {
     return (
         <div>
             <div  style={{"display":'flex'}}>
-                <DateSelectorCard onDateChange={updateDateRange} startDate = {startDate}/>
+                <DateSelectorCard onDateChange={updateDateRange} date = {startDate}/>
                 <div className="col-md-5"></div>
                 <SubmitCard/>
             </div>

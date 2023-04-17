@@ -1,30 +1,35 @@
 import React, {useState, useEffect} from 'react'
-import { DateRangePicker } from 'react-date-range';
 import moment from 'moment';
 
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+
+//TODO - Refactor to chakra 
 
 export default function DateCard(props) {
+    const [date, setDate] = useState(undefined);
 
-    const [selection, setSelection] = useState({
-        startDate: props.startDate.toDate(),
-        endDate: props.endDate.toDate(),
-        key: 'selection',
-        showDateDisplay: false   
-      }); 
-    
-    const selectDateRange = (interval) => {
-        const selectedRange = interval.selection; 
-        props.onDateChange(moment(selectedRange.startDate), moment(selectedRange.endDate)); 
-    
-        setSelection(selectedRange); 
-    }
+    useEffect(() => {
+        const providedDate = props.date; 
+        if (providedDate === undefined) {
+            setDate(new Date()); 
+        } else {
+            setDate(providedDate.toDate());
+        }
+    },[])
 
-    return (<div > 
-         <DateRangePicker
-                        ranges={[selection]}
-                        onChange={selectDateRange} 
-        /> 
-    </div>)
+    useEffect(() => {
+        if (date !== undefined) {
+            // There is a bug in moment that requires us to format it like this twice 
+            const startOfWeek = moment(date).subtract(7, 'days').startOf('week').unix(); 
+            props.onDateChange(moment.unix(startOfWeek)); 
+        }
+    }, [date])
+
+    return (
+        <DatePicker selected={date} onChange={(date) => setDate(date)} />
+      );
+
 }
 
 
