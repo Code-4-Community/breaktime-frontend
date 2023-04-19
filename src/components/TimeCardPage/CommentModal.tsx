@@ -1,21 +1,21 @@
-import React, { useState, useEffect } from 'react'
-//import { Button } from 'react-bootstrap';
+//import { Menu, MenuButton, MenuItem } from '@aws-amplify/ui-react';
 import {
     Input, Button, useDisclosure, Modal,
     ModalContent, ModalHeader, VStack, Card, CardBody, StackDivider, ModalFooter
-}
-    from '@chakra-ui/react'
+} from '@chakra-ui/react'
 import { useFormik } from "formik";
+import React from 'react';
 
 export default function CommentModal(props) {
 
     // enum for the type of comment the manager is leaving
-    const CommentType = {
-        Report: "Rejected",
-        Comment: "Comment"
+    enum CommentType {
+        Report,
+        Comment,
     }
 
     const formik = useFormik({
+        // TODO: add options for supervisor to choose from for the report
         initialValues: {
             type: "",
             remarks: "",
@@ -58,7 +58,7 @@ export default function CommentModal(props) {
                                 value={formik.values.type}
                                 placeholder="Enter Comment/Report"
                             />
-                            <Menu
+                            {/* <Menu
                             >
                                 <MenuButton as={Button}>
                                     Type
@@ -67,7 +67,7 @@ export default function CommentModal(props) {
                                     <MenuItem>Report</MenuItem>
                                     <MenuItem>Comment</MenuItem>
                                 </MenuList>
-                            </Menu>
+                            </Menu> */}
 
                             <button type='submit'>Submit</button>
                         </form>
