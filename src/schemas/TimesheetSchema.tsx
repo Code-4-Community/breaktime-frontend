@@ -19,14 +19,21 @@ export const StatusType = z.object({
 });
 
 export const TimeSheetSchema = z.object({
-  TimesheetID: z.number(), 
-  UserID: z.string(), 
+  TimesheetID: z.number(),
+  UserID: z.string(),
   StartDate: z.number(),
+<<<<<<< HEAD
   Status: StatusType, 
   CompanyID: z.string(), 
   TableData: z.array(RowSchema), 
   ScheduleTableData: ScheduledRowSchema,
   WeekNotes: z.union([z.undefined(), z.array(CommentSchema)]), 
 }); 
+=======
+  Status: z.string(),
+  Company: z.string(),
+  TableData: z.array(z.any()),
+})
+>>>>>>> Redid submit modal
 
 export type TimeSheetSchema = z.infer<typeof TimeSheetSchema>
