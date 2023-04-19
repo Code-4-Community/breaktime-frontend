@@ -11,9 +11,9 @@ const SAMPLE_MESSAGES_LIST = [
 export default function Messages() {
   const [messages, setMessages] = useState(SAMPLE_MESSAGES_LIST);
 
-  const addMessage = (message) => {
-    setMessages(messages.push(message));
-  };
+  // const addMessage = (message) => {
+  //   setMessages(messages.push(message));
+  // };
 
   const deleteMessage = (index) => {
     const delMessage = [...messages];
@@ -35,9 +35,9 @@ export default function Messages() {
             <div>
               {messages.map((message, index) => (
                 <Alert key={index} style={{ 'display': 'flex', 'gap': '1%', 'alignItems': 'center' }}>
-                  <CloseButton onClick={() => deleteMessage(index)}/>
+                  <CloseButton onClick={() => deleteMessage(index)} />
                   {message.type + ': ' + message.body}
-                  <Button href={message.url} style={{ 'backgroundColor': defaultColors.BREAKTIME_BLUE, 'borderWidth': '0px' }}>View</Button>
+                  <Button style={{ 'backgroundColor': defaultColors.BREAKTIME_BLUE, 'borderWidth': '0px' }}>View</Button>
                 </Alert>))}
             </div>
             : 'No messages'}

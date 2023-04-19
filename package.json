@@ -34,11 +34,7 @@
     "react-scripts": "5.0.1",
     "react-time-picker": "^6.0.2",
     "reactjs-popup": "^2.0.5",
-<<<<<<< HEAD
-    "typescript": "^5.0.3",
-=======
-    "typescript": "^5.0.4",
->>>>>>> main
+    "typescript": "^4.5.4",
     "uuid": "^9.0.0",
     "web-vitals": "^2.1.4",
     "zod": "^3.21.4"
@@ -67,5 +63,8 @@
       "last 1 safari version"
     ]
   },
-  "proxy": "http://localhost:3050"
+  "proxy": "http://localhost:3050",
+  "devDependencies": {
+    "@types/react-chartjs-2": "^2.5.7"
+  }
 }

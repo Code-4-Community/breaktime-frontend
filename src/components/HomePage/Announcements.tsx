@@ -11,9 +11,10 @@ const SAMPLE_EVENT_LIST = [
 export default function Announcements() {
   const [events, setEvents] = useState(SAMPLE_EVENT_LIST);
 
-  const addEvent = (event) => {
-    setEvents(events.push(event));
-  };
+  // const addEvent = (event: { name: String, photo: String, url: String, date: String }) => {
+  //   const eventsCopy = events.push(event);
+  //   setEvents([...events, event]);
+  // };
 
   return (
     <div className='announcements' style={{ 'display': 'flex', 'gridColumnStart': 1, 'gridRowStart': 2 }}>

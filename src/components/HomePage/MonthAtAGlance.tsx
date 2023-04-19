@@ -8,7 +8,7 @@ import { BsFillFileBarGraphFill } from 'react-icons/bs';
 
 import Chart from "chart.js/auto";
 import { CategoryScale } from "chart.js";
-import { Pie, Bar } from 'react-chartjs-2';
+import { Pie, Bar } from "react-chartjs-2";
 
 Chart.register(CategoryScale);
 
