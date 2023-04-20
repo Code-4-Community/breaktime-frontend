@@ -1,4 +1,4 @@
-import React, {useState} from 'react'; 
+import React, {useState, useMemo} from 'react'; 
 import TimeTable from './TimeTable'
 import Card from 'react-bootstrap/Card';
 import DatePicker from 'react-datepicker';
@@ -71,24 +71,22 @@ export default function Page() {
 
     const renderWarning = () => {
         const currentDate = moment().tz(TIMEZONE);  
-        if (selectedTimesheet !== undefined) { 
-            const startDate = moment.unix(selectedTimesheet.StartDate).tz(TIMEZONE); 
-            startDate.add(TIMESHEET_DURATION, 'days'); 
-            
-            if (currentDate.isAfter(startDate,'days')) {
-                return <Alert status='error'>
-                        <AlertIcon />
-                        <AlertTitle>Your timesheet is late!</AlertTitle>
-                        <AlertDescription>Please submit this as soon as possible</AlertDescription>
-                    </Alert>
-            } else {
-                const dueDuration = startDate.diff(currentDate,'days'); 
-                return <Alert status='info'>
+
+        const dateToCheck = moment(startDate); 
+        dateToCheck.add(TIMESHEET_DURATION, 'days'); 
+        if (currentDate.isAfter(dateToCheck,'days')) {
+            return <Alert status='error'>
                     <AlertIcon />
-                    <AlertTitle>Your timesheet is due in {dueDuration} days!</AlertTitle>
-                    <AlertDescription>Remember to press the submit button!</AlertDescription>
+                    <AlertTitle>Your timesheet is late!</AlertTitle>
+                    <AlertDescription>Please submit this as soon as possible</AlertDescription>
                 </Alert>
-            }
+        } else {
+            const dueDuration = dateToCheck.diff(currentDate,'days'); 
+            return <Alert status='info'>
+                <AlertIcon />
+                <AlertTitle>Your timesheet is due in {dueDuration} days!</AlertTitle>
+                <AlertDescription>Remember to press the submit button!</AlertDescription>
+            </Alert>
         }
     }
 
@@ -99,7 +97,7 @@ export default function Page() {
                 <div className="col-md-5"></div>
                 <SubmitCard/>
             </div>
-            {renderWarning()}
+            {useMemo(() => renderWarning(), [startDate])}
             <TimeTable columns={TABLE_COLUMNS} timesheet={selectedTimesheet} onTimesheetChange={processTimesheetChange}/>
         </div>
     )
