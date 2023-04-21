@@ -1,9 +1,7 @@
-import React, {useState} from 'react'; 
+import React, { useState } from 'react';
 import TimeTable from './TimeTable'
-import Card from 'react-bootstrap/Card';
-import DatePicker from 'react-datepicker';
 import { useEffect } from 'react';
-import SubmitCard from './SubmitCard'; 
+import SubmitCard from './SubmitCard';
 import DateSelectorCard from './SelectWeekCard'
 import moment from 'moment';
 import {TimeSheetSchema} from '../../schemas/TimesheetSchema'
@@ -11,7 +9,7 @@ import {TimeSheetSchema} from '../../schemas/TimesheetSchema'
 import apiClient from '../Auth/apiClient';
 
 //TODO - Refactor to backend calls once setup to pull rows, etc. 
-const defaultColumns = ['Date','Clock-in','Clock-Out','Hours','Comment']
+const defaultColumns = ['Date', 'Clock-in', 'Clock-Out', 'Hours', 'Comment']
 
 
 
@@ -61,9 +59,9 @@ const user = 'Example User'
 
 
 export default function Page() {
-    const today = moment(); 
-    const [startDate, setStartDate] = useState(new Date(today.startOf('week').format())); 
-    const [endDate, setEndDate] = useState(new Date(today.endOf('week').format())); 
+  const today = moment();
+  const [startDate, setStartDate] = useState(new Date(today.startOf('week').format()));
+  const [endDate, setEndDate] = useState(new Date(today.endOf('week').format()));
 
     const updateDateRange = (start, end) => {
         // Callback for date-range picker - does any pre-processing when grabbing a new date 
