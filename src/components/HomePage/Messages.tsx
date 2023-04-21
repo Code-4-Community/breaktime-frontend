@@ -4,9 +4,14 @@ import { defaultColors } from '../../utils';
 import { IconContext } from 'react-icons';
 import { BiMessageDetail } from 'react-icons/bi';
 
+enum MessageTypes {
+  Reminder = "Reminder",
+  Approved = "Approved"
+};
+
 const SAMPLE_MESSAGES_LIST = [
-  { type: 'Reminder', body: 'Submit timesheet for 11/6-11/12' },
-  { type: 'Approved', body: 'Timesheet for 10/30-11/5 by SUPERVISOR' }];
+  { type: MessageTypes.Reminder, body: 'Submit timesheet for 11/6-11/12' },
+  { type: MessageTypes.Approved, body: 'Timesheet for 10/30-11/5 by SUPERVISOR' }];
 
 export default function Messages() {
   const [messages, setMessages] = useState(SAMPLE_MESSAGES_LIST);
