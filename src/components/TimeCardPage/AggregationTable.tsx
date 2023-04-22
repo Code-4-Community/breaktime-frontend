@@ -31,10 +31,10 @@ function AggregationTable(props) {
 						return (
 						<tr key={uuidv4()}>
 							<td>
-								{totalRow.StartDate}
+								{moment.unix(totalRow.StartDate).format("MM/DD/YYYY")}
 							</td>
 							<td>
-								{totalRow.Duration}
+								{(totalRow.Duration/60).toFixed(2)}
 							</td>
 						</tr>	
 					)}
@@ -44,7 +44,7 @@ function AggregationTable(props) {
 					Total Hours
 				</td>
 				<td>
-					{totalHours}
+					{(totalHours/60).toFixed(2)}
 				</td>
 			</tr>
 			</tbody>

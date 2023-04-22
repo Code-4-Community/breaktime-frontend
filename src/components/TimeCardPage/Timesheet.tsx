@@ -68,16 +68,6 @@ export default function Page() {
     const [aggregatedRows, setAggregatedRows] = useState([]); 
     const columns = defaultColumns 
 
-    const exampleAggregationRows = [
-        {StartDate: 1681012800, Duration: 254},  
-        {StartDate: 1681099200, Duration: 0},
-        {StartDate: 1681185600, Duration: 0},
-        {StartDate: 1681272000, Duration: 0},
-        {StartDate: 1681358400, Duration: 268},
-        {StartDate: 1681444800, Duration: 0},
-        {StartDate: 1681531200, Duration: 0}
-    ]
-
     //Pulls user timesheets, marking first returned as the active one
     useEffect(() => {
         // Uncomment this if you want the default one loaded 
@@ -126,8 +116,7 @@ export default function Page() {
 
             const aggregatedRows = Object.entries(totalHoursForEachDay).map(entry =>
                 ({  "StartDate":moment(entry[0]).unix(), 
-                    "Duration":Number(entry[1]), 
-
+                    "Duration":Number(entry[1])
                 }));
 
             setAggregatedRows(aggregatedRows);    
