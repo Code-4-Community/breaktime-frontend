@@ -21,7 +21,7 @@ export default function DateCard(props) {
     useEffect(() => {
         if (date !== undefined) {
             // There is a bug in moment that requires us to format it like this twice 
-            const startOfWeek = moment(date).subtract(7, 'days').startOf('week').unix(); 
+            const startOfWeek = moment(date).startOf('week').unix();
             props.onDateChange(moment.unix(startOfWeek)); 
         }
     }, [date])

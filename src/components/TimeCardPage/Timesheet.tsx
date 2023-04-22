@@ -10,6 +10,7 @@ import { Tabs, TabList, Tab } from '@chakra-ui/react'
 
 import apiClient from '../Auth/apiClient';
 import { start } from 'repl';
+import AggregationTable from './AggregationTable';
 
 
 //TODO - Refactor to backend calls once setup to pull rows, etc. 
@@ -32,31 +33,50 @@ const testingTimesheetResp = {
     "Company":"Breaktime",
     "StartDate":1679918400,
     "Status":"Accepted",
-    "TableData":defaultRows
+    "TableData":[]
 }
 //To test uploading a timesheet 
 // apiClient.updateUserTimesheet(testingTimesheetResp); 
 
+const createEmptyTable = (startDate, company) => {
+    // We assign uuid to provide a unique key identifier to each row for reacts rendering 
+    return {
+        "UserID":"77566d69-3b61-452a-afe8-73dcda96f876", 
+        "TimesheetID":22222, 
+        "Company":company,
+        "StartDate":startDate,
+        "Status":"Accepted",
+        "TableData":[]
+    }
+}
 
 const user = 'Example User'
 
 export default function Page() {
     //const today = moment(); 
     const [startDate, setStartDate] = useState(moment().startOf('week').day(0)); 
-    const [endDate, setEndDate] = useState(moment(startDate).add(7, 'days')); 
 
     const updateDateRange = (date:Moment) => {
         setStartDate(date); 
         //TODO - Refactor this to use the constant in merge with contants branch 
-        setEndDate(date.add(7, 'days')); 
-
         setCurrentTimesheetsToDisplay (userTimesheets, date); 
     }
     
     const [userTimesheets, setUserTimesheets] = useState([]); 
     const [currentTimesheets, setCurrentTimesheets] = useState([]);
-    const [selectedTimesheet, setTimesheet] = useState(); 
+    const [selectedTimesheet, setTimesheet] = useState();
+    const [aggregatedRows, setAggregatedRows] = useState([]); 
     const columns = defaultColumns 
+
+    const exampleAggregationRows = [
+        {StartDate: 1681012800, Duration: 254},  
+        {StartDate: 1681099200, Duration: 0},
+        {StartDate: 1681185600, Duration: 0},
+        {StartDate: 1681272000, Duration: 0},
+        {StartDate: 1681358400, Duration: 268},
+        {StartDate: 1681444800, Duration: 0},
+        {StartDate: 1681531200, Duration: 0}
+    ]
 
     //Pulls user timesheets, marking first returned as the active one
     useEffect(() => {
@@ -76,16 +96,10 @@ export default function Page() {
 
     const setCurrentTimesheetsToDisplay  = (timesheets, currentStartDate:Moment) => {
         const newCurrentTimesheets  = timesheets.filter(sheet => moment.unix(sheet.StartDate).isSame(currentStartDate, 'day'));
-        
-        newCurrentTimesheets.map(sheet => {
-                                if (sheet.TableData.length === 0){
-                                    sheet.TableData = defaultRows;
-                                } 
-                               return sheet;
-                            });
+
 
         if (newCurrentTimesheets.length < 1){
-            newCurrentTimesheets.push(testingTimesheetResp); // TODO: change to make correct timesheets for the week
+            newCurrentTimesheets.push(createEmptyTable(startDate.unix(), "new")); // TODO: change to make correct timesheets for the week
         }
 
         if (newCurrentTimesheets.length > 1){
@@ -113,29 +127,19 @@ export default function Page() {
             const aggregatedRows = Object.entries(totalHoursForEachDay).map(entry =>
                 ({  "StartDate":moment(entry[0]).unix(), 
                     "Duration":Number(entry[1]), 
-                    "Comment":{
-                        "AuthorUUID":"XXXX", 
-                        "Type":"Report / Comment, etc", 
-                        "Timestamp":"", 
-                        "Content":":)" 
-                    }
-                }));
-          
-            const aggregatedCol = {
-                "UserID":newCurrentTimesheets[0].UserID, 
-                "TimesheetID":22222, 
-                "Company":"Total", 
-                "StartDate":currentStartDate.unix(),
-                "Status":"Accepted", 
-                "TableData":aggregatedRows
-            };
 
-            newCurrentTimesheets.push(aggregatedCol);
+                }));
+
+            setAggregatedRows(aggregatedRows);    
+
+            newCurrentTimesheets.push(createEmptyTable(startDate.unix(), "Total"));
 
         }
         setCurrentTimesheets(newCurrentTimesheets);
         setTimesheet(newCurrentTimesheets[0]);
     }
+
+    // add conditional logic on when to render aggregation table or timetable
 
     return (
         <div>
@@ -153,8 +157,10 @@ export default function Page() {
                 )}
             </TabList>
             </Tabs>
+            {selectedTimesheet?.Company === "Total" ? 
+            (<AggregationTable rows={aggregatedRows}/>)
+            : (<TimeTable columns={columns} timesheet={selectedTimesheet} onTimesheetChange={processTimesheetChange}/>)}
             
-            <TimeTable columns={columns} timesheet={selectedTimesheet} onTimesheetChange={processTimesheetChange}/>
         </div>
     )
 }
