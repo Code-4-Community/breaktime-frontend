@@ -54,6 +54,10 @@ const formatRows = (providedRows, startDate) => {
     return updatedRows;
 }
 
+// TODO: setup a context provider so that the timesheet objects get updated appropriately 
+// and as a result the aggregation gets updated appropriately
+// add auto save functionality where it saves after row changes or smth
+
 function TimeTable(props) {
 
     //When a row is updated, replace it in our list of rows 
@@ -92,6 +96,10 @@ function TimeTable(props) {
             setRows(formatRows(timesheet.TableData, timesheet.StartDate));
         }
     }, [props.timesheet])
+
+    useEffect(() => {
+        props.onTimesheetChange(rows);
+    }, [rows])
 
     var prevDate = undefined;
 

@@ -38,11 +38,11 @@ const testingTimesheetResp = {
 //To test uploading a timesheet 
 // apiClient.updateUserTimesheet(testingTimesheetResp); 
 
-const createEmptyTable = (startDate, company) => {
+const createEmptyTable = (startDate, company, userId, timesheetID) => {
     // We assign uuid to provide a unique key identifier to each row for reacts rendering 
     return {
-        "UserID":"77566d69-3b61-452a-afe8-73dcda96f876", 
-        "TimesheetID":22222, 
+        "UserID":userId, 
+        "TimesheetID":timesheetID, 
         "Company":company,
         "StartDate":startDate,
         "Status":"Accepted",
@@ -51,6 +51,7 @@ const createEmptyTable = (startDate, company) => {
 }
 
 const user = 'Example User'
+
 
 export default function Page() {
     //const today = moment(); 
@@ -78,23 +79,54 @@ export default function Page() {
         });
     }, [])
 
-    const processTimesheetChange = (timesheet) => {
+    const processTimesheetChange = (rows) => {
         //Adding the time entry to the table 
         //apiClient.addTimeEntry(timesheet); 
+        rows.map((row) => {
+            delete row.id
+        })
+
+        // update userTimesheets
+        // currentTimesheets
+        let changedSheet;
+        if (rows.length > 0) {
+            changedSheet = createEmptyTable(rows[0].StartDate, selectedTimesheet?.Company,  selectedTimesheet?.UserID, selectedTimesheet?.TimesheetID);
+            changedSheet.TableData = rows;
+            const newCurrentTimesheets = currentTimesheets.map((sheet) => {
+                if (changedSheet.TimesheetID === sheet.TimesheetID){
+                    return changedSheet;
+                }
+                return sheet;
+            })
+
+            const newUserTimesheets = userTimesheets.map((sheet) => {
+                if (changedSheet.TimesheetID === sheet.TimesheetID){
+                    return changedSheet;
+                }
+                return sheet;
+            })
+            
+            console.log("a", userTimesheets);
+            console.log("b", newUserTimesheets);
+
+            setCurrentTimesheets(newCurrentTimesheets);
+            //setUserTimesheets(newUserTimesheets);
+        }
+
     }
 
     const setCurrentTimesheetsToDisplay  = (timesheets, currentStartDate:Moment) => {
         const newCurrentTimesheets  = timesheets.filter(sheet => moment.unix(sheet.StartDate).isSame(currentStartDate, 'day'));
 
         if (newCurrentTimesheets.length < 1){
-            newCurrentTimesheets.push(createEmptyTable(startDate.unix(), "new")); // TODO: change to make correct timesheets for the week
+            newCurrentTimesheets.push(createEmptyTable(startDate.unix(), "new", "77566d69-3b61-452a-afe8-73dcda96f876", 22222)); // TODO: change to make correct timesheets for the week
         }
 
         if (newCurrentTimesheets.length > 1){ 
-            newCurrentTimesheets.push(createEmptyTable(startDate.unix(), "Total"));
+            newCurrentTimesheets.push(createEmptyTable(startDate.unix(), "Total", "77566d69-3b61-452a-afe8-73dcda96f876", 22222));
 
         }
-        
+
         setCurrentTimesheets(newCurrentTimesheets);
         setTimesheet(newCurrentTimesheets[0]);
     }

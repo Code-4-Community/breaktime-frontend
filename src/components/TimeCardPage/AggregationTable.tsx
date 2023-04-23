@@ -31,9 +31,14 @@ function AggregationTable(props) {
 
 	props.timesheets.forEach(sheet => {
 		sheet.TableData.forEach(entry => {
-			totalHoursForEachDay[moment.unix(entry.StartDate).format("MM/DD/YY")] += Number(entry.Duration);
+			if (entry.Duration !== undefined) {
+				totalHoursForEachDay[moment.unix(entry.StartDate).format("MM/DD/YY")] += Number(entry.Duration);
+			}
+			totalHoursForEachDay[moment.unix(entry.StartDate).format("MM/DD/YY")] += 0;
 		});
 	});
+
+	console.log("h",totalHoursForEachDay)
 
 	const aggregatedRows = Object.entries(totalHoursForEachDay).map(entry =>
 		({  "StartDate":moment(entry[0]).unix(), 
