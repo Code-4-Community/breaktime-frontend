@@ -1,5 +1,5 @@
 import Table from 'react-bootstrap/Table';
-import React, {useEffect, useState} from 'react'; 
+import React from 'react'; 
 import { v4 as uuidv4 } from 'uuid';
 import moment from 'moment';
 
@@ -26,7 +26,7 @@ function AggregationTable(props) {
 	while (currentDate.isBefore(finalDate, 'days')) {
 		totalHoursForEachDay[currentDate.format("MM/DD/YY")] = 0; 
 		currentDate.add(1, 'day'); 
-		console.log("Date: ", currentDate.format("MM/DD/YY")); 
+		//console.log("Date: ", currentDate.format("MM/DD/YY")); 
 	}
 
 	props.timesheets.forEach(sheet => {
@@ -37,8 +37,6 @@ function AggregationTable(props) {
 			totalHoursForEachDay[moment.unix(entry.StartDate).format("MM/DD/YY")] += 0;
 		});
 	});
-
-	console.log("h",totalHoursForEachDay)
 
 	const aggregatedRows = Object.entries(totalHoursForEachDay).map(entry =>
 		({  "StartDate":moment(entry[0]).unix(), 

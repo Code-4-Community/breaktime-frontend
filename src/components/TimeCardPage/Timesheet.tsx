@@ -82,15 +82,15 @@ export default function Page() {
     const processTimesheetChange = (rows) => {
         //Adding the time entry to the table 
         //apiClient.addTimeEntry(timesheet); 
-        rows.map((row) => {
-            delete row.id
+        rows = rows.map((row) => {
+            delete row.id;
+            return row;
         })
 
         // update userTimesheets
         // currentTimesheets
-        let changedSheet;
         if (rows.length > 0) {
-            changedSheet = createEmptyTable(rows[0].StartDate, selectedTimesheet?.Company,  selectedTimesheet?.UserID, selectedTimesheet?.TimesheetID);
+            const changedSheet = createEmptyTable(rows[0].StartDate, selectedTimesheet?.Company,  selectedTimesheet?.UserID, selectedTimesheet?.TimesheetID);
             changedSheet.TableData = rows;
             const newCurrentTimesheets = currentTimesheets.map((sheet) => {
                 if (changedSheet.TimesheetID === sheet.TimesheetID){
@@ -99,18 +99,19 @@ export default function Page() {
                 return sheet;
             })
 
-            const newUserTimesheets = userTimesheets.map((sheet) => {
-                if (changedSheet.TimesheetID === sheet.TimesheetID){
-                    return changedSheet;
-                }
-                return sheet;
-            })
-            
-            console.log("a", userTimesheets);
-            console.log("b", newUserTimesheets);
+            // also issue with all minutes being changed to 04 for some reason
+            // but why
+            if (userTimesheets.length > 0) {
+                const newUserTimesheets = userTimesheets.map((sheet) => {
+                    if (changedSheet.TimesheetID === sheet.TimesheetID){
+                        return changedSheet;
+                    }
+                    return sheet;
+                })
 
-            setCurrentTimesheets(newCurrentTimesheets);
-            //setUserTimesheets(newUserTimesheets);
+                setCurrentTimesheets(newCurrentTimesheets);
+                setUserTimesheets(newUserTimesheets);
+            }
         }
 
     }
