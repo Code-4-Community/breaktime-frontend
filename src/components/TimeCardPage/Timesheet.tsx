@@ -65,7 +65,6 @@ export default function Page() {
     const [userTimesheets, setUserTimesheets] = useState([]); 
     const [currentTimesheets, setCurrentTimesheets] = useState([]);
     const [selectedTimesheet, setTimesheet] = useState();
-    const [aggregatedRows, setAggregatedRows] = useState([]); 
     const columns = defaultColumns 
 
     //Pulls user timesheets, marking first returned as the active one
@@ -87,48 +86,18 @@ export default function Page() {
     const setCurrentTimesheetsToDisplay  = (timesheets, currentStartDate:Moment) => {
         const newCurrentTimesheets  = timesheets.filter(sheet => moment.unix(sheet.StartDate).isSame(currentStartDate, 'day'));
 
-
         if (newCurrentTimesheets.length < 1){
             newCurrentTimesheets.push(createEmptyTable(startDate.unix(), "new")); // TODO: change to make correct timesheets for the week
         }
 
-        if (newCurrentTimesheets.length > 1){
-
-            const totalHoursForEachDay = {};
-
-            // add the days in that stretch to dictionary 
-            // set all to 0
-            // iterate through each sheet and increment accordingly
-            
-            const finalDate = moment(currentStartDate).add(7, 'days'); 
-            const currentDate = moment(currentStartDate); 
-            while (currentDate.isBefore(finalDate, 'days')) {
-                totalHoursForEachDay[currentDate.format("MM/DD/YY")] = 0; 
-                currentDate.add(1, 'day'); 
-                console.log("Date: ", currentDate.format("MM/DD/YY")); 
-            }
- 
-            newCurrentTimesheets.forEach(sheet => {
-                sheet.TableData.forEach(entry => {
-                    totalHoursForEachDay[moment.unix(entry.StartDate).format("MM/DD/YY")] += Number(entry.Duration);
-                });
-            });
-
-            const aggregatedRows = Object.entries(totalHoursForEachDay).map(entry =>
-                ({  "StartDate":moment(entry[0]).unix(), 
-                    "Duration":Number(entry[1])
-                }));
-
-            setAggregatedRows(aggregatedRows);    
-
+        if (newCurrentTimesheets.length > 1){ 
             newCurrentTimesheets.push(createEmptyTable(startDate.unix(), "Total"));
 
         }
+        
         setCurrentTimesheets(newCurrentTimesheets);
         setTimesheet(newCurrentTimesheets[0]);
     }
-
-    // add conditional logic on when to render aggregation table or timetable
 
     return (
         <div>
@@ -147,7 +116,7 @@ export default function Page() {
             </TabList>
             </Tabs>
             {selectedTimesheet?.Company === "Total" ? 
-            (<AggregationTable rows={aggregatedRows}/>)
+            (<AggregationTable startDate={startDate} timesheets={currentTimesheets}/>)
             : (<TimeTable columns={columns} timesheet={selectedTimesheet} onTimesheetChange={processTimesheetChange}/>)}
             
         </div>

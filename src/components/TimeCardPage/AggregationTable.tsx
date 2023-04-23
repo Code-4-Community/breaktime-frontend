@@ -15,7 +15,32 @@ const exampleAggregationRows = [
 
 function AggregationTable(props) {
 
-	const totalHours = props.rows.reduce((acc, row) => acc + row.Duration, 0);
+	const totalHoursForEachDay = {};
+
+	// add the days in that stretch to dictionary 
+	// set all to 0
+	// iterate through each sheet and increment accordingly
+	
+	const finalDate = moment(props.startDate).add(7, 'days'); 
+	const currentDate = moment(props.startDate); 
+	while (currentDate.isBefore(finalDate, 'days')) {
+		totalHoursForEachDay[currentDate.format("MM/DD/YY")] = 0; 
+		currentDate.add(1, 'day'); 
+		console.log("Date: ", currentDate.format("MM/DD/YY")); 
+	}
+
+	props.timesheets.forEach(sheet => {
+		sheet.TableData.forEach(entry => {
+			totalHoursForEachDay[moment.unix(entry.StartDate).format("MM/DD/YY")] += Number(entry.Duration);
+		});
+	});
+
+	const aggregatedRows = Object.entries(totalHoursForEachDay).map(entry =>
+		({  "StartDate":moment(entry[0]).unix(), 
+			"Duration":Number(entry[1])
+		}));
+
+	const totalHours = aggregatedRows.reduce((acc, row) => acc + row.Duration, 0);
 
 	return (
 		<Table striped bordered hover>
@@ -26,7 +51,7 @@ function AggregationTable(props) {
 				</tr>
 			</thead>
 			<tbody>
-				{props.rows.map(
+				{aggregatedRows.map(
 					(totalRow) => {
 						return (
 						<tr key={uuidv4()}>
