@@ -75,7 +75,7 @@ export default function Page() {
         apiClient.getUserTimesheets().then(timesheets => {
             setUserTimesheets(timesheets); 
             //By Default just render / select the first timesheet for now 
-            // setCurrentTimesheetsToDisplay (timesheets, startDate); 
+            setCurrentTimesheetsToDisplay (timesheets, startDate); 
         });
     }, [])
 
