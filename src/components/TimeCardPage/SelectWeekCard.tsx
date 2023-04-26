@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react'
+import React, { useState, useEffect } from 'react'
 import { DateRangePicker } from 'react-date-range';
 
 
@@ -19,12 +19,10 @@ export default function DateCard(props) {
         setSelection(selectedRange);  
     }
 
-    return (<div > 
-         <DateRangePicker
-                        ranges={[selection]}
-                        onChange={selectDateRange} 
-        /> 
-    </div>)
+  return (<div >
+    <DateRangePicker
+      ranges={[selection]}
+      onChange={selectDateRange}
+    />
+  </div>)
 }
-
-
