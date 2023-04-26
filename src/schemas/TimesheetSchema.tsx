@@ -1,4 +1,5 @@
 import { z } from "zod";
+import {RowSchema} from './RowSchema'; 
 
 export const TimeSheetSchema = z.object({
   TimesheetID: z.number(), 
@@ -6,7 +7,7 @@ export const TimeSheetSchema = z.object({
   StartDate: z.number(),
   Status: z.string(),
   Company: z.string(), 
-  TableData: z.array(z.any()), 
+  TableData: z.array(RowSchema), 
 })
 
 export type TimeSheetSchema = z.infer<typeof TimeSheetSchema>

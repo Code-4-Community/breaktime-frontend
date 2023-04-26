@@ -4,6 +4,7 @@ import moment from 'moment-timezone';
 import { v4 as uuidv4 } from 'uuid';
 
 import TimeTableRow from "./TimeTableRow"; 
+import {TimeSheetSchema} from '../../schemas/TimesheetSchema'; 
 import { Fragment } from 'react';
 import { TIMESHEET_DURATION, TIMEZONE } from 'src/constants';
 import {CellType} from './types'; 
@@ -36,9 +37,6 @@ const formatRows = (providedRows, startDate) => {
     //This assumes each row is in sorted order by Date / StartTime - if this is not the case things will break 
     providedRows.forEach(item => {
         const timeObject = moment.unix(item.Date).tz(TIMEZONE); 
-        console.log(timeObject.format("MM/DD/YY")); 
-        console.log(currentDate.format("MM/DD/YY")); 
-
         //If we are missing a day - add it to the json before we process the next day 
         while (timeObject.isAfter(currentDate, 'day')) {
             updatedRows.push(createEmptyRow(currentDate.unix())); 
@@ -62,34 +60,55 @@ const formatRows = (providedRows, startDate) => {
     return updatedRows; 
 }
 
-function TimeTable(props) {
+interface TableProps {
+  timesheet: TimeSheetSchema; 
+  columns: String[]; 
+  onTimesheetChange: Function; 
+} 
+
+function TimeTable(props:TableProps) {
 
     //When a row is updated, replace it in our list of rows 
     const onRowChange = (row, rowIndex) => {
+        const updatedRows = [
+            ...rows.slice(0, rowIndex), 
+            row, 
+            ...rows.slice(rowIndex+1) 
+        ]
+
         setRows(
-            [
-                ...rows.slice(0, rowIndex), 
-                row, 
-                ...rows.slice(rowIndex+1) 
-            ]
+            updatedRows
         ); 
+        props.onTimesheetChange({
+            ...props.timesheet, 
+            TableData: updatedRows
+        });
     } 
 
     //Adds a row to the specified index 
     const addRow = (row, index) => {
         const newRow = createEmptyRow(rows[index].Date)
+        const updatedRows = [
+            ...rows.slice(0, index + 1), 
+            newRow, 
+            ...rows.slice(index+1)
+        ]
         setRows(
-            [
-                ...rows.slice(0, index + 1), 
-                newRow, 
-                ...rows.slice(index+1)
-            ]
+            updatedRows
         );
-    }
+        props.onTimesheetChange({
+            ...props.timesheet, 
+            TableData: updatedRows
+        });
+    } 
 
     const delRow = (row, index) => {
         const updatedRows = rows.filter((_, idx)=>{return index !== idx}); 
         setRows(updatedRows); 
+        props.onTimesheetChange({
+            ...props.timesheet, 
+            TableData: updatedRows
+        });
     }
     const [rows,setRows] = useState([]); 
 
@@ -106,7 +125,7 @@ function TimeTable(props) {
     return (
     <Table striped bordered hover>
         <thead>
-            <tr>
+            <tr key="Index">
                 <th></th>
                 {props.columns.map(
                     (column, idx) => (

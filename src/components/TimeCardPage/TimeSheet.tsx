@@ -65,9 +65,8 @@ export default function Page() {
     }, [])
 
     const processTimesheetChange = (timesheet) => {
-        //Adding the time entry to the table 
-        // apiClient.addTimeEntry(timesheet); 
-        //TODO - Upload timesheet to DB 
+        //TODO - Define logic of what to do here? 
+        selectedTimesheet.TableData = timesheet.TableData;  
     }
 
     const renderWarning = () => {

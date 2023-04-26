@@ -18,16 +18,24 @@ import { TypeCell } from './CellTypes/CellType';
 import { CommentCell } from './CellTypes/CommentCell';
 import {RowSchema} from '../../schemas/RowSchema'; 
 
+interface RowProps {
+    row: RowSchema; 
+    prevDate: number; 
+    onRowChange: Function; 
+} 
 
-function Row(props) { 
+function Row(props: RowProps) { 
   
     const [fields,setFields] = useState<undefined | RowSchema>(undefined); 
 
     const updateField = (key, value) => {
-        setFields({
+        const newFields = {
             ...fields, 
             [key]: value 
-        }); 
+        }
+        setFields(newFields); 
+        props.onRowChange(newFields); 
+        
     } 
 
     useEffect(() => {
