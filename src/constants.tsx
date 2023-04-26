@@ -1,4 +1,4 @@
-import moment from 'moment';
+import moment from 'moment-timezone';
 import {CellType, CommentType, Review_Stages} from './components/TimeCardPage/types'; 
 
 export const TIMESHEET_DURATION = 7; 
@@ -14,20 +14,19 @@ export const enum PAGE_ROUTES {
   }
 
 
-
-
 // Example data that can be used in testing until we re-format DB 
 export const EXAMPLE_ROW = {
-    Type: CellType.Regular, 
+    Type: CellType.Regular,  
+    Date: moment().tz(TIMEZONE).unix(),  
     Associate: {
-        Start: moment().valueOf(),  End:moment().add(120, 'minutes').valueOf(), Author:"<Ignore this in rendering>"
-    }, 
+        Start: 120,  End:300, Author:0
+    },  
     Supervisor: undefined, 
     Admin: undefined , 
     Comment: [{
         Author: "Joseph", 
         Type: CommentType.Comment, 
-        Timestamp: moment().subtract(1, 'days').valueOf(), 
+        Timestamp: moment().tz(TIMEZONE).subtract(1, 'days').unix(), 
         Content: "Great job with this entry!"
     }], 
 }
@@ -41,7 +40,7 @@ export const EXAMPLE_TIMESHEET = {
     UserID: "b43227a4-0b42-4cfc-8a2c-16e2f2e64fbe", 
     TimesheetID: "1293219", 
     CompanyID: "NEU", 
-    StartDate: moment().startOf('week').day(0), 
+    StartDate: moment().tz(TIMEZONE).startOf('week').day(0).unix(), 
     Status: {
         Stage: Review_Stages.UNSUBMITTED,
         Timestamp: undefined 

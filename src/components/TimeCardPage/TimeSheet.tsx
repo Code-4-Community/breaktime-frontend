@@ -5,7 +5,7 @@ import DatePicker from 'react-datepicker';
 import { useEffect } from 'react';
 import SubmitCard from './SubmitCard'; 
 import DateSelectorCard from './SelectWeekCard'
-import moment from 'moment';
+import moment from 'moment-timezone';
 import 'moment-timezone';
 
 import {TimeSheetSchema} from '../../schemas/TimesheetSchema'
@@ -16,7 +16,7 @@ import {
     AlertDescription,
   } from '@chakra-ui/react'
 
-import { TIMESHEET_DURATION, TIMEZONE } from 'src/constants';
+import { TIMESHEET_DURATION, TIMEZONE, EXAMPLE_TIMESHEET } from 'src/constants';
 
 import { TABLE_COLUMNS } from './types';
 
@@ -48,19 +48,20 @@ export default function Page() {
     
     const [userTimesheets,setTimesheets] = useState([]); 
     const [selectedTimesheet, setTimesheet] = useState(undefined); 
-    
+      
 
     //Pulls user timesheets, marking first returned as the active one
     useEffect(() => {
         // Uncomment this if you want the default one loaded 
-        apiClient.getUserTimesheets().then(timesheets => {
+        // apiClient.getUserTimesheets().then(timesheets => {
 
-            setTimesheets(timesheets); 
-            //By Default just render / select the first timesheet for now  
-            if (timesheets.length > 0) {
-                setTimesheet(timesheets[0])
-            }  
-        });  
+        //     setTimesheets(timesheets); 
+        //     //By Default just render / select the first timesheet for now  
+        //     if (timesheets.length > 0) {
+        //         setTimesheet(timesheets[0])
+        //     }  
+        // });  
+        setTimesheet(EXAMPLE_TIMESHEET);
     }, [])
 
     const processTimesheetChange = (timesheet) => {

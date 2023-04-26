@@ -10,7 +10,7 @@ export enum CommentType {
 
 export const enum Review_Stages {
     UNSUBMITTED = "Not-Submitted",
-    MANAGER_REVIEW = "Review (Manager)", 
+    EMPLOYEE_SUBMITTED = "Employee Submitted", 
     ADMIN_REVIEW = "Review (Breaktime)", 
     APPROVED = "Approved" 
 }; 
