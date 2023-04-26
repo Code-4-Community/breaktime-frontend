@@ -5,6 +5,8 @@ export const TIMESHEET_DURATION = 7;
 export const TIMEZONE = "America/New_York"; 
 export const DATETIME_FORMAT = "MM/DD/YY"; 
 
+export const defaultColors = { BREAKTIME_BLUE: '#001D66' };
+
 
 
 export const enum PAGE_ROUTES {

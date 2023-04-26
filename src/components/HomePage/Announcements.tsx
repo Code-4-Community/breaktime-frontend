@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Card, Alert, Image, Button } from 'react-bootstrap';
-import { defaultColors } from '../../utils';
+import { defaultColors } from '../../constants';
 import { IconContext } from 'react-icons';
 import { TfiAnnouncement } from 'react-icons/tfi';
 
