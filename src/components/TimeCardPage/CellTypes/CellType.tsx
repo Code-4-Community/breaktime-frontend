@@ -18,10 +18,10 @@ export function TypeCell(props:TypeProps) {
         const newType = CellType[event.target.value]; 
         setType(newType); 
         props.setType("Type",newType);  
-    }
+    } 
 
     return <Select onChange={onChange} value={cellType}>
-        {Object.values(CellType).map((entry) => (<option>{entry}</option>))}
+        {Object.values(CellType).map((entry) => (<option key={entry}>{entry}</option>))}
     </Select>
 
 }

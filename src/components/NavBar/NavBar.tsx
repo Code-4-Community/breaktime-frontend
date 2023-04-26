@@ -26,10 +26,10 @@ function NavBar() {
 				{items.map(
 					(dropDownItem) =>
 					(
-							<NavDropdown.Item href = {dropDownItem.link}>	
+							<NavDropdown.Item href = {dropDownItem.link} key={dropDownItem.title}>	
 								{dropDownItem.title}
 							</NavDropdown.Item>
-					)
+					) 
 				)}	
             </NavDropdown>
             <Nav.Link href="/logout">Sign Out</Nav.Link>
