@@ -16,7 +16,7 @@ export default function DateCard(props) {
         const selectedRange = interval.selection; 
         props.onDateChange(selectedRange.startDate, selectedRange.endDate); 
     
-        setSelection(selectedRange); 
+        setSelection(selectedRange);  
     }
 
     return (<div > 
