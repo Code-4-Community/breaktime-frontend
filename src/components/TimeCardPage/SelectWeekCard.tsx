@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import { DateRangePicker } from 'react-date-range';
 
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
+//TODO - Refactor to chakra 
 
 export default function DateCard(props) {
 
