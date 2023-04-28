@@ -1,9 +1,7 @@
-import React, {useState} from 'react'; 
+import React, { useState } from 'react';
 import TimeTable from './TimeTable'
-import Card from 'react-bootstrap/Card';
-import DatePicker from 'react-datepicker';
 import { useEffect } from 'react';
-import SubmitCard from './SubmitCard'; 
+import SubmitCard from './SubmitCard';
 import DateSelectorCard from './SelectWeekCard'
 import moment, {Moment} from 'moment';
 import { Tabs, TabList, Tab } from '@chakra-ui/react'
@@ -14,7 +12,7 @@ import AggregationTable from './AggregationTable';
 
 
 //TODO - Refactor to backend calls once setup to pull rows, etc. 
-const defaultColumns = ['Date','Clock-in','Clock-Out','Hours','Comment']
+const defaultColumns = ['Date', 'Clock-in', 'Clock-Out', 'Hours', 'Comment']
 
 const defaultRows = [
     {"StartDate":"1679918400", "Duration":"132", 
