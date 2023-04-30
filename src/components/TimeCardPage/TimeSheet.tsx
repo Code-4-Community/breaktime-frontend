@@ -118,11 +118,11 @@ export default function Page() {
         const newCurrentTimesheets  = timesheets.filter(sheet => moment.unix(sheet.StartDate).isSame(currentStartDate, 'day'));
 
         if (newCurrentTimesheets.length < 1){
-            newCurrentTimesheets.push(createEmptyTable(startDate.unix(), "new", "77566d69-3b61-452a-afe8-73dcda96f876", 22222)); // TODO: change to make correct timesheets for the week
+            newCurrentTimesheets.push(createEmptyTable(currentStartDate.unix(), "new", "77566d69-3b61-452a-afe8-73dcda96f876", 22222)); // TODO: change to make correct timesheets for the week
         }
 
         if (newCurrentTimesheets.length > 1){ 
-            newCurrentTimesheets.push(createEmptyTable(startDate.unix(), "Total", "77566d69-3b61-452a-afe8-73dcda96f876", 22222));
+            newCurrentTimesheets.push(createEmptyTable(currentStartDate.unix(), "Total", "77566d69-3b61-452a-afe8-73dcda96f876", 22222));
 
         }
 
