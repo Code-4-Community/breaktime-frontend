@@ -1,36 +1,82 @@
 //import { Menu, MenuButton, MenuItem } from '@aws-amplify/ui-react';
 import {
     Input, Button, useDisclosure, Modal,
-    ModalContent, ModalHeader, VStack, Card, CardBody, StackDivider, ModalFooter
+    ModalContent, ModalHeader, VStack, Card, CardBody, StackDivider, ModalFooter, HStack
 } from '@chakra-ui/react'
 import { useFormik } from "formik";
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { Select } from '@chakra-ui/react'
+import { daysInYear } from 'date-fns';
+import TimeTable from 'src/components/TimeCardPage/TimeTable'
 
 export default function CommentModal(props) {
 
     // enum for the type of comment the manager is leaving
     enum CommentType {
+        Default,
         Report,
         Comment,
     }
 
-    const formik = useFormik({
-        // TODO: add options for supervisor to choose from for the report
-        initialValues: {
-            type: "",
-            remarks: "",
-        },
-        onSubmit: (values) => {
-            // TODO: utilize a POST request to send comment to the backend (data is stored in 'values')
-            alert(JSON.stringify(values, null, 2));
-        }
-    });
+    // enum for the day of the week
+    enum Day {
+        Monday,
+        Tuesday,
+        Wednesday,
+        Thursday,
+        Friday,
+        Saturday,
+        Sunday
+    }
 
     const { isOpen, onOpen, onClose } = useDisclosure()
+    const [type, setType] = useState()
+    const [remark, setRemark] = useState()
+    const [day, setDay] = useState()
+
+
+    var commentMap = new Map()
+
+
+    // stores what type of remark was made
+    const handleSubmit = (e) => {
+        setType(e.target.value)
+    }
+
+    // stores the remark that was made
+    const handleChange = (e) => {
+        setRemark(e.target.value)
+    }
+
+    // stores the day for which the remark was made
+    const handleChangeDay = (e) => {
+        setDay(e.target.value)
+    }
+
+    const handleAllSubmit = (e) => {
+        const comments = []
+        comments.push(type, remark)
+        commentMap.set(day, comments)
+
+        alert("Your comment has been submitted!");
+
+        // TODO: can use values stored in commentMap to store comments in backend
+        // values are stored in the form of {Day : [CommentType, "comment"]}
+
+        // TODO: use addRow and delRow functions in TimeTable to mutate timesheets in backend
+        // - steps:
+        // - delete existing row for specific day
+        // - create new row with added comments
+        // - add this new row to the timesheet
+
+
+    }
+
+
 
     return (
         <>
-            <Button onClick={onOpen}>Comments/Reports</Button>
+            <Button gap={20} display="flex" onClick={onOpen} bg="white">Comments/Reports</Button>
             <Modal
                 isOpen={isOpen}
                 onClose={onClose}
@@ -40,41 +86,45 @@ export default function CommentModal(props) {
                 <ModalContent>
                     <VStack spacing={4} divider={<StackDivider />}>
                         <ModalHeader>Leave a comment/report</ModalHeader>
-                        <form onSubmit={formik.handleSubmit}>
-                            <label htmlFor="remarks">Remarks</label>
-                            <Input
-                                id="remarks"
-                                name="remarks"
-                                type="text"
-                                onChange={formik.handleChange}
-                                value={formik.values.remarks}
-                            />
-                            <label htmlFor="Type">Type</label>
-                            <Input
-                                id="type"
-                                name="type"
-                                type="text"
-                                onChange={formik.handleChange}
-                                value={formik.values.type}
-                                placeholder="Enter Comment/Report"
-                            />
-                            {/* <Menu
-                            >
-                                <MenuButton as={Button}>
-                                    Type
-                                </MenuButton>
-                                <MenuList>
-                                    <MenuItem>Report</MenuItem>
-                                    <MenuItem>Comment</MenuItem>
-                                </MenuList>
-                            </Menu> */}
 
-                            <button type='submit'>Submit</button>
+                        <form id="Form" onSubmit={handleAllSubmit}>
+
+                            <HStack spacing={4}>
+                                <label htmlFor="Day">Day</label>
+                                <Select onChange={handleChangeDay}>
+                                    <option value='Monday'>Monday</option>
+                                    <option value='Tuesday'>Tuesday</option>
+                                    <option value='Wednesday'>Wednesday</option>
+                                    <option value='Thursday'>Thursday</option>
+                                    <option value='Friday'>Friday</option>
+                                    <option value='Saturday'>Saturday</option>
+                                    <option value='Sunday'>Sunday</option>
+                                </Select>
+                                <label htmlFor="remarks">Remarks</label>
+                                <Input
+                                    id="remarks"
+                                    name="remarks"
+                                    type="text"
+                                    onChange={handleChange}
+
+                                />
+                                <label htmlFor="Type">Type</label>
+                                <Select onChange={handleSubmit}>
+                                    <option value='Comment'>Comment</option>
+                                    <option value='Report'>Report</option>
+                                </Select>
+
+                            </HStack>
+
                         </form>
 
                         <ModalFooter>
-                            <Button onClick={onClose} >Cancel</Button>
+                            <HStack spacing={10}>
+                                <Button onClick={onClose} >Close</Button>
+                                <Button type='submit' onClick={handleAllSubmit}>Submit</Button>
+                            </HStack>
                         </ModalFooter>
+
                     </VStack>
                 </ModalContent>
             </Modal>

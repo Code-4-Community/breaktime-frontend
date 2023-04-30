@@ -9,6 +9,7 @@ import moment from 'moment';
 import { TimeSheetSchema } from '../../schemas/TimesheetSchema'
 
 import apiClient from '../Auth/apiClient';
+import CommentModal from './CommentModal';
 
 //TODO - Refactor to backend calls once setup to pull rows, etc. 
 const defaultColumns = ['Date', 'Clock-in', 'Clock-Out', 'Hours', 'Comment']
