@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import { Card, CardHeader, CardBody, Alert, Image, Button } from '@chakra-ui/react';
+import { Card, CardHeader, CardBody, Alert, Image, Button, Icon } from '@chakra-ui/react';
 import { defaultColors } from '../../utils';
-import { IconContext } from 'react-icons';
 import { TfiAnnouncement } from 'react-icons/tfi';
 
 const SAMPLE_EVENT_LIST = [
@@ -20,9 +19,7 @@ export default function Announcements() {
     <div className='announcements' style={{ 'display': 'flex', 'gridColumnStart': 1, 'gridRowStart': 2 }}>
       <Card style={{ 'width': '100%' }}>
         <CardHeader as='h5' style={{ 'backgroundColor': defaultColors.BREAKTIME_BLUE, 'color': 'white', 'display': 'flex', 'gap': '1%', 'alignItems': 'center' }}>
-          <IconContext.Provider value={{ color: 'white' }}>
-            <TfiAnnouncement />
-          </IconContext.Provider>
+          <Icon as={TfiAnnouncement} />
           Announcements
         </CardHeader>
         <CardBody>
@@ -30,9 +27,9 @@ export default function Announcements() {
             <div>
               {events.map((event, index) => (
                 <Alert key={index} style={{ 'display': 'flex', 'gap': '1%', 'alignItems': 'center' }}>
-                  <Image src={event.photo} alt={event.name} rounded={true} style={{ 'width': '10%', 'height': 'auto' }} />
+                  <Image src={event.photo} />
                   {`${event.date}: ${event.name}`}
-                  <Button target='_blank' href={event.url} style={{ 'backgroundColor': defaultColors.BREAKTIME_BLUE, 'borderWidth': '0px' }}>Register</Button>
+                  <Button style={{ 'backgroundColor': defaultColors.BREAKTIME_BLUE, 'borderWidth': '0px' }}>Register</Button>
                 </Alert>))}
             </div>
             : 'No announcements'}

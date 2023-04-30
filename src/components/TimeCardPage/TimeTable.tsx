@@ -1,4 +1,14 @@
-import Table from 'react-bootstrap/Table'
+import {
+    Table,
+    Thead,
+    Tbody,
+    Tfoot,
+    Tr,
+    Th,
+    Td,
+    TableCaption,
+    TableContainer,
+} from '@chakra-ui/react'
 import React, { useEffect, useState } from 'react';
 import moment from 'moment';
 import { v4 as uuidv4 } from 'uuid';
@@ -105,37 +115,37 @@ function TimeTable(props) {
 
 
     return (
-            <Table striped bordered hover>
-                <thead>
-                    <tr>
-                        <th></th>
-                        {props.columns.map(
-                            (column, idx) => (
-                                <th key={idx}>{column}</th>
-                            )
-                        )}
-                    </tr>
-                </thead>
-                <tbody>
-                    {rows.map(
-                        (row, index) => {
-                            // Let the row know the day of the date before it to know if we should display its start date or not 
-                            const dateToSend = prevDate;
-                            prevDate = row.StartDate;
-                            return (
-                                <tr key={row.id}>
-                                    <td>
-                                        <button onClick={() => { addRow(row, index) }}>+</button>
-                                        <button onClick={() => { delRow(row, index) }}>-</button>
-                                    </td>
-                                    {
-                                        <TimeTableRow row={row} onRowChange={(row) => onRowChange(row, index)} prevDate={dateToSend} />
-                                    }
-                                </tr>);
-                        }
+        <Table>
+            <Thead>
+                <Tr>
+                    <Th></Th>
+                    {props.columns.map(
+                        (column, idx) => (
+                            <th key={idx}>{column}</th>
+                        )
                     )}
-                </tbody>
-            </Table>
+                </Tr>
+            </Thead>
+            <Tbody>
+                {rows.map(
+                    (row, index) => {
+                        // Let the row know the day of the date before it to know if we should display its start date or not 
+                        const dateToSend = prevDate;
+                        prevDate = row.StartDate;
+                        return (
+                            <tr key={row.id}>
+                                <td>
+                                    <button onClick={() => { addRow(row, index) }}>+</button>
+                                    <button onClick={() => { delRow(row, index) }}>-</button>
+                                </td>
+                                {
+                                    <TimeTableRow row={row} onRowChange={(row) => onRowChange(row, index)} prevDate={dateToSend} />
+                                }
+                            </tr>);
+                    }
+                )}
+            </Tbody>
+        </Table>
 
     );
 
