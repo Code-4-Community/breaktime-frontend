@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Card, Alert, Image, Button } from 'react-bootstrap';
+import { Card, CardHeader, CardBody, Alert, Image, Button } from '@chakra-ui/react';
 import { defaultColors } from '../../utils';
 import { IconContext } from 'react-icons';
 import { TfiAnnouncement } from 'react-icons/tfi';
@@ -19,13 +19,13 @@ export default function Announcements() {
   return (
     <div className='announcements' style={{ 'display': 'flex', 'gridColumnStart': 1, 'gridRowStart': 2 }}>
       <Card style={{ 'width': '100%' }}>
-        <Card.Header as='h5' style={{ 'backgroundColor': defaultColors.BREAKTIME_BLUE, 'color': 'white', 'display': 'flex', 'gap': '1%', 'alignItems': 'center' }}>
+        <CardHeader as='h5' style={{ 'backgroundColor': defaultColors.BREAKTIME_BLUE, 'color': 'white', 'display': 'flex', 'gap': '1%', 'alignItems': 'center' }}>
           <IconContext.Provider value={{ color: 'white' }}>
             <TfiAnnouncement />
           </IconContext.Provider>
           Announcements
-        </Card.Header>
-        <Card.Body>
+        </CardHeader>
+        <CardBody>
           {events[0] ?
             <div>
               {events.map((event, index) => (
@@ -36,7 +36,7 @@ export default function Announcements() {
                 </Alert>))}
             </div>
             : 'No announcements'}
-        </Card.Body>
+        </CardBody>
       </Card>
     </div>);
 }

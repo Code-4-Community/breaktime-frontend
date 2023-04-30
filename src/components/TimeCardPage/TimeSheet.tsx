@@ -63,7 +63,7 @@ export default function Page() {
     
     const [userTimesheets, setUserTimesheets] = useState([]); 
     const [currentTimesheets, setCurrentTimesheets] = useState([]);
-    const [selectedTimesheet, setTimesheet] = useState();
+    const [selectedTimesheet, setSelectedTimesheet] = useState();
     const columns = defaultColumns 
 
     //Pulls user timesheets, marking first returned as the active one
@@ -127,7 +127,7 @@ export default function Page() {
         }
 
         setCurrentTimesheets(newCurrentTimesheets);
-        setTimesheet(newCurrentTimesheets[0]);
+        setSelectedTimesheet(newCurrentTimesheets[0]);
     }
 
     return (
@@ -141,7 +141,7 @@ export default function Page() {
             <TabList> 
                 {currentTimesheets.map(
                     (sheet) => (
-                        <Tab onClick={() => setTimesheet(sheet)}>{sheet.Company}</Tab>
+                        <Tab onClick={() => setSelectedTimesheet(sheet)}>{sheet.Company}</Tab>
                     ) 
                 )}
             </TabList>

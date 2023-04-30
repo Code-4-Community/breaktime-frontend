@@ -8,7 +8,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import 'react-date-range/dist/styles.css'; // main style file
 import 'react-date-range/dist/theme/default.css'; // theme css file
 import NavBar from "./components/NavBar/NavBar"
-import {Amplify} from 'aws-amplify';
+import { Amplify } from 'aws-amplify';
 import awsmobile from './aws-exports'
 
 import AuthedApp from './components/Auth/AuthWrapper'
@@ -18,25 +18,28 @@ import Signout from './components/SignOut/Signout'
 import 'bootstrap/dist/css/bootstrap.css';
 
 import '@aws-amplify/ui-react/styles.css';
+import { ChakraProvider } from '@chakra-ui/react';
 
-Amplify.configure(awsmobile); 
+Amplify.configure(awsmobile);
 
 
 export default function Landing() {
-    return (
+  return (
+    <ChakraProvider>
       <BrowserRouter>
-      <NavBar/> 
-      <Routes>
-        <Route path="/" element={<AuthedApp page={<HomePage/>}/>}/>
-        <Route path="/timecard" element={<AuthedApp page={<TimeSheet />}/>} />
-        <Route path="/logout" element={<Signout/>} />
+        <NavBar />
+        <Routes>
+          <Route path="/" element={<AuthedApp page={<HomePage />} />} />
+          <Route path="/timecard" element={<AuthedApp page={<TimeSheet />} />} />
+          <Route path="/logout" element={<Signout />} />
 
-      </Routes>
-    </BrowserRouter> 
-    );
-  }
+        </Routes>
+      </BrowserRouter>
+    </ChakraProvider>
+  );
+}
 const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(<Landing/>);  
+root.render(<Landing />);
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))
 // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
