@@ -4,12 +4,14 @@ import { useEffect } from 'react';
 import SubmitCard from './SubmitCard';
 import DateSelectorCard from './SelectWeekCard'
 import moment, {Moment} from 'moment';
-import { Tabs, TabList, Tab } from '@chakra-ui/react'
+import { Tabs, TabList, Tab, CardBody } from '@chakra-ui/react'
 
 import apiClient from '../Auth/apiClient';
 import { start } from 'repl';
 import AggregationTable from './AggregationTable';
 
+import { Input, InputGroup, InputLeftAddon, Card, Avatar, HStack, Text } from '@chakra-ui/react'
+import { SearchIcon } from '@chakra-ui/icons';
 
 //TODO - Refactor to backend calls once setup to pull rows, etc. 
 const defaultColumns = ['Date', 'Clock-in', 'Clock-Out', 'Hours', 'Comment']
@@ -50,6 +52,56 @@ const createEmptyTable = (startDate, company, userId, timesheetID) => {
 
 const user = 'Example User'
 
+// list of user objects
+const testingEmployees = [
+    {pic: 'https://www.rd.com/wp-content/uploads/2021/04/GettyImages-1145794687.jpg', name:"david"},
+    {pic: 'https://media.glamour.com/photos/56964cd993ef4b095210515b/16:9/w_1280,c_limit/fashion-2015-10-cute-baby-turtles-main.jpg', name:"danimal"},
+    {pic: 'https://static.boredpanda.com/blog/wp-content/uuuploads/cute-baby-animals/cute-baby-animals-2.jpg', name:"ryan"},
+    {pic: 'https://compote.slate.com/images/73f0857e-2a1a-4fea-b97a-bd4c241c01f5.jpg', name:"izzy"},
+    {pic: 'https://static.independent.co.uk/s3fs-public/thumbnails/image/2013/01/24/12/v2-cute-cat-picture.jpg', name:"kaylee"}
+]
+
+function ProfileCard({employee}) {
+    
+    return (
+        <Card direction="row">
+            <Avatar src={employee.pic} name={employee.name} size='sm'/>
+            <CardBody>
+                <Text>{employee.name}</Text>
+            </CardBody>
+        </Card>
+    )
+}
+
+function SearchEmployeeTimesheet({employees}) {
+    const [searchQuery, setSearchQuery] = useState("");
+
+    const filteredEmployees = employees.filter(
+        (employee) => {
+            return (employee.name.toLowerCase().includes(searchQuery.toLowerCase()));
+        }
+    );
+    
+    const handleChange = (e) => {
+        setSearchQuery(e.target.value);
+    }
+
+    return (
+        <>
+        <InputGroup>
+            <InputLeftAddon pointerEvents='none' children={<SearchIcon/>} />
+            <Input placeholder='Search Employee Timesheet' onChange={handleChange}/>
+        </InputGroup>
+        <Card>
+            {filteredEmployees.map(
+                (employee) => (
+                    <option value={employee.name}>{employee.name}</option>
+                )
+            )}
+        </Card>
+        </>
+    )
+}
 
 export default function Page() {
     //const today = moment(); 
@@ -132,10 +184,13 @@ export default function Page() {
 
     return (
         <div>
-            <div  style={{"display":'flex'}}>
-                <DateSelectorCard onDateChange={updateDateRange} date = {startDate}/>
-                <div className="col-md-5"></div>
-                <SubmitCard/>
+            <div>
+                <HStack spacing='60px'>
+                    <ProfileCard employee={testingEmployees[0]}/>
+                    <SearchEmployeeTimesheet employees={testingEmployees}/>
+                    <DateSelectorCard onDateChange={updateDateRange} date={startDate}/>
+                    <SubmitCard/>
+                </HStack>
             </div>
             <Tabs>
             <TabList> 
