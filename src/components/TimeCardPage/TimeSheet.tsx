@@ -10,8 +10,8 @@ import apiClient from '../Auth/apiClient';
 import { start } from 'repl';
 import AggregationTable from './AggregationTable';
 
-import { Input, InputGroup, InputLeftAddon, Card, Avatar, HStack, Text } from '@chakra-ui/react'
-import { SearchIcon } from '@chakra-ui/icons';
+import { Input, InputGroup, InputLeftAddon, IconButton, Card, Avatar, HStack, Text } from '@chakra-ui/react'
+import { SearchIcon, WarningIcon, DownloadIcon } from '@chakra-ui/icons';
 
 //TODO - Refactor to backend calls once setup to pull rows, etc. 
 const defaultColumns = ['Date', 'Clock-in', 'Clock-Out', 'Hours', 'Comment']
@@ -62,10 +62,10 @@ const testingEmployees = [
 ]
 
 function ProfileCard({employee}) {
-    
+
     return (
         <Card direction="row">
-            <Avatar src={employee.pic} name={employee.name} size='sm'/>
+            <Avatar src={employee.pic} name={employee.name} size='md' showBorder={true} borderColor='black' borderWidth='thick'/>
             <CardBody>
                 <Text>{employee.name}</Text>
             </CardBody>
@@ -92,12 +92,14 @@ function SearchEmployeeTimesheet({employees}) {
             <InputLeftAddon pointerEvents='none' children={<SearchIcon/>} />
             <Input placeholder='Search Employee Timesheet' onChange={handleChange}/>
         </InputGroup>
-        <Card>
-            {filteredEmployees.map(
-                (employee) => (
-                    <option value={employee.name}>{employee.name}</option>
-                )
-            )}
+        <Card direction="row">
+            <CardBody>
+                {filteredEmployees.map(
+                    (employee) => (
+                        <Text>{employee.name}</Text>
+                    )
+                )}
+            </CardBody>
         </Card>
         </>
     )
@@ -183,15 +185,15 @@ export default function Page() {
     }
 
     return (
-        <div>
-            <div>
-                <HStack spacing='60px'>
-                    <ProfileCard employee={testingEmployees[0]}/>
-                    <SearchEmployeeTimesheet employees={testingEmployees}/>
-                    <DateSelectorCard onDateChange={updateDateRange} date={startDate}/>
-                    <SubmitCard/>
-                </HStack>
-            </div>
+        <>
+            <HStack spacing="120px">
+                <ProfileCard employee={testingEmployees[0]}/>
+                <SearchEmployeeTimesheet employees={testingEmployees}/>
+                <IconButton aria-label='Download' icon={<DownloadIcon />} />
+                <IconButton aria-label='Report' icon={<WarningIcon />} />
+                <DateSelectorCard onDateChange={updateDateRange} date={startDate}/>
+                <SubmitCard/>
+            </HStack>
             <Tabs>
             <TabList> 
                 {currentTimesheets.map(
@@ -205,6 +207,6 @@ export default function Page() {
             (<AggregationTable startDate={startDate} timesheets={currentTimesheets}/>)
             : (<TimeTable columns={columns} timesheet={selectedTimesheet} onTimesheetChange={processTimesheetChange}/>)}
             
-        </div>
+        </>
     )
 }
