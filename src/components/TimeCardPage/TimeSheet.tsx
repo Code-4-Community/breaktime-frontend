@@ -13,6 +13,8 @@ import AggregationTable from './AggregationTable';
 import { Input, InputGroup, InputLeftAddon, IconButton, Card, Avatar, HStack, Text } from '@chakra-ui/react'
 import { SearchIcon, WarningIcon, DownloadIcon } from '@chakra-ui/icons';
 
+import  { Select } from 'chakra-react-select'
+
 //TODO - Refactor to backend calls once setup to pull rows, etc. 
 const defaultColumns = ['Date', 'Clock-in', 'Clock-Out', 'Hours', 'Comment']
 
@@ -54,17 +56,17 @@ const user = 'Example User'
 
 // list of user objects
 const testingEmployees = [
-    {pic: 'https://www.rd.com/wp-content/uploads/2021/04/GettyImages-1145794687.jpg', name:"david"},
-    {pic: 'https://media.glamour.com/photos/56964cd993ef4b095210515b/16:9/w_1280,c_limit/fashion-2015-10-cute-baby-turtles-main.jpg', name:"danimal"},
-    {pic: 'https://static.boredpanda.com/blog/wp-content/uuuploads/cute-baby-animals/cute-baby-animals-2.jpg', name:"ryan"},
-    {pic: 'https://compote.slate.com/images/73f0857e-2a1a-4fea-b97a-bd4c241c01f5.jpg', name:"izzy"},
-    {pic: 'https://static.independent.co.uk/s3fs-public/thumbnails/image/2013/01/24/12/v2-cute-cat-picture.jpg', name:"kaylee"}
+    {label:"david", value:"david", pic: 'https://www.rd.com/wp-content/uploads/2021/04/GettyImages-1145794687.jpg', name:"david"},
+    {label:"danimal", value:"danimal",pic: 'https://media.glamour.com/photos/56964cd993ef4b095210515b/16:9/w_1280,c_limit/fashion-2015-10-cute-baby-turtles-main.jpg', name:"danimal"},
+    {label:"ryan", value:"ryan",pic: 'https://static.boredpanda.com/blog/wp-content/uuuploads/cute-baby-animals/cute-baby-animals-2.jpg', name:"ryan"},
+    {label:"izzy", value:"izzy",pic: 'https://compote.slate.com/images/73f0857e-2a1a-4fea-b97a-bd4c241c01f5.jpg', name:"izzy"},
+    {label:"kaylee", value:"kaylee",pic: 'https://static.independent.co.uk/s3fs-public/thumbnails/image/2013/01/24/12/v2-cute-cat-picture.jpg', name:"kaylee"}
 ]
 
 function ProfileCard({employee}) {
 
     return (
-        <Card direction="row">
+        <Card direction="row" width="50%">
             <Avatar src={employee.pic} name={employee.name} size='md' showBorder={true} borderColor='black' borderWidth='thick'/>
             <CardBody>
                 <Text>{employee.name}</Text>
@@ -73,35 +75,18 @@ function ProfileCard({employee}) {
     )
 }
 
-function SearchEmployeeTimesheet({employees}) {
-    const [searchQuery, setSearchQuery] = useState("");
-
-    const filteredEmployees = employees.filter(
-        (employee) => {
-            return (employee.name.toLowerCase().includes(searchQuery.toLowerCase()));
-        }
-    );
+function SearchEmployeeTimesheet({employees, setSelected}) {
     
-    const handleChange = (e) => {
-        setSearchQuery(e.target.value);
+    const handleChange = (selectedOption) => {
+        setSelected(selectedOption);
+        console.log(selectedOption);
     }
 
+    //TODO: fix styling
     return (
-        <>
-        <InputGroup>
-            <InputLeftAddon pointerEvents='none' children={<SearchIcon/>} />
-            <Input placeholder='Search Employee Timesheet' onChange={handleChange}/>
-        </InputGroup>
-        <Card direction="row">
-            <CardBody>
-                {filteredEmployees.map(
-                    (employee) => (
-                        <Text>{employee.name}</Text>
-                    )
-                )}
-            </CardBody>
-        </Card>
-        </>
+        <div style={{width: '600px'}}>
+            <Select isSearchable size="lg" options={employees} onChange={handleChange}/>
+        </div>
     )
 }
 
@@ -115,6 +100,12 @@ export default function Page() {
         setCurrentTimesheetsToDisplay (userTimesheets, date); 
     }
     
+    //TODO: default to first employee but idk if employee always exists
+    const [selected, setSelected] = useState();
+    const [userType, setUserType] = useState();
+
+    //TODO: make enum for userType and clarify what the user data is gonna look like
+
     const [userTimesheets, setUserTimesheets] = useState([]); 
     const [currentTimesheets, setCurrentTimesheets] = useState([]);
     const [selectedTimesheet, setTimesheet] = useState();
@@ -188,7 +179,7 @@ export default function Page() {
         <>
             <HStack spacing="120px">
                 <ProfileCard employee={testingEmployees[0]}/>
-                <SearchEmployeeTimesheet employees={testingEmployees}/>
+                <SearchEmployeeTimesheet employees={testingEmployees} setSelected={setSelected}/>
                 <IconButton aria-label='Download' icon={<DownloadIcon />} />
                 <IconButton aria-label='Report' icon={<WarningIcon />} />
                 <DateSelectorCard onDateChange={updateDateRange} date={startDate}/>
