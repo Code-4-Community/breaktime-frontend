@@ -10,7 +10,7 @@ import apiClient from '../Auth/apiClient';
 import { start } from 'repl';
 import AggregationTable from './AggregationTable';
 
-import { Input, InputGroup, InputLeftAddon, IconButton, Card, Avatar, HStack, Text } from '@chakra-ui/react'
+import { IconButton, Card, Avatar, HStack, Text } from '@chakra-ui/react'
 import { SearchIcon, WarningIcon, DownloadIcon } from '@chakra-ui/icons';
 
 import  { Select } from 'chakra-react-select'
@@ -55,19 +55,21 @@ const createEmptyTable = (startDate, company, userId, timesheetID) => {
 const user = 'Example User'
 
 // list of user objects
+// label, value needed for react-select
+// needs identifying characteristic of user that timesheets can be fetched based on
 const testingEmployees = [
-    {label:"david", value:"david", pic: 'https://www.rd.com/wp-content/uploads/2021/04/GettyImages-1145794687.jpg', name:"david"},
-    {label:"danimal", value:"danimal",pic: 'https://media.glamour.com/photos/56964cd993ef4b095210515b/16:9/w_1280,c_limit/fashion-2015-10-cute-baby-turtles-main.jpg', name:"danimal"},
-    {label:"ryan", value:"ryan",pic: 'https://static.boredpanda.com/blog/wp-content/uuuploads/cute-baby-animals/cute-baby-animals-2.jpg', name:"ryan"},
-    {label:"izzy", value:"izzy",pic: 'https://compote.slate.com/images/73f0857e-2a1a-4fea-b97a-bd4c241c01f5.jpg', name:"izzy"},
-    {label:"kaylee", value:"kaylee",pic: 'https://static.independent.co.uk/s3fs-public/thumbnails/image/2013/01/24/12/v2-cute-cat-picture.jpg', name:"kaylee"}
+    {label:"david", value:"david", picture: 'https://www.rd.com/wp-content/uploads/2021/04/GettyImages-1145794687.jpg', name:"david"},
+    {label:"danimal", value:"danimal", picture: 'https://media.glamour.com/photos/56964cd993ef4b095210515b/16:9/w_1280,c_limit/fashion-2015-10-cute-baby-turtles-main.jpg', name:"danimal"},
+    {label:"ryan", value:"ryan", picture: 'https://static.boredpanda.com/blog/wp-content/uuuploads/cute-baby-animals/cute-baby-animals-2.jpg', name:"ryan"},
+    {label:"izzy", value:"izzy", picture: 'https://compote.slate.com/images/73f0857e-2a1a-4fea-b97a-bd4c241c01f5.jpg', name:"izzy"},
+    {label:"kaylee", value:"kaylee", picture: 'https://static.independent.co.uk/s3fs-public/thumbnails/image/2013/01/24/12/v2-cute-cat-picture.jpg', name:"kaylee"}
 ]
 
 function ProfileCard({employee}) {
 
     return (
         <Card direction="row" width="50%">
-            <Avatar src={employee.pic} name={employee.name} size='md' showBorder={true} borderColor='black' borderWidth='thick'/>
+            <Avatar src={employee.picture} name={employee.name} size='md' showBorder={true} borderColor='black' borderWidth='thick'/>
             <CardBody>
                 <Text>{employee.name}</Text>
             </CardBody>
@@ -79,7 +81,6 @@ function SearchEmployeeTimesheet({employees, setSelected}) {
     
     const handleChange = (selectedOption) => {
         setSelected(selectedOption);
-        console.log(selectedOption);
     }
 
     //TODO: fix styling
@@ -102,16 +103,17 @@ export default function Page() {
     
     //TODO: default to first employee but idk if employee always exists
     const [selected, setSelected] = useState();
-    const [userType, setUserType] = useState();
-
-    //TODO: make enum for userType and clarify what the user data is gonna look like
 
     const [userTimesheets, setUserTimesheets] = useState([]); 
     const [currentTimesheets, setCurrentTimesheets] = useState([]);
     const [selectedTimesheet, setTimesheet] = useState();
     const columns = defaultColumns 
 
-    //Pulls user timesheets, marking first returned as the active one
+    // const getUserTimesheets , useMemo it and replace the useEffect
+    // use it and selected.userId or whatever 
+    // to change between timesheets
+
+    // Pulls user timesheets, marking first returned as the active one
     useEffect(() => {
         // Uncomment this if you want the default one loaded 
         //setTimesheet(testingTimesheetResp)
