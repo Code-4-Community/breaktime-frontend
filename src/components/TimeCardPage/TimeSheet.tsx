@@ -13,7 +13,7 @@ import AggregationTable from './AggregationTable';
 import { IconButton, Card, Avatar, HStack, Text } from '@chakra-ui/react'
 import { SearchIcon, WarningIcon, DownloadIcon } from '@chakra-ui/icons';
 
-import  { Select } from 'chakra-react-select'
+import  { Select, components } from 'chakra-react-select'
 
 //TODO - Refactor to backend calls once setup to pull rows, etc. 
 const defaultColumns = ['Date', 'Clock-in', 'Clock-Out', 'Hours', 'Comment']
@@ -83,10 +83,25 @@ function SearchEmployeeTimesheet({employees, setSelected}) {
         setSelected(selectedOption);
     }
 
+    const customStyles = {
+        control: (base) => ({
+          ...base,
+          flexDirection: 'row-reverse',
+        }),
+      }
+
+    const DropdownIndicator = (props) => {
+        return (
+          <components.DropdownIndicator {...props}>
+            <SearchIcon />
+          </components.DropdownIndicator>
+        );
+      };
+
     //TODO: fix styling
     return (
         <div style={{width: '600px'}}>
-            <Select isSearchable size="lg" options={employees} onChange={handleChange}/>
+            <Select isSearchable={true} defaultValue={employees[0]} chakraStyles={customStyles} size="lg" options={employees} onChange={handleChange} components={{ DropdownIndicator }}/>
         </div>
     )
 }
