@@ -19,6 +19,7 @@
     "base-64": "^1.0.0",
     "bootstrap": "^5.2.2",
     "buffer": "^6.0.3",
+    "chakra-react-select": "^4.6.0",
     "chart.js": "^4.2.1",
     "date-fns": "^2.29.3",
     "grommet-icons": "^4.10.0",
