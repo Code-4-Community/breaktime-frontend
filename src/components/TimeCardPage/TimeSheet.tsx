@@ -131,15 +131,6 @@ export default function Page() {
     const [selectedTimesheet, setTimesheet] = useState<TimeSheetSchema>();
     const columns = defaultColumns 
 
-    // const getUserTimesheets , useMemo it and replace the useEffect
-    // use it and selected.userId or whatever 
-    // to change between timesheets
-
-    // add some logic on what to do when employee vs manager
-    // if employee - set selected to be employee uuid
-    // if manager - set selected to be first employee of manager uuid
-    // modify getUserTimesheet endpoint to get be getTimesheet, pass in uuid of user
-
     // Pulls user timesheets, marking first returned as the active one
     useEffect(() => {
         // Uncomment this if you want the default one loaded 
