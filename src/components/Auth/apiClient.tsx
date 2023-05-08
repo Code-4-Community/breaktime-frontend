@@ -1,6 +1,7 @@
 import { Auth } from 'aws-amplify';
 import axios, { AxiosInstance } from 'axios';
 import {TimeSheetSchema} from '../../schemas/TimesheetSchema'
+import {UserSchema} from '../../schemas/UserSchema'
 
 
 const defaultBaseUrl = process.env.REACT_APP_API_BASE_URL ?? 'http://localhost:3000';
@@ -73,9 +74,11 @@ export class ApiClient {
     return this.get('/auth/timesheet') as Promise<string>;
   }
 
-  //TODO: fix types
-  public async getUserAttributes(): Promise<any> {
-    return Auth.currentUserInfo();
+  // TODO: fix types
+  // TODO: setup endpoint for getting user information, schema:
+  public async getUser(): Promise<any> {
+    return {Type:"Supervisor"};
+    //return Auth.currentAuthenticatedUser();
   }
 
  

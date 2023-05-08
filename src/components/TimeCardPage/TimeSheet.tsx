@@ -58,11 +58,11 @@ const user = 'Example User'
 // label, value needed for react-select
 // needs identifying characteristic of user that timesheets can be fetched based on
 const testingEmployees = [
-    {label:"david", value:"david", picture: 'https://www.rd.com/wp-content/uploads/2021/04/GettyImages-1145794687.jpg', name:"david", uuid:123131},
-    {label:"danimal", value:"danimal", picture: 'https://media.glamour.com/photos/56964cd993ef4b095210515b/16:9/w_1280,c_limit/fashion-2015-10-cute-baby-turtles-main.jpg', name:"danimal", uuid:123132},
-    {label:"ryan", value:"ryan", picture: 'https://static.boredpanda.com/blog/wp-content/uuuploads/cute-baby-animals/cute-baby-animals-2.jpg', name:"ryan", uuid:123133},
-    {label:"izzy", value:"izzy", picture: 'https://compote.slate.com/images/73f0857e-2a1a-4fea-b97a-bd4c241c01f5.jpg', name:"izzy", uuid:123134},
-    {label:"kaylee", value:"kaylee", picture: 'https://static.independent.co.uk/s3fs-public/thumbnails/image/2013/01/24/12/v2-cute-cat-picture.jpg', name:"kaylee", uuid:123135}
+    {picture: 'https://www.rd.com/wp-content/uploads/2021/04/GettyImages-1145794687.jpg', name:"david", uuid:123131},
+    {picture: 'https://media.glamour.com/photos/56964cd993ef4b095210515b/16:9/w_1280,c_limit/fashion-2015-10-cute-baby-turtles-main.jpg', name:"danimal", uuid:123132},
+    {picture: 'https://static.boredpanda.com/blog/wp-content/uuuploads/cute-baby-animals/cute-baby-animals-2.jpg', name:"ryan", uuid:123133},
+    {picture: 'https://compote.slate.com/images/73f0857e-2a1a-4fea-b97a-bd4c241c01f5.jpg', name:"izzy", uuid:123134},
+    {picture: 'https://static.independent.co.uk/s3fs-public/thumbnails/image/2013/01/24/12/v2-cute-cat-picture.jpg', name:"kaylee", uuid:123135}
 ]
 
 function ProfileCard({employee}) {
@@ -101,7 +101,14 @@ function SearchEmployeeTimesheet({employees, setSelected}) {
     //TODO: fix styling
     return (
         <div style={{width: '600px'}}>
-            <Select isSearchable={true} defaultValue={employees[0]} chakraStyles={customStyles} size="lg" options={employees} onChange={handleChange} components={{ DropdownIndicator }}/>
+            <Select isSearchable={true} 
+            defaultValue={employees[0]} 
+            chakraStyles={customStyles} 
+            size="lg" options={employees} 
+            onChange={handleChange} 
+            components={{ DropdownIndicator }}
+            getOptionLabel={option =>`${option.name}`}
+            getOptionValue={option => `${option.name}`}/>
         </div>
     )
 }
@@ -117,12 +124,12 @@ export default function Page() {
     }
     
     //TODO: default to first employee but idk if employee always exists
-    const [selected, setSelected] = useState();
-    const [userType, setUserType] = useState();
+    const [selected, setSelected] = useState<any>();
+    const [user, setUser] = useState<any>();
 
     const [userTimesheets, setUserTimesheets] = useState([]); 
     const [currentTimesheets, setCurrentTimesheets] = useState([]);
-    const [selectedTimesheet, setTimesheet] = useState();
+    const [selectedTimesheet, setTimesheet] = useState<any>();
     const columns = defaultColumns 
 
     // const getUserTimesheets , useMemo it and replace the useEffect
@@ -138,11 +145,13 @@ export default function Page() {
     useEffect(() => {
         // Uncomment this if you want the default one loaded 
         //setTimesheet(testingTimesheetResp)
-        apiClient.getUserAttributes().then(userInfo => {
-            setSelected(userInfo.attributes.sub)
+        apiClient.getUser().then(userInfo => {
+            setUser(userInfo);
+            console.log(userInfo);
         })
         apiClient.getUserTimesheets().then(timesheets => {
             setUserTimesheets(timesheets); 
+            setSelected(timesheets[0]?.UserID); // maybe change
             //By Default just render / select the first timesheet for now 
             setCurrentTimesheetsToDisplay(timesheets, startDate); 
         });
@@ -205,9 +214,12 @@ export default function Page() {
         <>
             <HStack spacing="120px">
                 <ProfileCard employee={testingEmployees[0]}/>
-                <SearchEmployeeTimesheet employees={testingEmployees} setSelected={setSelected}/>
-                <IconButton aria-label='Download' icon={<DownloadIcon />} />
-                <IconButton aria-label='Report' icon={<WarningIcon />} />
+                {(user?.Type === "Supervisor" || user?.Type === "Admin") ?
+                    <>
+                    <SearchEmployeeTimesheet employees={testingEmployees} setSelected={setSelected}/>
+                    <IconButton aria-label='Download' icon={<DownloadIcon />} />
+                    <IconButton aria-label='Report' icon={<WarningIcon />} />
+                    </>: <></>}
                 <DateSelectorCard onDateChange={updateDateRange} date={startDate}/>
                 <SubmitCard/>
             </HStack>
