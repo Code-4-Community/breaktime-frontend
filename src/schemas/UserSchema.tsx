@@ -2,7 +2,8 @@ import { z } from "zod";
 
 export const UserSchema = z.object({
   UserID: z.string(), 
-  Name: z.string(),
+  FirstName: z.string(),
+  LastName: z.string(),
   Type: z.enum(["Employee", "Supervisor", "Admin"]),
   Picture: z.string().optional()
 })

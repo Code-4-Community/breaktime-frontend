@@ -60,7 +60,7 @@ export class ApiClient {
     return this.axiosInstance.patch(path, body).then((response) => response.data);
   }
 
-
+  // TODO: setup endpoint for supervisor/admin so it returns a list of users with timesheets
   public async getUserTimesheets(): Promise<TimeSheetSchema[]> {
     return this.get('auth/timesheet') as Promise<TimeSheetSchema[]>; 
   }
@@ -74,11 +74,24 @@ export class ApiClient {
     return this.get('/auth/timesheet') as Promise<string>;
   }
 
-  // TODO: fix types
-  // TODO: setup endpoint for getting user information, schema:
-  public async getUser(): Promise<any> {
-    return {Type:"Supervisor"};
-    //return Auth.currentAuthenticatedUser();
+  // TODO: setup endpoint for getting user information
+  public async getUser(): Promise<UserSchema> {
+    return {  UserID: "abc", 
+              FirstName: "john",
+              LastName: "doe",
+              Type: "Supervisor",
+              Picture: "https://www.google.com/koala.png"
+          };
+  }
+
+  //TODO: setup endpoint for getting userInformation for a given uuid
+  public async getUserByUUID(UUID: string): Promise<UserSchema> {
+    return {  UserID: "bcd", 
+              FirstName: "joe",
+              LastName: "jane",
+              Type: "Employee",
+              Picture: "https://www.google.com/panda.png"
+          };
   }
 
  
