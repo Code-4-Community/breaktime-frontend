@@ -58,11 +58,11 @@ const user = 'Example User'
 // label, value needed for react-select
 // needs identifying characteristic of user that timesheets can be fetched based on
 const testingEmployees = [
-    {label:"david", value:"david", picture: 'https://www.rd.com/wp-content/uploads/2021/04/GettyImages-1145794687.jpg', name:"david"},
-    {label:"danimal", value:"danimal", picture: 'https://media.glamour.com/photos/56964cd993ef4b095210515b/16:9/w_1280,c_limit/fashion-2015-10-cute-baby-turtles-main.jpg', name:"danimal"},
-    {label:"ryan", value:"ryan", picture: 'https://static.boredpanda.com/blog/wp-content/uuuploads/cute-baby-animals/cute-baby-animals-2.jpg', name:"ryan"},
-    {label:"izzy", value:"izzy", picture: 'https://compote.slate.com/images/73f0857e-2a1a-4fea-b97a-bd4c241c01f5.jpg', name:"izzy"},
-    {label:"kaylee", value:"kaylee", picture: 'https://static.independent.co.uk/s3fs-public/thumbnails/image/2013/01/24/12/v2-cute-cat-picture.jpg', name:"kaylee"}
+    {label:"david", value:"david", picture: 'https://www.rd.com/wp-content/uploads/2021/04/GettyImages-1145794687.jpg', name:"david", uuid:123131},
+    {label:"danimal", value:"danimal", picture: 'https://media.glamour.com/photos/56964cd993ef4b095210515b/16:9/w_1280,c_limit/fashion-2015-10-cute-baby-turtles-main.jpg', name:"danimal", uuid:123132},
+    {label:"ryan", value:"ryan", picture: 'https://static.boredpanda.com/blog/wp-content/uuuploads/cute-baby-animals/cute-baby-animals-2.jpg', name:"ryan", uuid:123133},
+    {label:"izzy", value:"izzy", picture: 'https://compote.slate.com/images/73f0857e-2a1a-4fea-b97a-bd4c241c01f5.jpg', name:"izzy", uuid:123134},
+    {label:"kaylee", value:"kaylee", picture: 'https://static.independent.co.uk/s3fs-public/thumbnails/image/2013/01/24/12/v2-cute-cat-picture.jpg', name:"kaylee", uuid:123135}
 ]
 
 function ProfileCard({employee}) {
@@ -118,6 +118,7 @@ export default function Page() {
     
     //TODO: default to first employee but idk if employee always exists
     const [selected, setSelected] = useState();
+    const [userType, setUserType] = useState();
 
     const [userTimesheets, setUserTimesheets] = useState([]); 
     const [currentTimesheets, setCurrentTimesheets] = useState([]);
@@ -128,16 +129,24 @@ export default function Page() {
     // use it and selected.userId or whatever 
     // to change between timesheets
 
+    // add some logic on what to do when employee vs manager
+    // if employee - set selected to be employee uuid
+    // if manager - set selected to be first employee of manager uuid
+    // modify getUserTimesheet endpoint to get be getTimesheet, pass in uuid of user
+
     // Pulls user timesheets, marking first returned as the active one
     useEffect(() => {
         // Uncomment this if you want the default one loaded 
         //setTimesheet(testingTimesheetResp)
+        apiClient.getUserAttributes().then(userInfo => {
+            setSelected(userInfo.attributes.sub)
+        })
         apiClient.getUserTimesheets().then(timesheets => {
             setUserTimesheets(timesheets); 
             //By Default just render / select the first timesheet for now 
-            setCurrentTimesheetsToDisplay (timesheets, startDate); 
+            setCurrentTimesheetsToDisplay(timesheets, startDate); 
         });
-    }, [])
+    }, [selected])
 
     const processTimesheetChange = (rows) => {
         //Adding the time entry to the table 

@@ -73,6 +73,11 @@ export class ApiClient {
     return this.get('/auth/timesheet') as Promise<string>;
   }
 
+  //TODO: fix types
+  public async getUserAttributes(): Promise<any> {
+    return Auth.currentUserInfo();
+  }
+
  
 }
  
