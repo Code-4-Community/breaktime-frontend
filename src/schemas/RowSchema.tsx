@@ -12,7 +12,7 @@ export const CommentSchema = z.object({
     Type: z.enum([CommentType.Comment, CommentType.Report]), 
     Timestamp: z.number(), 
     Content: z.string(), 
-})
+}); 
 
 export type CommentSchema = z.infer<typeof CommentSchema> 
 
@@ -23,6 +23,6 @@ export const RowSchema = z.object({
     Supervisor: optionalMember, 
     Admin: optionalMember, 
     Comment: z.union([z.undefined(), z.array(CommentSchema)])
-})
+}); 
 
 export type RowSchema = z.infer<typeof RowSchema>
