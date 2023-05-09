@@ -40,7 +40,7 @@ export const SCHEDULE_ENTRY = {
 
 export const EXAMPLE_TIMESHEET = {
     UserID: "b43227a4-0b42-4cfc-8a2c-16e2f2e64fbe", 
-    TimesheetID: "1293219", 
+    TimesheetID: "1231231", 
     CompanyID: "NEU", 
     StartDate: moment().tz(TIMEZONE).startOf('week').day(0).unix(), 
     Status: {
@@ -48,7 +48,23 @@ export const EXAMPLE_TIMESHEET = {
         Timestamp: undefined 
     }, 
     WeekComments:[], 
-    TableData: [EXAMPLE_ROW], 
+    TableData: [{...EXAMPLE_ROW}], 
+    ScheduledData: {
+        Author:"<UUID of person>", 
+        TableData: [SCHEDULE_ENTRY]
+    }
+}
+export const EXAMPLE_TIMESHEET_2 = {
+    UserID: "b43227a4-0b42-4cfc-8a2c-16e2f2e64fbe", 
+    TimesheetID: "1293219", 
+    CompanyID: "Star Market", 
+    StartDate: moment().tz(TIMEZONE).startOf('week').day(0).unix(), 
+    Status: {
+        Stage: Review_Stages.UNSUBMITTED,
+        Timestamp: undefined 
+    }, 
+    WeekComments:[], 
+    TableData: [{...EXAMPLE_ROW}], 
     ScheduledData: {
         Author:"<UUID of person>", 
         TableData: [SCHEDULE_ENTRY]
