@@ -4,7 +4,7 @@ export const UserSchema = z.object({
   UserID: z.string(), 
   FirstName: z.string(),
   LastName: z.string(),
-  Type: z.enum(["Employee", "Supervisor", "Admin"]),
+  Type: z.enum(["Associate", "Supervisor", "Admin"]),
   Picture: z.string().optional()
 })
 

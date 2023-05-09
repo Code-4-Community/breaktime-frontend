@@ -122,36 +122,49 @@ export default function Page() {
         setCurrentTimesheetsToDisplay (userTimesheets, date); 
     }
     
-    //TODO: default to first employee but idk if employee always exists
-    const [selected, setSelected] = useState<UserSchema>();
+    // fetch the information of the user whos timesheet is being displayed
+    // if user is an employee selected and user would be the same
+    // if user is a supervisor/admin then selected would contain the information of the user
+    // whos timesheet is being looked at and user would contain the supervisor/admins information
+    // by default the first user is selected
+    const [selectedUser, setSelectedUser] = useState<UserSchema>();
     const [user, setUser] = useState<UserSchema>();
+
+    // associates is only used by supervisor/admin for the list of all associates they have access to
+    const [associates, setAssociates] = useState<UserSchema[]>();
 
     const [userTimesheets, setUserTimesheets] = useState<TimeSheetSchema[]>([]); 
     const [currentTimesheets, setCurrentTimesheets] = useState<TimeSheetSchema[]>([]);
     const [selectedTimesheet, setTimesheet] = useState<TimeSheetSchema>();
     const columns = defaultColumns 
 
+    // this hook should always run first
+    useEffect(() => {
+        apiClient.getUser().then(userInfo => {
+            setUser(userInfo);
+            if (userInfo.Type === "Supervisor" || userInfo.Type === "Admin"){
+                apiClient.getAllUsers().then(users => {
+                    setAssociates(users);
+                    setSelectedUser(users[0]);
+                })
+            }
+            setSelectedUser(userInfo)
+        })
+        // if employee setSelectedUSer to be userinfo
+        // if supervisor/admin get all users
+        // set selected user
+    }, [])
+
     // Pulls user timesheets, marking first returned as the active one
     useEffect(() => {
         // Uncomment this if you want the default one loaded 
         //setTimesheet(testingTimesheetResp)
-        apiClient.getUser().then(userInfo => {
-            setUser(userInfo);
-        })
-        apiClient.getUserTimesheets().then(timesheets => {
+        apiClient.getUserTimesheets(selectedUser?.UserID).then(timesheets => {
             setUserTimesheets(timesheets); 
             //By Default just render / select the first timesheet for now 
             setCurrentTimesheetsToDisplay(timesheets, startDate);
-            // fetch the information of the user whos timesheet is being displayed
-            // if user is an employee selected and user would be the same
-            // if user is a supervisor/admin then selected would contain the information of the user
-            // whos timesheet is being looked at and user would contain the supervisor/admins information
-            // by default the first user is selected
-            apiClient.getUserByUUID(timesheets[0].UserID).then(user =>{
-                setSelected(user)
-            }) 
         });
-    }, [selected])
+    }, [selectedUser])
 
     const processTimesheetChange = (rows) => {
         //Adding the time entry to the table 
@@ -212,7 +225,7 @@ export default function Page() {
                 <ProfileCard employee={user}/>
                 {(user?.Type === "Supervisor" || user?.Type === "Admin") ?
                     <>
-                    <SearchEmployeeTimesheet employees={testingEmployees} setSelected={setSelected}/>
+                    <SearchEmployeeTimesheet employees={associates} setSelected={setSelectedUser}/>
                     <IconButton aria-label='Download' icon={<DownloadIcon />} />
                     <IconButton aria-label='Report' icon={<WarningIcon />} />
                     </>: <></>}

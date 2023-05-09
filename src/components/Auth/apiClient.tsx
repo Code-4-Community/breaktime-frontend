@@ -60,8 +60,8 @@ export class ApiClient {
     return this.axiosInstance.patch(path, body).then((response) => response.data);
   }
 
-  // TODO: setup endpoint for supervisor/admin so it returns a list of users with timesheets
-  public async getUserTimesheets(): Promise<TimeSheetSchema[]> {
+  // TODO: setup endpoint for associate/supervisor/admin so it returns a list of timesheets for given uuid
+  public async getUserTimesheets(UUID: string): Promise<TimeSheetSchema[]> {
     return this.get('auth/timesheet') as Promise<TimeSheetSchema[]>; 
   }
 
@@ -75,6 +75,7 @@ export class ApiClient {
   }
 
   // TODO: setup endpoint for getting user information
+  // all roles -> return UserSchema for the current user that is logged in
   public async getUser(): Promise<UserSchema> {
     return {  UserID: "abc", 
               FirstName: "john",
@@ -84,14 +85,14 @@ export class ApiClient {
           };
   }
 
-  //TODO: setup endpoint for getting userInformation for a given uuid
-  public async getUserByUUID(UUID: string): Promise<UserSchema> {
-    return {  UserID: "bcd", 
+  //TODO: hook up to backend, izzys pr has it just not merged yet
+  public async getAllUsers(): Promise<UserSchema[]> {
+    return [{  UserID: "bcd", 
               FirstName: "joe",
               LastName: "jane",
-              Type: "Employee",
+              Type: "Associate",
               Picture: "https://www.google.com/panda.png"
-          };
+          }];
   }
 
  
