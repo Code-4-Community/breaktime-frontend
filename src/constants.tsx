@@ -8,19 +8,17 @@ export const DATETIME_FORMAT = "MM/DD/YY";
 export const defaultColors = { BREAKTIME_BLUE: '#001D66' };
 
 
-
 export const enum PAGE_ROUTES {
     ROOT = "/",
     TIMECARD = "/timecard", 
     LOGOUT = "/logout"
   }
 
-
 // Example data that can be used in testing until we re-format DB 
 export const EXAMPLE_ROW = {
     Type: CellType.Regular,  
     Date: moment().tz(TIMEZONE).unix(),  
-    Associate: {
+    Associate: { 
         Start: 120,  End:300, Author:0
     },  
     Supervisor: undefined, 
@@ -44,8 +42,10 @@ export const EXAMPLE_TIMESHEET = {
     CompanyID: "NEU", 
     StartDate: moment().tz(TIMEZONE).startOf('week').day(0).unix(), 
     Status: {
-        Stage: Review_Stages.UNSUBMITTED,
-        Timestamp: undefined 
+        Employee: undefined, 
+        Manager: undefined, 
+        Admin: undefined, 
+        Accepted: undefined
     }, 
     WeekComments:[], 
     TableData: [{...EXAMPLE_ROW}], 
@@ -60,8 +60,10 @@ export const EXAMPLE_TIMESHEET_2 = {
     CompanyID: "Star Market", 
     StartDate: moment().tz(TIMEZONE).startOf('week').day(0).unix(), 
     Status: {
-        Stage: Review_Stages.UNSUBMITTED,
-        Timestamp: undefined 
+        Employee: {Date: moment().tz(TIMEZONE).unix(), Author:"<Some UUID of an author>"}, 
+        Manager: undefined, 
+        Admin: undefined, 
+        Accepted: undefined
     }, 
     WeekComments:[], 
     TableData: [{...EXAMPLE_ROW}], 

@@ -13,7 +13,6 @@ interface AggregationProps {
 function AggregationTable(props:AggregationProps) {
 	//NOTE: Aggregation is only applying to associate entries currently - TODO is to develop logic for all user types 
 
-
 	const totalHoursForEachDay = {};
 
 	// add the days in that stretch to dictionary 

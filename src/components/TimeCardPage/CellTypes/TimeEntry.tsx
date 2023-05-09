@@ -12,8 +12,6 @@ interface TimeEntryProps {
 export function TimeEntry(props:TimeEntryProps) {
     const [minutes, setMinutes] = useState(undefined); 
 
-    // const thing = useMemo(() => renderClockTime(args), [minutes])
-
     const onChange = (time) => {
         const [hours, parsedMinutes] = time.split(":");   
         const calculatedTime = Number(hours) * 60 + Number(parsedMinutes)
