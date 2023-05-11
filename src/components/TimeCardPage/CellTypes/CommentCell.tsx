@@ -17,16 +17,16 @@ export function CommentCell(props:CommentProps) {
     //TODO - Eventually refactor to handle multiple comments / process for grabbing user 
     useEffect(() => {
         // If empty, create stubbed empty one to leave our comments at - eventually refactor to just add this to the end as the current users comments?
-        if (comments === undefined) {
+        if (props.comments === undefined) {
             //Create one empty comment 
             setComments([{
-                Author:"DEBUG User Account", 
+                AuthorID:"<TODO Fill this in at some point>", 
                 Type: CommentType.Comment, 
                 Timestamp: moment().tz(TIMEZONE).unix(), 
                 Content:"" 
             }]); 
         } 
-    }, []); 
+    }, []);  
     
 
     const onUpdate = (event) => {

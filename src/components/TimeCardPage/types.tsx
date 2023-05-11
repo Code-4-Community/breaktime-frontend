@@ -3,6 +3,11 @@ export enum CellType {
     PTO = "PTO"
 }; 
 
+export enum CellStatus {
+    Active="Active",
+    Deleted="Deleted"
+}
+
 export enum CommentType { 
     Comment = "Comment", 
     Report = "Report", 

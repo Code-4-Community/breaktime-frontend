@@ -21,7 +21,7 @@ export function TimeEntry(props:TimeEntryProps) {
         var rowToMutate = props.row.Associate; 
         if (rowToMutate === undefined) {
             rowToMutate = {
-                Start:undefined, End:undefined, Author:0 
+                Start:undefined, End:undefined, AuthorID:"<TODO-add ID>"
             }
         }
         rowToMutate[props.field] = calculatedTime; 

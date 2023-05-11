@@ -1,5 +1,5 @@
 import moment from 'moment-timezone';
-import {CellType, CommentType, Review_Stages} from './components/TimeCardPage/types'; 
+import {CellType, CommentType, Review_Stages, CellStatus} from './components/TimeCardPage/types'; 
 
 export const TIMESHEET_DURATION = 7; 
 export const TIMEZONE = "America/New_York"; 
@@ -24,16 +24,18 @@ export const EXAMPLE_ROW = {
     Supervisor: undefined, 
     Admin: undefined , 
     Comment: [{
-        Author: "Joseph", 
+        AuthorID: "Joseph", 
         Type: CommentType.Comment, 
         Timestamp: moment().tz(TIMEZONE).subtract(1, 'days').unix(), 
-        Content: "Great job with this entry!"
+        Content: "Great job with this entry!", 
+        State: CellStatus.Active
     }], 
 }
 
 export const SCHEDULE_ENTRY = {
     Start: 0, 
     End: 0, 
+    AuthorID: "<UUID OF AUTHOR>"
 }
 
 export const EXAMPLE_TIMESHEET = {
@@ -42,17 +44,14 @@ export const EXAMPLE_TIMESHEET = {
     CompanyID: "NEU", 
     StartDate: moment().tz(TIMEZONE).startOf('week').day(0).unix(), 
     Status: {
-        Employee: undefined, 
-        Manager: undefined, 
-        Admin: undefined, 
-        Accepted: undefined
+        HoursSubmitted: undefined, 
+        HoursReviewed: undefined, 
+        ScheduleSubmitted: undefined, 
+        Finalized: undefined
     }, 
-    WeekComments:[], 
+    WeekNotes:[], 
     TableData: [{...EXAMPLE_ROW}], 
-    ScheduledData: {
-        Author:"<UUID of person>", 
-        TableData: [SCHEDULE_ENTRY]
-    }
+    ScheduleTableData: [{...SCHEDULE_ENTRY}]
 }
 export const EXAMPLE_TIMESHEET_2 = {
     UserID: "b43227a4-0b42-4cfc-8a2c-16e2f2e64fbe", 
@@ -60,15 +59,12 @@ export const EXAMPLE_TIMESHEET_2 = {
     CompanyID: "Star Market", 
     StartDate: moment().tz(TIMEZONE).startOf('week').day(0).unix(), 
     Status: {
-        Employee: {Date: moment().tz(TIMEZONE).unix(), Author:"<Some UUID of an author>"}, 
-        Manager: undefined, 
-        Admin: undefined, 
-        Accepted: undefined
+        HoursSubmitted: {Date: moment().tz(TIMEZONE).unix(), Author:"<Some UUID of an author>"}, 
+        HoursReviewed: undefined, 
+        ScheduleSubmitted: undefined, 
+        Finalized: undefined
     }, 
-    WeekComments:[], 
+    WeekNotes:[], 
     TableData: [{...EXAMPLE_ROW}], 
-    ScheduledData: {
-        Author:"<UUID of person>", 
-        TableData: [SCHEDULE_ENTRY]
-    }
+    ScheduleTableData: [{...SCHEDULE_ENTRY}]
 }
