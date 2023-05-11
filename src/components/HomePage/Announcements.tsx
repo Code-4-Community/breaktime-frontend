@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Card, CardHeader, CardBody, Alert, Image, Button, Icon } from '@chakra-ui/react';
+import { Card, CardHeader, CardBody, Alert, Image, Button, Icon, Flex, VStack } from '@chakra-ui/react';
 import { defaultColors } from '../../utils';
 import { TfiAnnouncement } from 'react-icons/tfi';
 
@@ -16,24 +16,28 @@ export default function Announcements() {
   // };
 
   return (
-    <div className='announcements' style={{ 'display': 'flex', 'gridColumnStart': 1, 'gridRowStart': 2 }}>
-      <Card style={{ 'width': '100%' }}>
-        <CardHeader as='h5' style={{ 'backgroundColor': defaultColors.BREAKTIME_BLUE, 'color': 'white', 'display': 'flex', 'gap': '1%', 'alignItems': 'center' }}>
-          <Icon as={TfiAnnouncement} />
-          Announcements
+    <Flex gridColumnStart={1} gridRowStart={2}>
+      <Card width={'100%'} rounded={'lg'}>
+        <CardHeader as='h5' backgroundColor={defaultColors.BREAKTIME_BLUE} color={'white'}>
+          <Flex gap={'1%'}>
+            <Icon as={TfiAnnouncement} />
+            Announcements
+          </Flex >
         </CardHeader>
         <CardBody>
           {events[0] ?
-            <div>
+            <VStack>
               {events.map((event, index) => (
-                <Alert key={index} style={{ 'display': 'flex', 'gap': '1%', 'alignItems': 'center' }}>
-                  <Image src={event.photo} />
+                <Alert key={index} display={'flex'} gap={'1%'} alignItems={'center'} rounded={'lg'}>
+                  <Image src={event.photo} width={'10%'} />
                   {`${event.date}: ${event.name}`}
-                  <Button style={{ 'backgroundColor': defaultColors.BREAKTIME_BLUE, 'borderWidth': '0px' }}>Register</Button>
+                  <Button as='a' href={event.url} target='_blank' backgroundColor={defaultColors.BREAKTIME_BLUE}
+                    borderWidth={'0px'} color={'white'}>Register</Button>
                 </Alert>))}
-            </div>
+            </VStack>
             : 'No announcements'}
         </CardBody>
       </Card>
-    </div>);
+    </Flex>
+  );
 }

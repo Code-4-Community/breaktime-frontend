@@ -1,9 +1,7 @@
 import React from 'react';
-import { Card, CardHeader, CardBody, Icon } from '@chakra-ui/react';
+import { Card, CardHeader, CardBody, Icon, Flex, Container } from '@chakra-ui/react';
 import { defaultColors } from '../../utils';
 import { data, dataBar } from './dummyData';
-
-import { IconContext } from 'react-icons';
 import { BsFillFileBarGraphFill } from 'react-icons/bs';
 
 import Chart from "chart.js/auto";
@@ -15,20 +13,24 @@ Chart.register(CategoryScale);
 export default function MonthAtAGlance() {
 
   return (
-    <div className='monthAtAGlance' style={{ 'display': 'flex', 'gridColumnStart': 1, 'gridRowStart': 1 }}>
-      <Card style={{ 'width': '100%' }}>
-        <CardHeader as='h5' style={{ 'backgroundColor': defaultColors.BREAKTIME_BLUE, 'color': 'white', 'display': 'flex', 'gap': '1%', 'alignItems': 'center' }}>
+    <Flex gridColumnStart={1} gridRowStart={1}>
+      <Card width={'100%'} rounded={'lg'}>
+        <CardHeader as='h5' backgroundColor={defaultColors.BREAKTIME_BLUE} color={'white'} rounded={'lg'}>
+          <Flex gap={'1%'}>
             <Icon as={BsFillFileBarGraphFill} />
-          Month at a Glance
+            Month at a Glance
+          </Flex >
         </CardHeader>
-        <CardBody style={{ 'display': 'flex', 'justifyContent': 'space-around', 'alignItems': 'center' }}>
-          <div style={{ 'width': '1fr' }}>
-            <Pie data={data} />
-          </div>
-          <div style={{ 'width': '1fr' }}>
-            <Bar data={dataBar} />
-          </div>
+        <CardBody>
+          <Flex alignItems={'center'} justifyContent={'space-around'}>
+            <Container width={'1fr'}>
+              <Pie data={data} />
+            </Container>
+            <Container width={'1fr'}>
+              <Bar data={dataBar} />
+            </Container>
+          </Flex>
         </CardBody>
       </Card>
-    </div>);
+    </Flex >);
 }
