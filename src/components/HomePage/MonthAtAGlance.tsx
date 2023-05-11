@@ -1,6 +1,6 @@
 import React from 'react';
 import { Card } from 'react-bootstrap';
-import { defaultColors } from '../../utils';
+import { defaultColors } from '../../constants';
 import { data, dataBar } from './dummyData';
 
 import { IconContext } from 'react-icons';

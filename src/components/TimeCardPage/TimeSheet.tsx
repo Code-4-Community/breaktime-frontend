@@ -1,54 +1,66 @@
-import React, { useState } from 'react';
+import React, {useState, useMemo} from 'react'; 
 import TimeTable from './TimeTable'
 import { useEffect } from 'react';
-import SubmitCard from './SubmitCard';
+import SubmitCard from './SubmitCard'; 
 import DateSelectorCard from './SelectWeekCard'
-import moment, {Moment} from 'moment';
-import { Tabs, TabList, Tab, CardBody } from '@chakra-ui/react'
+
+import {
+    Alert,
+    AlertIcon,
+    AlertTitle,
+    AlertDescription,
+    } from '@chakra-ui/react'
+import { 
+    IconButton, 
+    Card, 
+    CardBody, 
+    Avatar, 
+    HStack, 
+    Text
+    } from '@chakra-ui/react'
+
+import {
+    Tabs, 
+    TabList, 
+    Tab 
+    } from '@chakra-ui/react' 
+
+
+import { TIMESHEET_DURATION, TIMEZONE, EXAMPLE_TIMESHEET, EXAMPLE_TIMESHEET_2 } from 'src/constants';
+
+import { Review_Stages, TABLE_COLUMNS } from './types';
+import moment, {Moment} from 'moment-timezone';
 
 import apiClient from '../Auth/apiClient';
 import AggregationTable from './AggregationTable';
-import {TimeSheetSchema} from '../../schemas/TimesheetSchema'
+import { v4 as uuidv4 } from 'uuid';
 import {UserSchema} from '../../schemas/UserSchema'
 
-import { IconButton, Card, Avatar, HStack, Text } from '@chakra-ui/react'
 import { SearchIcon, WarningIcon, DownloadIcon } from '@chakra-ui/icons';
 import  { Select, components } from 'chakra-react-select'
 
 //TODO - Refactor to backend calls once setup to pull rows, etc. 
-const defaultColumns = ['Date', 'Clock-in', 'Clock-Out', 'Hours', 'Comment']
 
-const defaultRows = [
-    {"StartDate":"1679918400", "Duration":"132", 
-    "Comment":{
-        "AuthorUUID":"XXXX", 
-        "Type":"Report / Comment, etc", 
-        "Timestamp":"", 
-        "Content":":)" 
-    }}, 
-    
-] 
-// Example timesheet we are parsing out 
-const testingTimesheetResp = {
-    "UserID":"77566d69-3b61-452a-afe8-73dcda96f876", 
-    "TimesheetID":22222, 
-    "Company":"Breaktime",
-    "StartDate":1679918400,
-    "Status":"Accepted",
-    "TableData":[]
-}
+
 //To test uploading a timesheet 
 // apiClient.updateUserTimesheet(testingTimesheetResp); 
 
-const createEmptyTable = (startDate, company, userId, timesheetID) => {
+const createEmptyTable = (startDate, company) => {
     // We assign uuid to provide a unique key identifier to each row for reacts rendering 
+    
+    //TODO's: Pull UserID automatically
     return {
-        "UserID":userId, 
-        "TimesheetID":timesheetID, 
-        "Company":company,
-        "StartDate":startDate,
-        "Status":"Accepted",
-        "TableData":[]
+        UserID: "77566d69-3b61-452a-afe8-73dcda96f876",
+        TimesheetID: uuidv4(), 
+        CompanyID: company, 
+        StartDate: startDate, 
+        Status: {
+            Stage: Review_Stages.APPROVED, 
+            Timestamp: undefined 
+        },
+        WeekComments: [], 
+        TableData:[], 
+        ScheduledData: undefined 
     }
 }
 
@@ -114,10 +126,10 @@ function SearchEmployeeTimesheet({employees, setSelected}) {
 
 export default function Page() {
     //const today = moment(); 
-    const [startDate, setStartDate] = useState(moment().startOf('week').day(0)); 
+    const [selectedDate, setSelectedDate] = useState(moment().startOf('week').day(0)); 
 
     const updateDateRange = (date:Moment) => {
-        setStartDate(date); 
+        setSelectedDate(date); 
         //TODO - Refactor this to use the constant in merge with contants branch 
         setCurrentTimesheetsToDisplay (userTimesheets, date); 
     }
@@ -131,12 +143,14 @@ export default function Page() {
     const [user, setUser] = useState<UserSchema>();
 
     // associates is only used by supervisor/admin for the list of all associates they have access to
-    const [associates, setAssociates] = useState<UserSchema[]>();
+    const [associates, setAssociates] = useState<UserSchema[]>([]);
 
-    const [userTimesheets, setUserTimesheets] = useState<TimeSheetSchema[]>([]); 
-    const [currentTimesheets, setCurrentTimesheets] = useState<TimeSheetSchema[]>([]);
-    const [selectedTimesheet, setTimesheet] = useState<TimeSheetSchema>();
-    const columns = defaultColumns 
+    // A list of the timesheet objects 
+    // TODO: add types
+    const [userTimesheets, setUserTimesheets] = useState([]); 
+    const [currentTimesheets, setCurrentTimesheets] = useState([]);
+    const [selectedTimesheet, setTimesheet] = useState(undefined);
+
 
     // this hook should always run first
     useEffect(() => {
@@ -158,66 +172,80 @@ export default function Page() {
     // Pulls user timesheets, marking first returned as the active one
     useEffect(() => {
         // Uncomment this if you want the default one loaded 
-        //setTimesheet(testingTimesheetResp)
-        apiClient.getUserTimesheets(selectedUser?.UserID).then(timesheets => {
-            setUserTimesheets(timesheets); 
-            //By Default just render / select the first timesheet for now 
-            setCurrentTimesheetsToDisplay(timesheets, startDate);
-        });
+        setUserTimesheets([EXAMPLE_TIMESHEET, EXAMPLE_TIMESHEET_2]);
+        
+        //apiClient.getUserTimesheets(selectedUser?.UserID).then(timesheets => {
+        //    setUserTimesheets(timesheets); 
+        //    //By Default just render / select the first timesheet for now 
+        //    setCurrentTimesheetsToDisplay(timesheets, startDate);
+        //});
     }, [selectedUser])
 
-    const processTimesheetChange = (rows) => {
-        //Adding the time entry to the table 
-        //apiClient.addTimeEntry(timesheet); 
-        rows = rows.map((row) => {
-            delete row.id;
-            return row;
-        })
-
-        // update userTimesheets
-        // currentTimesheets
-        if (rows.length > 0) {
-            const changedSheet = createEmptyTable(rows[0].StartDate, selectedTimesheet?.Company,  selectedTimesheet?.UserID, selectedTimesheet?.TimesheetID);
-            changedSheet.TableData = rows;
-            const newCurrentTimesheets = currentTimesheets.map((sheet) => {
-                if (changedSheet.TimesheetID === sheet.TimesheetID){
-                    return changedSheet;
+    const processTimesheetChange = (updated_sheet) => {
+        // Updating the rows of the selected timesheets from our list of timesheets 
+        const modifiedTimesheets = userTimesheets.map((entry) => {
+            if (entry.TimesheetID === selectedTimesheet.TimesheetID) {
+                return {
+                    ...entry, 
+                    TableData: updated_sheet.TableData 
                 }
-                return sheet;
-            })
-
-            // also issue with all minutes being changed to 04 for some reason
-            // but why
-            if (userTimesheets.length > 0) {
-                const newUserTimesheets = userTimesheets.map((sheet) => {
-                    if (changedSheet.TimesheetID === sheet.TimesheetID){
-                        return changedSheet;
-                    }
-                    return sheet;
-                })
-
-                setCurrentTimesheets(newCurrentTimesheets);
-                setUserTimesheets(newUserTimesheets);
             }
-        }
-
+            return entry 
+        });
+        setUserTimesheets(modifiedTimesheets);  
+        
+        //Also need to update our list of currently selected - TODO come up with a way to not need these duplicated lists 
+        setCurrentTimesheets(currentTimesheets.map(
+            (entry) => {
+                if (entry.TimesheetID === selectedTimesheet.TimesheetID) {
+                    return {
+                        ...entry, 
+                        TableData: updated_sheet.TableData
+                    }
+                } 
+                return entry 
+            }
+        ));
+        
+        // selectedTimesheet.TableData = rows; 
     }
 
     const setCurrentTimesheetsToDisplay  = (timesheets, currentStartDate:Moment) => {
         const newCurrentTimesheets  = timesheets.filter(sheet => moment.unix(sheet.StartDate).isSame(currentStartDate, 'day'));
 
         if (newCurrentTimesheets.length < 1){
-            newCurrentTimesheets.push(createEmptyTable(currentStartDate.unix(), "new", "77566d69-3b61-452a-afe8-73dcda96f876", 22222)); // TODO: change to make correct timesheets for the week
+            newCurrentTimesheets.push(createEmptyTable(currentStartDate.unix(), "new")); // TODO: change to make correct timesheets for the week
         }
 
         if (newCurrentTimesheets.length > 1){ 
-            newCurrentTimesheets.push(createEmptyTable(currentStartDate.unix(), "Total", "77566d69-3b61-452a-afe8-73dcda96f876", 22222));
-
+            newCurrentTimesheets.push(createEmptyTable(currentStartDate.unix(), "Total"));
         }
 
         setCurrentTimesheets(newCurrentTimesheets);
         setTimesheet(newCurrentTimesheets[0]);
     }
+
+    const renderWarning = () => {
+        const currentDate = moment().tz(TIMEZONE);  
+
+        const dateToCheck = moment(selectedDate); 
+        dateToCheck.add(TIMESHEET_DURATION, 'days'); 
+        if (currentDate.isAfter(dateToCheck,'days')) {
+            return <Alert status='error'>
+                    <AlertIcon />
+                    <AlertTitle>Your timesheet is late!</AlertTitle>
+                    <AlertDescription>Please submit this as soon as possible</AlertDescription>
+                </Alert>
+        } else {
+            const dueDuration = dateToCheck.diff(currentDate,'days'); 
+            return <Alert status='info'>
+                <AlertIcon />
+                <AlertTitle>Your timesheet is due in {dueDuration} days!</AlertTitle>
+                <AlertDescription>Remember to press the submit button!</AlertDescription>
+            </Alert>
+        }
+    }
+
 
     return (
         <>
@@ -229,21 +257,22 @@ export default function Page() {
                     <IconButton aria-label='Download' icon={<DownloadIcon />} />
                     <IconButton aria-label='Report' icon={<WarningIcon />} />
                     </>: <></>}
-                <DateSelectorCard onDateChange={updateDateRange} date={startDate}/>
+                <DateSelectorCard onDateChange={updateDateRange} date = {selectedDate}/>
                 <SubmitCard/>
             </HStack>
+            {useMemo(() => renderWarning(), [selectedDate])}
             <Tabs>
             <TabList> 
                 {currentTimesheets.map(
                     (sheet) => (
-                        <Tab onClick={() => setTimesheet(sheet)}>{sheet.Company}</Tab>
+                        <Tab onClick={() => setTimesheet(sheet)}>{sheet.CompanyID}</Tab>
                     ) 
                 )}
             </TabList>
             </Tabs>
-            {selectedTimesheet?.Company === "Total" ? 
-            (<AggregationTable startDate={startDate} timesheets={currentTimesheets}/>)
-            : (<TimeTable columns={columns} timesheet={selectedTimesheet} onTimesheetChange={processTimesheetChange}/>)}
+            {selectedTimesheet?.CompanyID === "Total" ? 
+            (<AggregationTable Date={selectedDate} timesheets={currentTimesheets}/>)
+            : (<TimeTable columns={TABLE_COLUMNS} timesheet={selectedTimesheet} onTimesheetChange={processTimesheetChange}/>)}
             
         </>
     )
