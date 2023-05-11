@@ -1,30 +1,43 @@
 import React, {useState, useMemo} from 'react'; 
 import TimeTable from './TimeTable'
-import Card from 'react-bootstrap/Card';
-import DatePicker from 'react-datepicker';
 import { useEffect } from 'react';
 import SubmitCard from './SubmitCard'; 
 import DateSelectorCard from './SelectWeekCard'
 
-import {TimeSheetSchema} from '../../schemas/TimesheetSchema'
 import {
     Alert,
     AlertIcon,
     AlertTitle,
     AlertDescription,
-  } from '@chakra-ui/react'
+    } from '@chakra-ui/react'
+import { 
+    IconButton, 
+    Card, 
+    CardBody, 
+    Avatar, 
+    HStack, 
+    Text
+    } from '@chakra-ui/react'
+
+import {
+    Tabs, 
+    TabList, 
+    Tab 
+    } from '@chakra-ui/react' 
+
 
 import { TIMESHEET_DURATION, TIMEZONE, EXAMPLE_TIMESHEET, EXAMPLE_TIMESHEET_2 } from 'src/constants';
 
 import { Review_Stages, TABLE_COLUMNS } from './types';
 import moment, {Moment} from 'moment-timezone';
-import { Tabs, TabList, Tab } from '@chakra-ui/react'
 
 import apiClient from '../Auth/apiClient';
-import { start } from 'repl';
 import AggregationTable from './AggregationTable';
 import { v4 as uuidv4 } from 'uuid';
+import {UserSchema} from '../../schemas/UserSchema'
 
+import { SearchIcon, WarningIcon, DownloadIcon } from '@chakra-ui/icons';
+import  { Select, components } from 'chakra-react-select'
 
 //TODO - Refactor to backend calls once setup to pull rows, etc. 
 
@@ -53,6 +66,63 @@ const createEmptyTable = (startDate, company) => {
 
 const user = 'Example User'
 
+const testingEmployees = [
+    {UserID: "abc", FirstName: "joe", LastName: "jane", Type: "Employee", Picture: "https://www.google.com/koala.png"},
+    {UserID: "bcd", FirstName: "david", LastName: "lev", Type: "Employee", Picture: "https://www.google.com/panda.png"},
+    {UserID: "cde", FirstName: "crys", LastName: "tal", Type: "Employee", Picture: "https://www.google.com/capybara.png"},
+    {UserID: "def", FirstName: "ken", LastName: "ney", Type: "Employee", Picture: "https://www.google.com/koala.png"},
+]
+
+function ProfileCard({employee}) {
+
+    return (
+        <Card direction="row" width="50%">
+            <Avatar src={employee?.Picture} name={employee?.FirstName + " " + employee?.LastName} size='md' showBorder={true} borderColor='black' borderWidth='thick'/>
+            <CardBody>
+                <Text>{employee?.FirstName + " " + employee?.LastName}</Text>
+            </CardBody>
+        </Card>
+    )
+}
+
+function SearchEmployeeTimesheet({employees, setSelected}) {
+    
+    const handleChange = (selectedOption) => {
+        setSelected(selectedOption);
+    }
+
+    const customStyles = {
+        control: (base) => ({
+          ...base,
+          flexDirection: 'row-reverse',
+        }),
+      }
+
+    const DropdownIndicator = (props) => {
+        return (
+          <components.DropdownIndicator {...props}>
+            <SearchIcon />
+          </components.DropdownIndicator>
+        );
+      };
+
+    // TODO: fix styling
+    // at the moment defaultValue is the first user in the employees array
+    // which is currently an invariant that matches the useState in Page
+    return (
+        <div style={{width: '600px'}}>
+            <Select isSearchable={true} 
+            defaultValue={employees[0]} 
+            chakraStyles={customStyles} 
+            size="lg" 
+            options={employees} 
+            onChange={handleChange} 
+            components={{ DropdownIndicator }}
+            getOptionLabel={option =>`${option.FirstName + " " + option.LastName}`}
+            getOptionValue={option => `${option.FirstName + " " + option.LastName}`}/>
+        </div>
+    )
+}
 
 export default function Page() {
     //const today = moment(); 
@@ -63,27 +133,53 @@ export default function Page() {
         //TODO - Refactor this to use the constant in merge with contants branch 
         setCurrentTimesheetsToDisplay (userTimesheets, date); 
     }
+    
+    // fetch the information of the user whos timesheet is being displayed
+    // if user is an employee selected and user would be the same
+    // if user is a supervisor/admin then selected would contain the information of the user
+    // whos timesheet is being looked at and user would contain the supervisor/admins information
+    // by default the first user is selected
+    const [selectedUser, setSelectedUser] = useState<UserSchema>();
+    const [user, setUser] = useState<UserSchema>();
+
+    // associates is only used by supervisor/admin for the list of all associates they have access to
+    const [associates, setAssociates] = useState<UserSchema[]>([]);
+
     // A list of the timesheet objects 
+    // TODO: add types
     const [userTimesheets, setUserTimesheets] = useState([]); 
     const [currentTimesheets, setCurrentTimesheets] = useState([]);
     const [selectedTimesheet, setTimesheet] = useState(undefined);
 
 
+    // this hook should always run first
+    useEffect(() => {
+        apiClient.getUser().then(userInfo => {
+            setUser(userInfo);
+            if (userInfo.Type === "Supervisor" || userInfo.Type === "Admin"){
+                apiClient.getAllUsers().then(users => {
+                    setAssociates(users);
+                    setSelectedUser(users[0]);
+                })
+            }
+            setSelectedUser(userInfo)
+        })
+        // if employee setSelectedUSer to be userinfo
+        // if supervisor/admin get all users
+        // set selected user
+    }, [])
 
-    //Pulls user timesheets, marking first returned as the active one
+    // Pulls user timesheets, marking first returned as the active one
     useEffect(() => {
         // Uncomment this if you want the default one loaded 
-        //setTimesheet(testingTimesheetResp)
-
-        setUserTimesheets([EXAMPLE_TIMESHEET, EXAMPLE_TIMESHEET_2]); 
+        setUserTimesheets([EXAMPLE_TIMESHEET, EXAMPLE_TIMESHEET_2]);
         
-
-        // apiClient.getUserTimesheets().then(timesheets => {
-        //     setUserTimesheets(timesheets); 
-        //     //By Default just render / select the first timesheet for now 
-        //     setCurrentTimesheetsToDisplay (timesheets, startDate); 
-        // });
-    }, [])
+        //apiClient.getUserTimesheets(selectedUser?.UserID).then(timesheets => {
+        //    setUserTimesheets(timesheets); 
+        //    //By Default just render / select the first timesheet for now 
+        //    setCurrentTimesheetsToDisplay(timesheets, startDate);
+        //});
+    }, [selectedUser])
 
     const processTimesheetChange = (updated_sheet) => {
         // Updating the rows of the selected timesheets from our list of timesheets 
@@ -152,12 +248,18 @@ export default function Page() {
 
 
     return (
-        <div>
-            <div  style={{"display":'flex'}}>
+        <>
+            <HStack spacing="120px">
+                <ProfileCard employee={user}/>
+                {(user?.Type === "Supervisor" || user?.Type === "Admin") ?
+                    <>
+                    <SearchEmployeeTimesheet employees={associates} setSelected={setSelectedUser}/>
+                    <IconButton aria-label='Download' icon={<DownloadIcon />} />
+                    <IconButton aria-label='Report' icon={<WarningIcon />} />
+                    </>: <></>}
                 <DateSelectorCard onDateChange={updateDateRange} date = {selectedDate}/>
-                <div className="col-md-5"></div>
                 <SubmitCard/>
-            </div>
+            </HStack>
             {useMemo(() => renderWarning(), [selectedDate])}
             <Tabs>
             <TabList> 
@@ -172,6 +274,6 @@ export default function Page() {
             (<AggregationTable Date={selectedDate} timesheets={currentTimesheets}/>)
             : (<TimeTable columns={TABLE_COLUMNS} timesheet={selectedTimesheet} onTimesheetChange={processTimesheetChange}/>)}
             
-        </div>
+        </>
     )
 }
