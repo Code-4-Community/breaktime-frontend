@@ -1,6 +1,7 @@
 import { Auth } from 'aws-amplify';
 import axios, { AxiosInstance } from 'axios';
 import {TimeSheetSchema} from '../../schemas/TimesheetSchema'
+import {UserSchema} from '../../schemas/UserSchema'
 
 
 const defaultBaseUrl = process.env.REACT_APP_API_BASE_URL ?? 'http://localhost:3000';
@@ -59,8 +60,8 @@ export class ApiClient {
     return this.axiosInstance.patch(path, body).then((response) => response.data);
   }
 
-
-  public async getUserTimesheets(): Promise<TimeSheetSchema[]> {
+  // TODO: setup endpoint for associate/supervisor/admin so it returns a list of timesheets for given uuid
+  public async getUserTimesheets(UUID: string): Promise<TimeSheetSchema[]> {
     return this.get('auth/timesheet') as Promise<TimeSheetSchema[]>; 
   }
 
@@ -71,6 +72,27 @@ export class ApiClient {
 
   public async getPasswordTest(): Promise<string> {
     return this.get('/auth/timesheet') as Promise<string>;
+  }
+
+  // TODO: setup endpoint for getting user information
+  // all roles -> return UserSchema for the current user that is logged in
+  public async getUser(): Promise<UserSchema> {
+    return {  UserID: "abc", 
+              FirstName: "john",
+              LastName: "doe",
+              Type: "Supervisor",
+              Picture: "https://www.google.com/koala.png"
+          };
+  }
+
+  //TODO: hook up to backend, izzys pr has it just not merged yet
+  public async getAllUsers(): Promise<UserSchema[]> {
+    return [{  UserID: "bcd", 
+              FirstName: "joe",
+              LastName: "jane",
+              Type: "Associate",
+              Picture: "https://www.google.com/panda.png"
+          }];
   }
 
  

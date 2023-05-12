@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Card, CardHeader, CardBody, Alert, Button, CloseButton, Icon, Flex, VStack } from '@chakra-ui/react';
-import { defaultColors } from '../../utils';
+import { defaultColors } from '../../constants';
 import { BiMessageDetail } from 'react-icons/bi';
 
 enum MessageTypes {

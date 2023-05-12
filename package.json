@@ -4,13 +4,14 @@
   "private": true,
   "dependencies": {
     "@aws-amplify/ui-react": "^4.3.9",
-    "@chakra-ui/react": "^2.6.0",
-    "@emotion/react": "^11.10.8",
-    "@emotion/styled": "^11.10.8",
+    "@chakra-ui/icons": "^2.0.19",
+    "@chakra-ui/react": "^2.5.5",
+    "@emotion/react": "^11.10.6",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
     "@types/jest": "^29.5.0",
+    "@types/moment-timezone": "^0.5.30",
     "@types/node": "^18.15.11",
     "@types/react": "^18.0.33",
     "@types/react-dom": "^18.0.11",
@@ -18,11 +19,10 @@
     "base-64": "^1.0.0",
     "bootstrap": "^5.2.2",
     "buffer": "^6.0.3",
+    "chakra-react-select": "^4.6.0",
     "chart.js": "^4.2.1",
     "date-fns": "^2.29.3",
-    "framer-motion": "^10.12.4",
-    "grommet-icons": "^4.10.0",
-    "grommet-styles": "^0.2.0",
+    "framer-motion": "^10.11.6",
     "moment": "^2.29.4",
     "react": "^18.2.0",
     "react-bootstrap": "^2.6.0",
@@ -33,17 +33,19 @@
     "react-datetime-picker": "^4.2.0",
     "react-dom": "^18.2.0",
     "react-icons": "^4.8.0",
-    "react-icons-kit": "^2.0.0",
     "react-router-dom": "^6.4.3",
-    "react-scripts": "5.0.1",
+    "react-scripts": "^5.0.1",
     "react-tabs": "^6.0.0",
     "react-time-picker": "^6.0.4",
     "reactjs-popup": "^2.0.5",
-    "typescript": "^4.5.4",
+    "typescript": "^5.0.4",
     "uuid": "^9.0.0",
     "web-vitals": "^2.1.4",
     "zod": "^3.21.4"
   },
+  "overrides": {    
+    "typescript": "^5.0.4"
+  },  
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
@@ -68,8 +70,5 @@
       "last 1 safari version"
     ]
   },
-  "proxy": "http://localhost:3050",
-  "devDependencies": {
-    "@types/react-chartjs-2": "^2.5.7"
-  }
+  "proxy": "http://localhost:3050"
 }

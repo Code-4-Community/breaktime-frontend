@@ -18,26 +18,30 @@ import Signout from './components/SignOut/Signout'
 import 'bootstrap/dist/css/bootstrap.css';
 
 import '@aws-amplify/ui-react/styles.css';
-import { ChakraProvider } from '@chakra-ui/react';
+import { ChakraProvider } from '@chakra-ui/react'; 
 
-Amplify.configure(awsmobile);
+import {PAGE_ROUTES} from './constants'; 
+
+Amplify.configure(awsmobile); 
+
+
 
 
 export default function Landing() {
-  return (
-    <ChakraProvider>
-      <BrowserRouter>
-        <NavBar />
+    return (
+      <ChakraProvider>
+        <BrowserRouter>
+        <NavBar/> 
         <Routes>
-          <Route path="/" element={<AuthedApp page={<HomePage />} />} />
-          <Route path="/timecard" element={<AuthedApp page={<TimeSheet />} />} />
-          <Route path="/logout" element={<Signout />} />
+          <Route path={PAGE_ROUTES.ROOT} element={<AuthedApp page={<HomePage/>}/>}/>
+          <Route path={PAGE_ROUTES.TIMECARD} element={<AuthedApp page={<TimeSheet />}/>} />
+          <Route path={PAGE_ROUTES.LOGOUT} element={<Signout/>} />
 
         </Routes>
-      </BrowserRouter>
+      </BrowserRouter> 
     </ChakraProvider>
-  );
-}
+    );
+  }
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(<Landing />);
 // If you want to start measuring performance in your app, pass a function

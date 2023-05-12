@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Card, CardHeader, CardBody, Alert, Image, Button, Icon, Flex, VStack } from '@chakra-ui/react';
-import { defaultColors } from '../../utils';
+import { defaultColors } from '../../constants';
 import { TfiAnnouncement } from 'react-icons/tfi';
 
 const SAMPLE_EVENT_LIST = [

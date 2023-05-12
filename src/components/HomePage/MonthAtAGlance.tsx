@@ -1,6 +1,6 @@
 import React from 'react';
 import { Card, CardHeader, CardBody, Icon, Flex, Container } from '@chakra-ui/react';
-import { defaultColors } from '../../utils';
+import { defaultColors } from '../../constants';
 import { data, dataBar } from './dummyData';
 import { BsFillFileBarGraphFill } from 'react-icons/bs';
 
