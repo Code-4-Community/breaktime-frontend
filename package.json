@@ -43,9 +43,9 @@
     "web-vitals": "^2.1.4",
     "zod": "^3.21.4"
   },
-  "overrides": {    
+  "overrides": {
     "typescript": "^5.0.4"
-  },  
+  },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
@@ -70,5 +70,8 @@
       "last 1 safari version"
     ]
   },
-  "proxy": "http://localhost:3050"
+  "proxy": "http://localhost:3050",
+  "devDependencies": {
+    "prettier": "2.8.8"
+  }
 }
