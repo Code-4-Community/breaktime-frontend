@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
+import CommentModal from './CommentModal';
 
 //https://react-bootstrap.github.io/components/cards/
 
@@ -11,13 +12,14 @@ export default function SubmitCard(props) {
         Rejected: "Rejected",
         InReviewEmployer: "In Review - Employer",
         InReviewBreaktime: "In Review - Breaktime",
-        Completed: "Completed"
+        Completed: "Completed",
+        Unsubmitted: "Unsubmitted"
     }
 
 
     const [submitted, setSubmitted] = useState(false);
     const [submitDate, setSubmitDate] = useState(null);
-    const [state, setState] = useState(CardState.Rejected);
+    const [state, setState] = useState(CardState.Unsubmitted);
     const [rejected, setRejected] = useState(false);
 
     useEffect(() => {
@@ -29,11 +31,11 @@ export default function SubmitCard(props) {
         setSubmitted(!submitted);
         const currentTime = new Date();
         setSubmitDate(currentTime.toString());
-        if (state === CardState.Rejected) {
+        if (state === CardState.Unsubmitted) {
             setState(CardState.InReviewEmployer);
         }
         else {
-            setState(CardState.Rejected);
+            setState(CardState.Unsubmitted);
         }
     }
 
@@ -54,6 +56,7 @@ export default function SubmitCard(props) {
                 {submitted && <Card.Footer>
                     {submitDate}
                     {state}
+                    <CommentModal></CommentModal>
 
                 </Card.Footer>}
             </Card>
