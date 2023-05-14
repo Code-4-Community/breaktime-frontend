@@ -26,9 +26,9 @@ export default function Messages() {
   };
 
   return (
-    <Flex gridColumnStart={2} gridRowStart={1} gridRowEnd={3}>
+    <Flex gridArea={'Messages'}>
       <Card width={'100%'} rounded={'lg'}>
-        <CardHeader as='h5' backgroundColor={defaultColors.BREAKTIME_BLUE} color={'white'}>
+        <CardHeader as='h5' backgroundColor={defaultColors.BREAKTIME_BLUE} color={'white'} rounded='lg'>
           <Flex gap={'1%'}>
             <Icon as={BiMessageDetail} />
             Messages

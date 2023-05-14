@@ -13,7 +13,7 @@ Chart.register(CategoryScale);
 export default function MonthAtAGlance() {
 
   return (
-    <Flex gridColumnStart={1} gridRowStart={1}>
+    <Flex gridArea={'MaaG'}>
       <Card width={'100%'} rounded={'lg'}>
         <CardHeader as='h5' backgroundColor={defaultColors.BREAKTIME_BLUE} color={'white'} rounded={'lg'}>
           <Flex gap={'1%'}>

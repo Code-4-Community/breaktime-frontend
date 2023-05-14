@@ -7,13 +7,15 @@ import React from 'react';
 export default function HomePage() {
 
   return (
-    <Grid templateAreas={`'MaaG Messages'
-                          'Announcements Messages'`}>
-      <div style={{ 'display': 'grid', 'gridTemplateRows': '1fr 1 fr', 'gridTemplateColumns': '1fr 1 fr', 'gap': '1%' }}>
-        <MonthAtAGlance />
-        <Announcements />
-        <Messages />
-      </div>
+    <Grid
+      templateAreas={`'MaaG Messages'
+                          'Announcements Messages'`}
+      gridTemplateRows={'1fr 1 fr'}
+      gridTemplateColumns={'1fr 1fr'}
+      gap={'1%'}>
+      <MonthAtAGlance />
+      <Announcements />
+      <Messages />
     </Grid>
   );
 }

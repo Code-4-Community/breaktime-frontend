@@ -16,9 +16,9 @@ export default function Announcements() {
   // };
 
   return (
-    <Flex gridColumnStart={1} gridRowStart={2}>
+    <Flex gridArea={'Announcements'}>
       <Card width={'100%'} rounded={'lg'}>
-        <CardHeader as='h5' backgroundColor={defaultColors.BREAKTIME_BLUE} color={'white'}>
+        <CardHeader as='h5' backgroundColor={defaultColors.BREAKTIME_BLUE} color={'white'} rounded={'lg'}>
           <Flex gap={'1%'}>
             <Icon as={TfiAnnouncement} />
             Announcements
