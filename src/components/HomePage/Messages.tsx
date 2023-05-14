@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Card, CardHeader, CardBody, Alert, Button, CloseButton, Icon, Flex, VStack } from '@chakra-ui/react';
+import { Card, CardHeader, CardBody, Alert, Button, CloseButton, Icon, Flex, VStack, Spacer } from '@chakra-ui/react';
 import { defaultColors } from '../../constants';
 import { BiMessageDetail } from 'react-icons/bi';
 
@@ -41,6 +41,7 @@ export default function Messages() {
                 <Alert key={index} display={'flex'} gap={'1%'} alignItems={'center'} rounded={'lg'}>
                   <CloseButton onClick={() => deleteMessage(index)} />
                   {message.type + ': ' + message.body}
+                  <Spacer />
                   <Button as='a' target='_blank' backgroundColor={defaultColors.BREAKTIME_BLUE}
                     borderWidth={'0px'} color={'white'}>View</Button>
                 </Alert>))}

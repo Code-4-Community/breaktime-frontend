@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Card, CardHeader, CardBody, Alert, Image, Button, Icon, Flex, VStack } from '@chakra-ui/react';
+import { Card, CardHeader, CardBody, Alert, Image, Button, Icon, Flex, VStack, Spacer } from '@chakra-ui/react';
 import { defaultColors } from '../../constants';
 import { TfiAnnouncement } from 'react-icons/tfi';
 
@@ -31,6 +31,7 @@ export default function Announcements() {
                 <Alert key={index} display={'flex'} gap={'1%'} alignItems={'center'} rounded={'lg'}>
                   <Image src={event.photo} width={'10%'} />
                   {`${event.date}: ${event.name}`}
+                  <Spacer />
                   <Button as='a' href={event.url} target='_blank' backgroundColor={defaultColors.BREAKTIME_BLUE}
                     borderWidth={'0px'} color={'white'}>Register</Button>
                 </Alert>))}
