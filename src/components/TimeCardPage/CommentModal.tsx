@@ -8,12 +8,6 @@ import React from 'react';
 
 export default function CommentModal(props) {
 
-    // enum for the type of comment the manager is leaving
-    enum CommentType {
-        Report,
-        Comment,
-    }
-
     const formik = useFormik({
         // TODO: add options for supervisor to choose from for the report
         initialValues: {
@@ -21,7 +15,9 @@ export default function CommentModal(props) {
             remarks: "",
         },
         onSubmit: (values) => {
-            // TODO: utilize a POST request to send comment to the backend (data is stored in 'values')
+            // TODO: utilize a request to send comment to the backend (data is stored in 'values')
+            // Have to figure out what new reqeusts will need to be implemented in order to send 
+            // this to the backend
             alert(JSON.stringify(values, null, 2));
         }
     });
@@ -58,17 +54,6 @@ export default function CommentModal(props) {
                                 value={formik.values.type}
                                 placeholder="Enter Comment/Report"
                             />
-                            {/* <Menu
-                            >
-                                <MenuButton as={Button}>
-                                    Type
-                                </MenuButton>
-                                <MenuList>
-                                    <MenuItem>Report</MenuItem>
-                                    <MenuItem>Comment</MenuItem>
-                                </MenuList>
-                            </Menu> */}
-
                             <button type='submit'>Submit</button>
                         </form>
 

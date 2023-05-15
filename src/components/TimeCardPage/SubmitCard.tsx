@@ -2,20 +2,13 @@ import React, { useState, useEffect } from 'react'
 import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
 import CommentModal from './CommentModal';
+import { Box } from '@chakra-ui/react';
+import { CardState } from './types'
 
 //https://react-bootstrap.github.io/components/cards/
 
 
 export default function SubmitCard(props) {
-
-    const CardState = {
-        Rejected: "Rejected",
-        InReviewEmployer: "In Review - Employer",
-        InReviewBreaktime: "In Review - Breaktime",
-        Completed: "Completed",
-        Unsubmitted: "Unsubmitted"
-    }
-
 
     const [submitted, setSubmitted] = useState(false);
     const [submitDate, setSubmitDate] = useState(null);
@@ -40,14 +33,14 @@ export default function SubmitCard(props) {
     }
 
     return (
-        <div className="col-md-2" style={{ display: "flex", justifyContent: 'flex-end' }}>
+        <Box className="col-md-2" style={{ display: "flex", justifyContent: 'flex-end' }}>
             <Card
                 bg={(state === CardState.Completed) ? 'success' : ((state === CardState.InReviewBreaktime || state === CardState.InReviewEmployer) ? 'warning' : 'danger')}
                 text="white"
                 key="submit_description"
                 className="mb-2 text-center">
                 <Card.Body>
-                    <Button variant={submitted ? 'light' : 'light'} onClick={submitAction}>{submitted ? "Resubmit" : "Submit!"}</Button>
+                    <Button variant={'light'} onClick={submitAction}>{submitted ? "Resubmit" : "Submit!"}</Button>
                 </Card.Body>
                 {(submitted && rejected) && <Card.Footer>
                     {props.content}
@@ -60,8 +53,7 @@ export default function SubmitCard(props) {
 
                 </Card.Footer>}
             </Card>
-
-        </div >
+        </Box >
     )
 
 }

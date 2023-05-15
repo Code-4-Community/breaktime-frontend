@@ -20,4 +20,13 @@ export const enum Review_Stages {
     APPROVED = "Approved"
 };
 
-export const TABLE_COLUMNS = ['Type', 'Date', 'Clock-in', 'Clock-Out', 'Hours', 'Comment']; 
+export const TABLE_COLUMNS = ['Type', 'Date', 'Clock-in', 'Clock-Out', 'Hours', 'Comment'];
+
+
+export enum CardState {
+    Rejected = "Rejected",
+    InReviewEmployer = "In Review - Employer",
+    InReviewBreaktime = "In Review - Breaktime",
+    Completed = "Completed",
+    Unsubmitted = "Unsubmitted"
+}
