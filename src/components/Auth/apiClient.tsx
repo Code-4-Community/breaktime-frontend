@@ -88,6 +88,7 @@ export class ApiClient {
       UserID: "abc",
       FirstName: "john",
       LastName: "doe",
+      Email: "hi@gmail.com",
       Type: "Supervisor",
       Picture: "https://www.google.com/koala.png",
     };
@@ -100,6 +101,7 @@ export class ApiClient {
         UserID: "bcd",
         FirstName: "joe",
         LastName: "jane",
+        Email: "bye@gmail.com",
         Type: "Associate",
         Picture: "https://www.google.com/panda.png",
       },

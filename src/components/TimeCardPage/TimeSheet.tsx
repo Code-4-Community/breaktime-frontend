@@ -18,7 +18,17 @@ import {
   HStack,
   Text,
 } from "@chakra-ui/react";
-
+import {
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+  PopoverHeader,
+  PopoverBody,
+  PopoverFooter,
+  PopoverArrow,
+  PopoverCloseButton,
+  PopoverAnchor,
+} from '@chakra-ui/react'
 import { Tabs, TabList, Tab } from "@chakra-ui/react";
 
 import {
@@ -95,6 +105,57 @@ const testingEmployees = [
     Picture: "https://www.google.com/koala.png",
   },
 ];
+
+
+// size - s,m,l
+function AuthorComponent({ user , size }) {
+
+  const fullName = user?.FirstName + " " + user?.LastName
+
+  const avatar = 
+      <Avatar
+      src={user?.Picture}
+      name={fullName}
+      size="md"
+      showBorder={true}
+      borderColor="black"
+      borderWidth="thick"
+     />
+
+  if (size === "s") {
+    return (
+        <Popover trigger="hover">
+        <PopoverTrigger>
+          {avatar}
+        </PopoverTrigger>
+        <PopoverContent >
+          <PopoverArrow />
+          <PopoverCloseButton />
+          <PopoverBody>{fullName}</PopoverBody>
+        </PopoverContent>
+        </Popover>
+    )
+  } else if(size === "m") {
+    return (
+      <Card width="50%">
+        {avatar}
+      <CardBody>
+        <Text>{fullName}</Text>
+      </CardBody>
+    </Card>
+    )
+  } else {
+    return (
+      <Card width="50%">
+        {avatar}
+      <CardBody>
+        <Text>{fullName}</Text>
+        <Text>{user?.Email}</Text>
+      </CardBody>
+    </Card>
+    )
+  }
+}
 
 function ProfileCard({ employee }) {
   return (
@@ -301,7 +362,7 @@ export default function Page() {
   return (
     <>
       <HStack spacing="120px">
-        <ProfileCard employee={user} />
+        <AuthorComponent user={user} size={"s"}/>
         {user?.Type === "Supervisor" || user?.Type === "Admin" ? (
           <>
             <SearchEmployeeTimesheet
