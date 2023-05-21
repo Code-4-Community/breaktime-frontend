@@ -5,22 +5,24 @@ import SubmitCard from './SubmitCard';
 import DateCard from './SelectWeekCard'
 
 import {
-    Alert,
-    AlertIcon,
-    AlertTitle,
-    AlertDescription,
-    Box,
-    IconButton,
-    Card,
-    CardBody,
-    Avatar,
-    Flex,
-    Text,
-    Tabs,
-    TabList,
-    Tab,
-    Spacer,
-    HStack
+  Alert,
+  AlertIcon,
+  AlertTitle,
+  AlertDescription,
+  Box,
+  IconButton,
+  Card,
+  CardBody,
+  Avatar,
+  Flex,
+  Text,
+  Tabs,
+  TabList,
+  Tab,
+  Spacer,
+  HStack,
+  VStack,
+  ButtonGroup
 } from '@chakra-ui/react'
 
 
@@ -44,235 +46,241 @@ import { Select, components } from 'chakra-react-select'
 // apiClient.updateUserTimesheet(testingTimesheetResp); 
 
 const createEmptyTable = (startDate, company) => {
-    // We assign uuid to provide a unique key identifier to each row for reacts rendering 
+  // We assign uuid to provide a unique key identifier to each row for reacts rendering 
 
-    //TODO's: Pull UserID automatically
-    return {
-        UserID: "77566d69-3b61-452a-afe8-73dcda96f876",
-        TimesheetID: uuidv4(),
-        CompanyID: company,
-        StartDate: startDate,
-        Status: {
-            Stage: Review_Stages.APPROVED,
-            Timestamp: undefined
-        },
-        WeekComments: [],
-        TableData: [],
-        ScheduledData: undefined
-    }
+  //TODO's: Pull UserID automatically
+  return {
+    UserID: "77566d69-3b61-452a-afe8-73dcda96f876",
+    TimesheetID: uuidv4(),
+    CompanyID: company,
+    StartDate: startDate,
+    Status: {
+      Stage: Review_Stages.APPROVED,
+      Timestamp: undefined
+    },
+    WeekComments: [],
+    TableData: [],
+    ScheduledData: undefined
+  }
 }
 
 const user = 'Example User'
 
 const testingEmployees = [
-    { UserID: "abc", FirstName: "joe", LastName: "jane", Type: "Employee", Picture: "https://www.google.com/koala.png" },
-    { UserID: "bcd", FirstName: "david", LastName: "lev", Type: "Employee", Picture: "https://www.google.com/panda.png" },
-    { UserID: "cde", FirstName: "crys", LastName: "tal", Type: "Employee", Picture: "https://www.google.com/capybara.png" },
-    { UserID: "def", FirstName: "ken", LastName: "ney", Type: "Employee", Picture: "https://www.google.com/koala.png" },
+  { UserID: "abc", FirstName: "joe", LastName: "jane", Type: "Employee", Picture: "https://www.google.com/koala.png" },
+  { UserID: "bcd", FirstName: "david", LastName: "lev", Type: "Employee", Picture: "https://www.google.com/panda.png" },
+  { UserID: "cde", FirstName: "crys", LastName: "tal", Type: "Employee", Picture: "https://www.google.com/capybara.png" },
+  { UserID: "def", FirstName: "ken", LastName: "ney", Type: "Employee", Picture: "https://www.google.com/koala.png" },
 ]
 
 function ProfileCard({ employee }) {
 
-    return (
-        <Card direction="row" >
-            <Avatar src={employee?.Picture} name={employee?.FirstName + " " + employee?.LastName} size='md' showBorder={true} borderColor='black' borderWidth='thick' />
-            <CardBody>
-                <Text>{employee?.FirstName + " " + employee?.LastName}</Text>
-            </CardBody>
-        </Card>
-    )
+  return (
+    <Card align={'center'} width={'100%'}>
+      <CardBody>
+        <HStack>
+          <Avatar src={employee?.Picture} name={employee?.FirstName + " " + employee?.LastName} size='md' showBorder={true} borderColor='black' borderWidth='thick' />
+          <Text>{employee?.FirstName + " " + employee?.LastName}</Text>
+        </HStack>
+      </CardBody>
+    </Card>
+  )
 }
 
 function SearchEmployeeTimesheet({ employees, setSelected }) {
 
-    const handleChange = (selectedOption) => {
-        setSelected(selectedOption);
-    }
+  const handleChange = (selectedOption) => {
+    setSelected(selectedOption);
+  }
 
-    const customStyles = {
-        control: (base) => ({
-            ...base,
-            flexDirection: 'row-reverse',
-        }),
-    }
+  const customStyles = {
+    control: (base) => ({
+      ...base,
+      flexDirection: 'row-reverse',
+    }),
+  }
 
-    const DropdownIndicator = (props) => {
-        return (
-            <components.DropdownIndicator {...props}>
-                <SearchIcon />
-            </components.DropdownIndicator>
-        );
-    };
-
-    // TODO: fix styling
-    // at the moment defaultValue is the first user in the employees array
-    // which is currently an invariant that matches the useState in Page
+  const DropdownIndicator = (props) => {
     return (
-        <Box width='600px' >
-            <Select isSearchable={true}
-                defaultValue={employees[0]}
-                chakraStyles={customStyles}
-                size="lg"
-                options={employees}
-                onChange={handleChange}
-                components={{ DropdownIndicator }}
-                getOptionLabel={option => `${option.FirstName + " " + option.LastName}`}
-                getOptionValue={option => `${option.FirstName + " " + option.LastName}`} />
-        </Box>
-    )
+      <components.DropdownIndicator {...props}>
+        <SearchIcon />
+      </components.DropdownIndicator>
+    );
+  };
+
+  // TODO: fix styling
+  // at the moment defaultValue is the first user in the employees array
+  // which is currently an invariant that matches the useState in Page
+  return (
+    <Box width={'100%'}>
+      <Select isSearchable={true}
+        defaultValue={employees[0]}
+        chakraStyles={customStyles}
+        size="lg"
+        options={employees}
+        onChange={handleChange}
+        components={{ DropdownIndicator }}
+        getOptionLabel={option => `${option.FirstName + " " + option.LastName}`}
+        getOptionValue={option => `${option.FirstName + " " + option.LastName}`} />
+    </Box>
+  )
 }
 
 export default function Page() {
-    //const today = moment(); 
-    const [selectedDate, setSelectedDate] = useState(moment().startOf('week').day(0));
+  //const today = moment(); 
+  const [selectedDate, setSelectedDate] = useState(moment().startOf('week').day(0));
 
-    const updateDateRange = (date: Moment) => {
-        setSelectedDate(date);
-        //TODO - Refactor this to use the constant in merge with contants branch 
-        setCurrentTimesheetsToDisplay(userTimesheets, date);
-    }
+  const updateDateRange = (date: Moment) => {
+    setSelectedDate(date);
+    //TODO - Refactor this to use the constant in merge with contants branch 
+    setCurrentTimesheetsToDisplay(userTimesheets, date);
+  }
 
-    // fetch the information of the user whos timesheet is being displayed
-    // if user is an employee selected and user would be the same
-    // if user is a supervisor/admin then selected would contain the information of the user
-    // whos timesheet is being looked at and user would contain the supervisor/admins information
-    // by default the first user is selected
-    const [selectedUser, setSelectedUser] = useState<UserSchema>();
-    const [user, setUser] = useState<UserSchema>();
+  // fetch the information of the user whos timesheet is being displayed
+  // if user is an employee selected and user would be the same
+  // if user is a supervisor/admin then selected would contain the information of the user
+  // whos timesheet is being looked at and user would contain the supervisor/admins information
+  // by default the first user is selected
+  const [selectedUser, setSelectedUser] = useState<UserSchema>();
+  const [user, setUser] = useState<UserSchema>();
 
-    // associates is only used by supervisor/admin for the list of all associates they have access to
-    const [associates, setAssociates] = useState<UserSchema[]>([]);
+  // associates is only used by supervisor/admin for the list of all associates they have access to
+  const [associates, setAssociates] = useState<UserSchema[]>([]);
 
-    // A list of the timesheet objects 
-    // TODO: add types
-    const [userTimesheets, setUserTimesheets] = useState([]);
-    const [currentTimesheets, setCurrentTimesheets] = useState([]);
-    const [selectedTimesheet, setTimesheet] = useState(undefined);
+  // A list of the timesheet objects 
+  // TODO: add types
+  const [userTimesheets, setUserTimesheets] = useState([]);
+  const [currentTimesheets, setCurrentTimesheets] = useState([]);
+  const [selectedTimesheet, setTimesheet] = useState(undefined);
 
 
-    // this hook should always run first
-    useEffect(() => {
-        apiClient.getUser().then(userInfo => {
-            setUser(userInfo);
-            if (userInfo.Type === "Supervisor" || userInfo.Type === "Admin") {
-                apiClient.getAllUsers().then(users => {
-                    setAssociates(users);
-                    setSelectedUser(users[0]);
-                })
-            }
-            setSelectedUser(userInfo)
+  // this hook should always run first
+  useEffect(() => {
+    apiClient.getUser().then(userInfo => {
+      setUser(userInfo);
+      if (userInfo.Type === "Supervisor" || userInfo.Type === "Admin") {
+        apiClient.getAllUsers().then(users => {
+          setAssociates(users);
+          setSelectedUser(users[0]);
         })
-        // if employee setSelectedUSer to be userinfo
-        // if supervisor/admin get all users
-        // set selected user
-    }, [])
+      }
+      setSelectedUser(userInfo)
+    })
+    // if employee setSelectedUSer to be userinfo
+    // if supervisor/admin get all users
+    // set selected user
+  }, [])
 
-    // Pulls user timesheets, marking first returned as the active one
-    useEffect(() => {
-        // Uncomment this if you want the default one loaded 
-        setUserTimesheets([EXAMPLE_TIMESHEET, EXAMPLE_TIMESHEET_2]);
+  // Pulls user timesheets, marking first returned as the active one
+  useEffect(() => {
+    // Uncomment this if you want the default one loaded 
+    setUserTimesheets([EXAMPLE_TIMESHEET, EXAMPLE_TIMESHEET_2]);
 
-        //apiClient.getUserTimesheets(selectedUser?.UserID).then(timesheets => {
-        //    setUserTimesheets(timesheets); 
-        //    //By Default just render / select the first timesheet for now 
-        //    setCurrentTimesheetsToDisplay(timesheets, startDate);
-        //});
-    }, [selectedUser])
+    //apiClient.getUserTimesheets(selectedUser?.UserID).then(timesheets => {
+    //    setUserTimesheets(timesheets); 
+    //    //By Default just render / select the first timesheet for now 
+    //    setCurrentTimesheetsToDisplay(timesheets, startDate);
+    //});
+  }, [selectedUser])
 
-    const processTimesheetChange = (updated_sheet) => {
-        // Updating the rows of the selected timesheets from our list of timesheets 
-        const modifiedTimesheets = userTimesheets.map((entry) => {
-            if (entry.TimesheetID === selectedTimesheet.TimesheetID) {
-                return {
-                    ...entry,
-                    TableData: updated_sheet.TableData
-                }
-            }
-            return entry
-        });
-        setUserTimesheets(modifiedTimesheets);
+  const processTimesheetChange = (updated_sheet) => {
+    // Updating the rows of the selected timesheets from our list of timesheets 
+    const modifiedTimesheets = userTimesheets.map((entry) => {
+      if (entry.TimesheetID === selectedTimesheet.TimesheetID) {
+        return {
+          ...entry,
+          TableData: updated_sheet.TableData
+        }
+      }
+      return entry
+    });
+    setUserTimesheets(modifiedTimesheets);
 
-        //Also need to update our list of currently selected - TODO come up with a way to not need these duplicated lists 
-        setCurrentTimesheets(currentTimesheets.map(
-            (entry) => {
-                if (entry.TimesheetID === selectedTimesheet.TimesheetID) {
-                    return {
-                        ...entry,
-                        TableData: updated_sheet.TableData
-                    }
-                }
-                return entry
-            }
-        ));
+    //Also need to update our list of currently selected - TODO come up with a way to not need these duplicated lists 
+    setCurrentTimesheets(currentTimesheets.map(
+      (entry) => {
+        if (entry.TimesheetID === selectedTimesheet.TimesheetID) {
+          return {
+            ...entry,
+            TableData: updated_sheet.TableData
+          }
+        }
+        return entry
+      }
+    ));
 
-        // selectedTimesheet.TableData = rows; 
+    // selectedTimesheet.TableData = rows; 
+  }
+
+  const setCurrentTimesheetsToDisplay = (timesheets, currentStartDate: Moment) => {
+    const newCurrentTimesheets = timesheets.filter(sheet => moment.unix(sheet.StartDate).isSame(currentStartDate, 'day'));
+
+    if (newCurrentTimesheets.length < 1) {
+      newCurrentTimesheets.push(createEmptyTable(currentStartDate.unix(), "new")); // TODO: change to make correct timesheets for the week
     }
 
-    const setCurrentTimesheetsToDisplay = (timesheets, currentStartDate: Moment) => {
-        const newCurrentTimesheets = timesheets.filter(sheet => moment.unix(sheet.StartDate).isSame(currentStartDate, 'day'));
-
-        if (newCurrentTimesheets.length < 1) {
-            newCurrentTimesheets.push(createEmptyTable(currentStartDate.unix(), "new")); // TODO: change to make correct timesheets for the week
-        }
-
-        if (newCurrentTimesheets.length > 1) {
-            newCurrentTimesheets.push(createEmptyTable(currentStartDate.unix(), "Total"));
-        }
-
-        setCurrentTimesheets(newCurrentTimesheets);
-        setTimesheet(newCurrentTimesheets[0]);
+    if (newCurrentTimesheets.length > 1) {
+      newCurrentTimesheets.push(createEmptyTable(currentStartDate.unix(), "Total"));
     }
 
-    const renderWarning = () => {
-        const currentDate = moment().tz(TIMEZONE);
+    setCurrentTimesheets(newCurrentTimesheets);
+    setTimesheet(newCurrentTimesheets[0]);
+  }
 
-        const dateToCheck = moment(selectedDate);
-        dateToCheck.add(TIMESHEET_DURATION, 'days');
-        if (currentDate.isAfter(dateToCheck, 'days')) {
-            return <Alert status='error'>
-                <AlertIcon />
-                <AlertTitle>Your timesheet is late!</AlertTitle>
-                <AlertDescription>Please submit this as soon as possible</AlertDescription>
-            </Alert>
-        } else {
-            const dueDuration = dateToCheck.diff(currentDate, 'days');
-            return <Alert status='info'>
-                <AlertIcon />
-                <AlertTitle>Your timesheet is due in {dueDuration} days!</AlertTitle>
-                <AlertDescription>Remember to press the submit button!</AlertDescription>
-            </Alert>
-        }
+  const renderWarning = () => {
+    const currentDate = moment().tz(TIMEZONE);
+
+    const dateToCheck = moment(selectedDate);
+    dateToCheck.add(TIMESHEET_DURATION, 'days');
+    if (currentDate.isAfter(dateToCheck, 'days')) {
+      return <Alert status='error'>
+        <AlertIcon />
+        <AlertTitle>Your timesheet is late!</AlertTitle>
+        <AlertDescription>Please submit this as soon as possible</AlertDescription>
+      </Alert>
+    } else {
+      const dueDuration = dateToCheck.diff(currentDate, 'days');
+      return <Alert status='info'>
+        <AlertIcon />
+        <AlertTitle>Your timesheet is due in {dueDuration} days!</AlertTitle>
+        <AlertDescription>Remember to press the submit button!</AlertDescription>
+      </Alert>
     }
+  }
 
 
-    return (
-        <>
-            <Flex align={'end'} m={'1%'}>
-                <ProfileCard employee={user} />
-                {(user?.Type === "Supervisor" || user?.Type === "Admin") ?
-                    <>
-                        <SearchEmployeeTimesheet employees={associates} setSelected={setSelectedUser} />
-                        <IconButton aria-label='Download' icon={<DownloadIcon />} />
-                        <IconButton aria-label='Report' icon={<WarningIcon />} />
-                    </> : <></>}
-                <Spacer />
-                <DateCard onDateChange={updateDateRange} date={selectedDate} />
-                <SubmitCard />
-            </Flex>
-            {useMemo(() => renderWarning(), [selectedDate])}
-            <Tabs>
-                <TabList>
-                    {currentTimesheets.map(
-                        (sheet) => (
-                            <Tab onClick={() => setTimesheet(sheet)}>{sheet.CompanyID}</Tab>
-                        )
-                    )}
-                </TabList>
-            </Tabs>
-            {selectedTimesheet?.CompanyID === "Total" ?
-                (<AggregationTable Date={selectedDate} timesheets={currentTimesheets} />)
-                : (<TimeTable columns={TABLE_COLUMNS} timesheet={selectedTimesheet} onTimesheetChange={processTimesheetChange} />)}
+  return (
+    <>
+      <Flex align={'end'} m={'1%'} gap={'1%'}>
+        <VStack align={'start'}>
+          <ProfileCard employee={user} />
+          <DateCard onDateChange={updateDateRange} date={selectedDate} />
+        </VStack>
+        <Spacer/>
+        {(user?.Type === "Supervisor" || user?.Type === "Admin") ?
+          <VStack align={'end'} width={'30%'}>
+            <ButtonGroup>
+              <IconButton aria-label='Download' icon={<DownloadIcon />} />
+              <IconButton aria-label='Report' icon={<WarningIcon />} />
+            </ButtonGroup>
+            <SearchEmployeeTimesheet employees={associates} setSelected={setSelectedUser} />
+          </VStack> : <></>}
+        <SubmitCard />
+      </Flex>
+      {useMemo(() => renderWarning(), [selectedDate])}
+      <Tabs>
+        <TabList>
+          {currentTimesheets.map(
+            (sheet) => (
+              <Tab onClick={() => setTimesheet(sheet)}>{sheet.CompanyID}</Tab>
+            )
+          )}
+        </TabList>
+      </Tabs>
+      {selectedTimesheet?.CompanyID === "Total" ?
+        (<AggregationTable Date={selectedDate} timesheets={currentTimesheets} />)
+        : (<TimeTable columns={TABLE_COLUMNS} timesheet={selectedTimesheet} onTimesheetChange={processTimesheetChange} />)}
 
-        </>
-    )
+    </>
+  )
 }

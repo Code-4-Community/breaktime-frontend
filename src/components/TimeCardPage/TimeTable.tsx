@@ -1,15 +1,12 @@
 import {
-  Button,
   Table,
   Thead,
   Tbody,
-  Tfoot,
   Tr,
   Th,
   Td,
-  TableCaption,
-  TableContainer,
   ButtonGroup,
+  IconButton,
 } from '@chakra-ui/react'
 import React, { useEffect, useState } from 'react';
 import moment from 'moment-timezone';
@@ -17,9 +14,9 @@ import { v4 as uuidv4 } from 'uuid';
 
 import TimeTableRow from "./TimeTableRow";
 import { TimeSheetSchema } from '../../schemas/TimesheetSchema';
-import { Fragment } from 'react';
 import { TIMESHEET_DURATION, TIMEZONE } from 'src/constants';
 import { CellType } from './types';
+import { AddIcon, MinusIcon } from '@chakra-ui/icons';
 
 
 //Can expand upon this further by specifying input types - to allow only dates, numbers, etc for the input https://www.w3schools.com/bootstrap/bootstrap_forms_inputs.asp 
@@ -152,9 +149,10 @@ function TimeTable(props: TableProps) {
             return (
               <Tr key={row.id}>
                 <Td>
-
-                  <Button onClick={() => { addRow(row, index) }}>+</Button>
-                  <Button onClick={() => { delRow(row, index) }}>-</Button>
+                  <ButtonGroup>
+                    <IconButton aria-label='Add row' onClick={() => { addRow(row, index) }} icon={<AddIcon />} />
+                    <IconButton aria-label='Delete row' onClick={() => { delRow(row, index) }} icon={<MinusIcon />} />
+                  </ButtonGroup>
                 </Td>
                 {
                   <TimeTableRow row={row} onRowChange={(row) => onRowChange(row, index)} prevDate={dateToSend} />
