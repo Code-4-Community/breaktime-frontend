@@ -108,13 +108,19 @@ const testingEmployees = [
 
 
 // size - s,m,l
-function AuthorComponent({ user , size }) {
+function AuthorComponent({ user, size }) {
 
-  const fullName = user?.FirstName + " " + user?.LastName
+  if (user === undefined) {
+    return (
+      <></>
+    )
+  }
+
+  const fullName = user.FirstName + " " + user.LastName
 
   const avatar = 
       <Avatar
-      src={user?.Picture}
+      src={user.Picture}
       name={fullName}
       size="md"
       showBorder={true}
@@ -141,20 +147,11 @@ function AuthorComponent({ user , size }) {
         {avatar}
       <CardBody>
         <Text>{fullName}</Text>
+        {size === "l" && <Text>{user?.Email}</Text>}
       </CardBody>
     </Card>
     )
-  } else {
-    return (
-      <Card width="50%">
-        {avatar}
-      <CardBody>
-        <Text>{fullName}</Text>
-        <Text>{user?.Email}</Text>
-      </CardBody>
-    </Card>
-    )
-  }
+  } 
 }
 
 function ProfileCard({ employee }) {
@@ -362,8 +359,8 @@ export default function Page() {
   return (
     <>
       <HStack spacing="120px">
-        <AuthorComponent user={user} size={"s"}/>
-        {user?.Type === "Supervisor" || user?.Type === "Admin" ? (
+        <AuthorComponent user={user} size={"l"}/>
+        {user?.Type === "Supervisor" || user?.Type === "Admin" && (
           <>
             <SearchEmployeeTimesheet
               employees={associates}
@@ -372,8 +369,6 @@ export default function Page() {
             <IconButton aria-label="Download" icon={<DownloadIcon />} />
             <IconButton aria-label="Report" icon={<WarningIcon />} />
           </>
-        ) : (
-          <></>
         )}
         <DateSelectorCard onDateChange={updateDateRange} date={selectedDate} />
         <SubmitCard />
