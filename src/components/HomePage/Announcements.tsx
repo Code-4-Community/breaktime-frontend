@@ -32,8 +32,7 @@ export default function Announcements() {
                   <Image src={event.photo} width={'10%'} />
                   {`${event.date}: ${event.name}`}
                   <Spacer />
-                  <Button as='a' href={event.url} target='_blank' backgroundColor={defaultColors.BREAKTIME_BLUE}
-                    borderWidth={'0px'} color={'white'}>Register</Button>
+                  <Button as='a' href={event.url} target='_blank'>Register</Button>
                 </Alert>))}
             </VStack>
             : 'No announcements'}

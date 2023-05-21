@@ -1,16 +1,10 @@
-import Table from 'react-bootstrap/Table' 
 import React, {useEffect, useState} from 'react'; 
-import moment from 'moment-timezone';
-import { v4 as uuidv4 } from 'uuid';
-import TimePicker from 'react-time-picker';
 import 'react-time-picker/dist/TimePicker.css';
 import 'react-clock/dist/Clock.css';
 import { Fragment } from 'react';
 
-import { Select } from '@chakra-ui/react'; 
-import {TIMEZONE} from 'src/constants'; 
-
-import {CellType} from './types' 
+import { Td } from '@chakra-ui/react'; 
+ 
 import { TimeEntry } from './CellTypes/TimeEntry';
 import {Duration} from './CellTypes/HoursCell' 
 import {DateCell} from './CellTypes/DateCell'; 
@@ -56,7 +50,7 @@ function Row(props: RowProps) {
         const itemOrdering = ["Type", "Date", "Clock-in", "Clock-out", "Hours", "Comment"];
 
         return <Fragment>
-            {itemOrdering.map((entry) => <td key={entry}>{items[entry]}</td>)}
+            {itemOrdering.map((entry) => <Td key={entry}>{items[entry]}</Td>)}
         </Fragment>
     
     } else {

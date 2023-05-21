@@ -2,27 +2,25 @@ import React, { useState, useMemo } from 'react';
 import TimeTable from './TimeTable'
 import { useEffect } from 'react';
 import SubmitCard from './SubmitCard';
-import DateSelectorCard from './SelectWeekCard'
+import DateCard from './SelectWeekCard'
 
 import {
     Alert,
     AlertIcon,
     AlertTitle,
     AlertDescription,
-} from '@chakra-ui/react'
-import {
+    Box,
     IconButton,
     Card,
     CardBody,
     Avatar,
-    HStack,
-    Text
-} from '@chakra-ui/react'
-
-import {
+    Flex,
+    Text,
     Tabs,
     TabList,
-    Tab
+    Tab,
+    Spacer,
+    HStack
 } from '@chakra-ui/react'
 
 
@@ -76,7 +74,7 @@ const testingEmployees = [
 function ProfileCard({ employee }) {
 
     return (
-        <Card direction="row" width="50%">
+        <Card direction="row" >
             <Avatar src={employee?.Picture} name={employee?.FirstName + " " + employee?.LastName} size='md' showBorder={true} borderColor='black' borderWidth='thick' />
             <CardBody>
                 <Text>{employee?.FirstName + " " + employee?.LastName}</Text>
@@ -110,7 +108,7 @@ function SearchEmployeeTimesheet({ employees, setSelected }) {
     // at the moment defaultValue is the first user in the employees array
     // which is currently an invariant that matches the useState in Page
     return (
-        <div style={{ width: '600px' }}>
+        <Box width='600px' >
             <Select isSearchable={true}
                 defaultValue={employees[0]}
                 chakraStyles={customStyles}
@@ -120,7 +118,7 @@ function SearchEmployeeTimesheet({ employees, setSelected }) {
                 components={{ DropdownIndicator }}
                 getOptionLabel={option => `${option.FirstName + " " + option.LastName}`}
                 getOptionValue={option => `${option.FirstName + " " + option.LastName}`} />
-        </div>
+        </Box>
     )
 }
 
@@ -249,7 +247,7 @@ export default function Page() {
 
     return (
         <>
-            <HStack spacing="120px">
+            <Flex align={'end'} m={'1%'}>
                 <ProfileCard employee={user} />
                 {(user?.Type === "Supervisor" || user?.Type === "Admin") ?
                     <>
@@ -257,9 +255,10 @@ export default function Page() {
                         <IconButton aria-label='Download' icon={<DownloadIcon />} />
                         <IconButton aria-label='Report' icon={<WarningIcon />} />
                     </> : <></>}
-                <DateSelectorCard onDateChange={updateDateRange} date={selectedDate} />
+                <Spacer />
+                <DateCard onDateChange={updateDateRange} date={selectedDate} />
                 <SubmitCard />
-            </HStack>
+            </Flex>
             {useMemo(() => renderWarning(), [selectedDate])}
             <Tabs>
                 <TabList>

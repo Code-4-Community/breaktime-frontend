@@ -42,8 +42,7 @@ export default function Messages() {
                   <CloseButton onClick={() => deleteMessage(index)} />
                   {message.type + ': ' + message.body}
                   <Spacer />
-                  <Button as='a' target='_blank' backgroundColor={defaultColors.BREAKTIME_BLUE}
-                    borderWidth={'0px'} color={'white'}>View</Button>
+                  <Button as='a' target='_blank'>View</Button>
                 </Alert>))}
             </VStack>
             : 'No messages'}
