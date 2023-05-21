@@ -6,7 +6,7 @@ import {
 import { useFormik } from "formik";
 import React from 'react';
 
-export default function CommentModal(props) {
+export default function CommentModal() {
 
     const formik = useFormik({
         // TODO: add options for supervisor to choose from for the report

@@ -8,17 +8,16 @@ import { CardState } from './types'
 //https://react-bootstrap.github.io/components/cards/
 
 
-export default function SubmitCard(props) {
+export default function SubmitCard() {
 
     const [submitted, setSubmitted] = useState(false);
     const [submitDate, setSubmitDate] = useState(null);
     const [state, setState] = useState(CardState.Unsubmitted);
-    const [rejected, setRejected] = useState(false);
 
     useEffect(() => {
         //TODO - API Call to determine if the table has been submitted or not.
         //Will set submitted? here and also submitDate if it was submitted to grab the date     
-    }, [props.comment])
+    }, [])
 
     const submitAction = () => {
         setSubmitted(!submitted);
@@ -42,10 +41,6 @@ export default function SubmitCard(props) {
                 <Card.Body>
                     <Button variant={'light'} onClick={submitAction}>{submitted ? "Resubmit" : "Submit!"}</Button>
                 </Card.Body>
-                {(submitted && rejected) && <Card.Footer>
-                    {props.content}
-
-                </Card.Footer>}
                 {submitted && <Card.Footer>
                     {submitDate}
                     {state}

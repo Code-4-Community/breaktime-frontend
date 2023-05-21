@@ -258,7 +258,7 @@ export default function Page() {
                         <IconButton aria-label='Report' icon={<WarningIcon />} />
                     </> : <></>}
                 <DateSelectorCard onDateChange={updateDateRange} date={selectedDate} />
-                {selectedTimesheet && <SubmitCard comment={selectedTimesheet.comment} />}
+                {selectedTimesheet && <SubmitCard />}
 
             </HStack>
             {useMemo(() => renderWarning(), [selectedDate])}
