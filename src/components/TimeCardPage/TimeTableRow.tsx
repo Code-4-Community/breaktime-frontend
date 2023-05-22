@@ -12,29 +12,50 @@ import {TIMEZONE} from 'src/constants';
 
 import {CellType} from './types' 
 import { TimeEntry } from './CellTypes/TimeEntry';
-import {Duration} from './CellTypes/HoursCell' 
+import {Duration} from './CellTypes/HoursCell'  
 import {DateCell} from './CellTypes/DateCell'; 
 import { TypeCell } from './CellTypes/CellType';
 import { CommentCell } from './CellTypes/CommentCell';
 import {RowSchema} from '../../schemas/RowSchema'; 
+import ApiClient from 'src/components/Auth/apiClient'
+
+import * as updateSchemas from 'src/schemas/backend/UpdateTimesheet'
+import apiClient from 'src/components/Auth/apiClient';
 
 interface RowProps {
     row: RowSchema; 
     prevDate: number; 
     onRowChange: Function; 
+    TimesheetID: number; 
 } 
+
+
+
 
 function Row(props: RowProps) { 
   
     const [fields,setFields] = useState<undefined | RowSchema>(undefined); 
 
     const updateField = (key, value) => {
+        
         const newFields = {
             ...fields, 
             [key]: value 
         }
+
         setFields(newFields); 
         props.onRowChange(newFields); 
+        //Send a request to update the db on this item being changed 
+        ApiClient.updateTimesheet(updateSchemas.TimesheetUpdateRequest.parse({
+            TimesheetID: props.TimesheetID, 
+            Operation: updateSchemas.TimesheetOperations.UPDATE, 
+            Payload: updateSchemas.UpdateRequest.parse({
+                Type: updateSchemas.TimesheetListItems.TABLEDATA, 
+                Id: props.row.UUID, 
+                Attribute: key, 
+                Data: value 
+            })
+        })); 
         
     } 
 

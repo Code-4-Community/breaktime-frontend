@@ -51,7 +51,7 @@ const createEmptyTable = (startDate, company) => {
     //TODO's: Pull UserID automatically
     return {
         UserID: "77566d69-3b61-452a-afe8-73dcda96f876",
-        TimesheetID: uuidv4(), 
+        TimesheetID: Math.round(Math.random() * 1000000000), 
         CompanyID: company, 
         StartDate: startDate, 
         Status: {
@@ -172,13 +172,13 @@ export default function Page() {
     // Pulls user timesheets, marking first returned as the active one
     useEffect(() => {
         // Uncomment this if you want the default one loaded 
-        setUserTimesheets([EXAMPLE_TIMESHEET, EXAMPLE_TIMESHEET_2]);
+        // setUserTimesheets([EXAMPLE_TIMESHEET, EXAMPLE_TIMESHEET_2]);
         
-        //apiClient.getUserTimesheets(selectedUser?.UserID).then(timesheets => {
-        //    setUserTimesheets(timesheets); 
-        //    //By Default just render / select the first timesheet for now 
-        //    setCurrentTimesheetsToDisplay(timesheets, startDate);
-        //});
+        apiClient.getUserTimesheets(selectedUser?.UserID).then(timesheets => {
+           setUserTimesheets(timesheets); 
+           //By Default just render / select the first timesheet for now 
+           setCurrentTimesheetsToDisplay(timesheets, selectedDate);
+        });
     }, [selectedUser])
 
     const processTimesheetChange = (updated_sheet) => {

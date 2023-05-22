@@ -51,7 +51,7 @@ export const EXAMPLE_TIMESHEET = {
     }, 
     WeekNotes:[], 
     TableData: [{...EXAMPLE_ROW}], 
-    ScheduleTableData: [{...SCHEDULE_ENTRY}]
+    ScheduleTableData: undefined 
 }
 export const EXAMPLE_TIMESHEET_2 = {
     UserID: "b43227a4-0b42-4cfc-8a2c-16e2f2e64fbe", 
@@ -66,5 +66,5 @@ export const EXAMPLE_TIMESHEET_2 = {
     }, 
     WeekNotes:[], 
     TableData: [{...EXAMPLE_ROW}], 
-    ScheduleTableData: [{...SCHEDULE_ENTRY}]
+    ScheduleTableData:undefined 
 }

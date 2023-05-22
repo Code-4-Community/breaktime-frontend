@@ -19,13 +19,13 @@ export const StatusType = z.object({
 });
 
 export const TimeSheetSchema = z.object({
-  TimesheetID: z.number(), 
+  TimesheetID: z.number(),  
   UserID: z.string(), 
   StartDate: z.number(),
   Status: StatusType, 
   CompanyID: z.string(), 
   TableData: z.array(RowSchema), 
-  ScheduleTableData: ScheduledRowSchema,
+  ScheduleTableData: z.union([z.undefined(), z.array(ScheduledRowSchema)]),
   WeekNotes: z.union([z.undefined(), z.array(CommentSchema)]), 
 }); 
 

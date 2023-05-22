@@ -60,6 +60,10 @@ export class ApiClient {
     return this.axiosInstance.patch(path, body).then((response) => response.data);
   }
 
+  public async updateTimesheet(req): Promise<unknown> {
+    return this.axiosInstance.post('/auth/timesheet', req)
+  }
+
   // TODO: setup endpoint for associate/supervisor/admin so it returns a list of timesheets for given uuid
   public async getUserTimesheets(UUID: string): Promise<TimeSheetSchema[]> {
     return this.get('auth/timesheet') as Promise<TimeSheetSchema[]>; 
