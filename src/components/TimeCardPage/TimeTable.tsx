@@ -15,7 +15,7 @@ import * as updateSchemas from 'src/schemas/backend/UpdateTimesheet'
 //Can expand upon this further by specifying input types - to allow only dates, numbers, etc for the input https://www.w3schools.com/bootstrap/bootstrap_forms_inputs.asp 
 
 
-function uploadNewRow(row, timesheetid) {
+function uploadNewRow(row, timesheetid:number) {
     ApiClient.updateTimesheet(
         updateSchemas.TimesheetUpdateRequest.parse({
             TimesheetID: timesheetid, 
@@ -29,6 +29,7 @@ function uploadNewRow(row, timesheetid) {
 }
 
 const createEmptyRow = (date) => {
+    console.log("Creating empty row ", moment.unix(date).format("MM DD")); 
     // We assign uuid to provide a unique key identifier to each row for reacts rendering 
     return {
         UUID: uuidv4(), 
@@ -39,38 +40,6 @@ const createEmptyRow = (date) => {
         Admin: undefined,
         Comment: undefined 
     }
-}
-
-// Converts the provided data into our columns / adds entries for days that are missing default ones 
-const formatRows = (providedRows, startDate, timesheetid) => {
-    const updatedRows = []
-
-    var currentDate = moment.unix(startDate).tz(TIMEZONE); 
-
-    //This assumes each row is in sorted order by Date / StartTime - if this is not the case things will break 
-    providedRows.forEach(item => {
-        const timeObject = moment.unix(item.Date).tz(TIMEZONE); 
-        //If we are missing a day - add it to the json before we process the next day 
-        while (timeObject.isAfter(currentDate, 'day')) {
-            const newRow = createEmptyRow(currentDate.unix())
-            updatedRows.push(newRow);
-            uploadNewRow(newRow, timesheetid) 
-            currentDate = currentDate.add(1, 'day');   
-        }
-        if (timeObject.isSame(currentDate, 'day')) {
-            currentDate = currentDate.add(1, 'day'); 
-        }  
-        updatedRows.push(item);
-    })
-    //Fill in remaining days if we do not have days that go up to start date + total duration 
-    while (!currentDate.isAfter(moment.unix(startDate).tz(TIMEZONE).add(TIMESHEET_DURATION - 1,'day'), 'day')) {
-        const newRow = createEmptyRow(currentDate.unix())
-        updatedRows.push(newRow); 
-        uploadNewRow(newRow, timesheetid); 
-        currentDate = currentDate.add(1, 'day');  
-
-    }
-    return updatedRows;
 }
 
 interface TableProps {
@@ -143,7 +112,7 @@ function TimeTable(props:TableProps) {
     useEffect(() => {
         const timesheet = props.timesheet;
         if (timesheet !== undefined) {
-            setRows(formatRows(timesheet.TableData, timesheet.StartDate, timesheet.TimesheetID)); 
+            setRows(timesheet.TableData); 
         } 
     }, [props.timesheet]) 
     
