@@ -2,8 +2,11 @@ import moment from 'moment-timezone';
 import React, {useState, useEffect} from 'react'; 
 
 import {CommentSchema} from '../../../schemas/RowSchema'; 
-import {CommentType} from '../types'; 
+
+import * as cellTypes from '../types'; 
 import {TIMEZONE} from '../../../constants'; 
+import { v4 as uuidv4 } from 'uuid';
+
 
 interface CommentProps {
     comments: CommentSchema[] | undefined; 
@@ -17,14 +20,16 @@ export function CommentCell(props:CommentProps) {
     //TODO - Eventually refactor to handle multiple comments / process for grabbing user 
     useEffect(() => {
         // If empty, create stubbed empty one to leave our comments at - eventually refactor to just add this to the end as the current users comments?
-        if (props.comments === undefined || props.comments.length === 1) {
+        if (props.comments === undefined || props.comments.length === 0) {
             //Create one empty comment 
-            setComments([{
+            setComments([CommentSchema.parse({
+                UUID: uuidv4(),
                 AuthorID:"<TODO Fill this in at some point>", 
-                Type: CommentType.Comment, 
+                Type: cellTypes.CommentType.Comment, 
                 Timestamp: moment().tz(TIMEZONE).unix(), 
-                Content:"" 
-            }]); 
+                Content:"", 
+                State: cellTypes.CellStatus.Active, 
+            })]); 
         } 
     }, []);  
     
