@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Card, CardHeader, CardBody, Alert, Image, Button, Icon, Flex, VStack, Spacer } from '@chakra-ui/react';
-import { defaultColors } from '../../constants';
+import { DEFAULT_COLORS } from 'src/constants';
 import { TfiAnnouncement } from 'react-icons/tfi';
 
 const SAMPLE_EVENT_LIST = [
@@ -18,7 +18,7 @@ export default function Announcements() {
   return (
     <Flex gridArea={'Announcements'}>
       <Card width={'100%'} rounded={'lg'}>
-        <CardHeader as='h5' backgroundColor={defaultColors.BREAKTIME_BLUE} color={'white'} rounded={'lg'}>
+        <CardHeader as='h5' backgroundColor={DEFAULT_COLORS.BREAKTIME_BLUE} color={DEFAULT_COLORS.WHITE} rounded={'lg'}>
           <Flex gap={'1%'}>
             <Icon as={TfiAnnouncement} />
             Announcements

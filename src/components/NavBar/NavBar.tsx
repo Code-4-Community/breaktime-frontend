@@ -1,5 +1,5 @@
 import React from 'react';
-import { PAGE_ROUTES, defaultColors } from 'src/constants';
+import { PAGE_ROUTES, DEFAULT_COLORS } from 'src/constants';
 import {
   Box,
   Button,
@@ -41,7 +41,7 @@ function NavBar() {
       <Spacer />
       <ButtonGroup gap='1%'>
         <Menu>
-          <MenuButton as={Button} rightIcon={<ChevronDownIcon />} rounded={'md'} bgColor={defaultColors.BREAKTIME_BLUE} textColor={'white'}>
+          <MenuButton as={Button} rightIcon={<ChevronDownIcon />} rounded={'md'} bgColor={DEFAULT_COLORS.BREAKTIME_BLUE} textColor={DEFAULT_COLORS.WHITE}>
             Menu
           </MenuButton>
           <MenuList>
@@ -56,8 +56,8 @@ function NavBar() {
           </MenuList>
         </Menu>
         <Spacer />
-        <Button as='a' href={PAGE_ROUTES.LOGOUT} rounded={'md'} bgColor={defaultColors.BREAKTIME_BLUE} textColor={'white'}>
-          Sign out
+        <Button as='a' href={PAGE_ROUTES.LOGOUT} rounded={'md'} bgColor={DEFAULT_COLORS.BREAKTIME_BLUE} textColor={DEFAULT_COLORS.WHITE}>
+          Sign Out
         </Button>
       </ButtonGroup>
     </Flex>

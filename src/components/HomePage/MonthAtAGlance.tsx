@@ -1,6 +1,6 @@
 import React from 'react';
 import { Card, CardHeader, CardBody, Icon, Flex, Container } from '@chakra-ui/react';
-import { defaultColors } from '../../constants';
+import { DEFAULT_COLORS } from 'src/constants';
 import { data, dataBar } from './dummyData';
 import { BsFillFileBarGraphFill } from 'react-icons/bs';
 
@@ -15,7 +15,7 @@ export default function MonthAtAGlance() {
   return (
     <Flex gridArea={'MaaG'}>
       <Card width={'100%'} rounded={'lg'}>
-        <CardHeader as='h5' backgroundColor={defaultColors.BREAKTIME_BLUE} color={'white'} rounded={'lg'}>
+        <CardHeader as='h5' backgroundColor={DEFAULT_COLORS.BREAKTIME_BLUE} color={DEFAULT_COLORS.WHITE} rounded={'lg'}>
           <Flex gap={'1%'}>
             <Icon as={BsFillFileBarGraphFill} />
             Month at a Glance
