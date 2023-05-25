@@ -1,15 +1,12 @@
 //import { Menu, MenuButton, MenuItem } from '@aws-amplify/ui-react';
 import {
     Input, Button, useDisclosure, Modal,
-    ModalContent, ModalHeader, VStack, Card, CardBody, StackDivider, ModalFooter, HStack
+    ModalContent, ModalHeader, VStack, StackDivider, ModalFooter, HStack
 } from '@chakra-ui/react'
-import { useFormik } from "formik";
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Select } from '@chakra-ui/react'
-import { daysInYear } from 'date-fns';
-import TimeTable from 'src/components/TimeCardPage/TimeTable'
 
-export default function CommentModal(props) {
+export default function CommentModal() {
 
     // enum for the type of comment the manager is leaving
     enum CommentType {
@@ -68,8 +65,6 @@ export default function CommentModal(props) {
         // - delete existing row for specific day
         // - create new row with added comments
         // - add this new row to the timesheet
-
-
     }
 
 
@@ -77,12 +72,7 @@ export default function CommentModal(props) {
     return (
         <>
             <Button gap={20} display="flex" onClick={onOpen} bg="white">Comments/Reports</Button>
-            <Modal
-                isOpen={isOpen}
-                onClose={onClose}
-                isCentered
-                colorScheme={"red"}
-            >
+            <Modal isOpen={isOpen} onClose={onClose}>
                 <ModalContent>
                     <VStack spacing={4} divider={<StackDivider />}>
                         <ModalHeader>Leave a comment/report</ModalHeader>
@@ -129,7 +119,5 @@ export default function CommentModal(props) {
                 </ModalContent>
             </Modal>
         </>
-
     )
-
 }
