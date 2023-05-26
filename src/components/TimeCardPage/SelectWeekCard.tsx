@@ -10,24 +10,24 @@ export default function DateCard(props) {
     const [date, setDate] = useState(undefined);
 
     useEffect(() => {
-        const providedDate = props.date; 
+        const providedDate = props.date;
         if (providedDate === undefined) {
-            setDate(new Date()); 
+            setDate(new Date());
         } else {
             setDate(providedDate.toDate());
         }
-    },[])
+    }, [])
 
     useEffect(() => {
         if (date !== undefined) {
-            const startOfWeek = moment(date).startOf('week').unix(); 
-            props.onDateChange(moment.unix(startOfWeek)); 
+            const startOfWeek = moment(date).startOf('week').unix();
+            props.onDateChange(moment.unix(startOfWeek));
         }
     }, [date])
 
     return (
         <DatePicker selected={date} onChange={(date) => setDate(date)} />
-      );
-    }
+    );
+}
 
 
