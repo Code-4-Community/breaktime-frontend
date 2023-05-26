@@ -3,6 +3,7 @@ import TimeTable from "./TimeTable";
 import { useEffect } from "react";
 import SubmitCard from "./SubmitCard";
 import DateSelectorCard from "./SelectWeekCard";
+import AuthorComponent from "../UserComponents/UserDisplay";
 
 import {
   Alert,
@@ -18,17 +19,6 @@ import {
   HStack,
   Text,
 } from "@chakra-ui/react";
-import {
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-  PopoverHeader,
-  PopoverBody,
-  PopoverFooter,
-  PopoverArrow,
-  PopoverCloseButton,
-  PopoverAnchor,
-} from '@chakra-ui/react'
 import { Tabs, TabList, Tab } from "@chakra-ui/react";
 
 import {
@@ -39,6 +29,7 @@ import {
 } from "src/constants";
 
 import { Review_Stages, TABLE_COLUMNS } from "./types";
+import { SizeType } from '../UserComponents/types'
 import moment, { Moment } from "moment-timezone";
 
 import apiClient from "../Auth/apiClient";
@@ -105,72 +96,6 @@ const testingEmployees = [
     Picture: "https://www.google.com/koala.png",
   },
 ];
-
-
-// size - s,m,l
-function AuthorComponent({ user, size }) {
-
-  if (user === undefined) {
-    return (
-      <></>
-    )
-  }
-
-  const fullName = user.FirstName + " " + user.LastName
-
-  const avatar = 
-      <Avatar
-      src={user.Picture}
-      name={fullName}
-      size="md"
-      showBorder={true}
-      borderColor="black"
-      borderWidth="thick"
-     />
-
-  if (size === "s") {
-    return (
-        <Popover trigger="hover">
-        <PopoverTrigger>
-          {avatar}
-        </PopoverTrigger>
-        <PopoverContent >
-          <PopoverArrow />
-          <PopoverCloseButton />
-          <PopoverBody>{fullName}</PopoverBody>
-        </PopoverContent>
-        </Popover>
-    )
-  } else if(size === "m") {
-    return (
-      <Card width="50%">
-        {avatar}
-      <CardBody>
-        <Text>{fullName}</Text>
-        {size === "l" && <Text>{user?.Email}</Text>}
-      </CardBody>
-    </Card>
-    )
-  } 
-}
-
-function ProfileCard({ employee }) {
-  return (
-    <Card direction="row" width="50%">
-      <Avatar
-        src={employee?.Picture}
-        name={employee?.FirstName + " " + employee?.LastName}
-        size="md"
-        showBorder={true}
-        borderColor="black"
-        borderWidth="thick"
-      />
-      <CardBody>
-        <Text>{employee?.FirstName + " " + employee?.LastName}</Text>
-      </CardBody>
-    </Card>
-  );
-}
 
 function SearchEmployeeTimesheet({ employees, setSelected }) {
   const handleChange = (selectedOption) => {
@@ -359,7 +284,7 @@ export default function Page() {
   return (
     <>
       <HStack spacing="120px">
-        <AuthorComponent user={user} size={"l"}/>
+        <AuthorComponent user={user} size={SizeType.medium}/>
         {user?.Type === "Supervisor" || user?.Type === "Admin" && (
           <>
             <SearchEmployeeTimesheet
