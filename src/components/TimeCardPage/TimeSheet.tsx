@@ -284,7 +284,7 @@ export default function Page() {
   return (
     <>
       <HStack spacing="120px">
-        <AuthorComponent user={user} size={SizeType.medium}/>
+        <AuthorComponent user={user} size={SizeType.large}/>
         {user?.Type === "Supervisor" || user?.Type === "Admin" && (
           <>
             <SearchEmployeeTimesheet

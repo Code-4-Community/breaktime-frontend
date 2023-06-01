@@ -1,5 +1,5 @@
 export const enum SizeType {
-	small = "s",
-	medium = "m",
-	large = "l"
+	small = "sm",
+	medium = "md",
+	large = "lg"
 }
