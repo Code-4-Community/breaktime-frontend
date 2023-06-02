@@ -79,3 +79,9 @@ export const EXAMPLE_TIMESHEET_2 = {
   TableData: [{ ...EXAMPLE_ROW }],
   ScheduleTableData: [{ ...SCHEDULE_ENTRY }],
 };
+
+export const enum SizeType {
+	small = "sm",
+	medium = "md",
+	large = "lg"
+}

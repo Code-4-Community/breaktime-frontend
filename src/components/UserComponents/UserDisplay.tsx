@@ -1,6 +1,6 @@
 import React from "react";
 import { UserSchema } from "../../schemas/UserSchema";
-import { SizeType } from "./types";
+import { SizeType } from "../../constants";
 import { Card, CardBody, Avatar, Text } from "@chakra-ui/react";
 import {
   Popover,

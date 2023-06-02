@@ -29,7 +29,7 @@ import {
 } from "src/constants";
 
 import { Review_Stages, TABLE_COLUMNS } from "./types";
-import { SizeType } from '../UserComponents/types'
+import { SizeType } from '../../constants'
 import moment, { Moment } from "moment-timezone";
 
 import apiClient from "../Auth/apiClient";
