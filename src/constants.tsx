@@ -29,6 +29,13 @@ export const EXAMPLE_ROW = {
         Timestamp: moment().tz(TIMEZONE).subtract(1, 'days').unix(), 
         Content: "Great job with this entry!", 
         State: CellStatus.Active
+    },
+    {
+        AuthorID: "David", 
+        Type: CommentType.Report, 
+        Timestamp: moment().tz(TIMEZONE).subtract(1, 'days').unix(), 
+        Content: "Something went wrong :(", 
+        State: CellStatus.Active
     }], 
 }
 
