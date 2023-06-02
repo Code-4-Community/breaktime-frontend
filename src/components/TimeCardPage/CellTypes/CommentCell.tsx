@@ -9,14 +9,26 @@ import {
     ModalFooter,
     ModalBody,
     ModalCloseButton,
-    Text,
+    Input,
     IconButton,
-    useDisclosure
+    ButtonGroup,
+    Flex,
+    useDisclosure,
+    useEditableControls
   } from '@chakra-ui/react';
 import {
     ChatIcon,
-    WarningIcon
+    WarningIcon,
+    CheckIcon,
+    CloseIcon,
+    EditIcon
   } from '@chakra-ui/icons';
+import {
+  Editable,
+  EditableTextarea,
+  EditablePreview,
+  EditableInput
+  } from '@chakra-ui/react';
 
 import {CommentSchema} from '../../../schemas/RowSchema'; 
 import {CommentType, CellStatus} from '../types'; 
@@ -26,35 +38,76 @@ import { UserSchema } from 'src/schemas/UserSchema';
 interface CommentProps {
     comments: CommentSchema[] | undefined; 
     setComment: Function; 
-    user: UserSchema
+    user: UserSchema;
 } 
 
-interface CommentModalProps{
-    comment: CommentSchema;
+interface ShowCommentModalProps{
+    comments: CommentSchema[];
+    setComments: Function;
     icon;
     color: string;
     editable: boolean;
 }
 
-function CommentModal(props:CommentModalProps) {
-    const { isOpen, onOpen, onClose } = useDisclosure()
+const createNewComment = (type: CommentType, content: string) => {
+    return {
+      AuthorID:"david", 
+      Type: type, 
+      Timestamp: 1312313, 
+      Content: content, 
+      State: CellStatus.Active
+    }
+}
 
+function ShowCommentModal(props:ShowCommentModalProps) {
+    const { isOpen, onOpen, onClose } = useDisclosure()
+    const [comment, setComment] = useState(props.comments[props.comments.length - 1]);
+
+    const EditableControls = () => {
+      const {
+        isEditing,
+        getSubmitButtonProps,
+        getCancelButtonProps,
+        getEditButtonProps,
+      } = useEditableControls()
+      
+      // change this later
+      return isEditing ? (
+        <ButtonGroup justifyContent='center' size='sm'>
+          <Button leftIcon={<CheckIcon />} {...getSubmitButtonProps()} />
+          <Button leftIcon={<CloseIcon />} {...getCancelButtonProps()} />
+        </ButtonGroup>
+      ) : (
+        <Flex justifyContent='right'>
+          <Button size='sm' leftIcon={<EditIcon />} {...getEditButtonProps()} />
+        </Flex>
+      )
+    }
+
+    // make the editable work as intended later, without the odd preview box and whatever
     return (
       <>
         <IconButton colorScheme={props.color} aria-label='Report' icon={props.icon} onClick={onOpen} />
         <Modal isOpen={isOpen} onClose={onClose}>
           <ModalOverlay />
           <ModalContent>
-            <ModalHeader>{props.comment.Type}</ModalHeader>
+            <ModalHeader>{comment.Type}</ModalHeader>
             <ModalCloseButton />
             <ModalBody>
-              <Text>{props.comment.Content}</Text>
+                <Editable isDisabled={!props.editable} defaultValue={comment.Content} onSubmit={(value) => setComment(createNewComment(comment.Type, value))}>
+                  <Input as={EditableInput} />
+                  <EditablePreview />
+                  <EditableTextarea />
+                  <EditableControls />
+                </Editable> 
             </ModalBody>
   
             <ModalFooter>
               <Button colorScheme='blue' mr={3} onClick={onClose}>
                 Close
               </Button>
+              {/* add in api call*/}
+              {props.editable && <Button colorScheme='green' onClick={() => {props.setComments(...props.comments, comment); console.log("save to Db and show user it was saved", comment);}}>Save</Button>}
             </ModalFooter>
           </ModalContent>
         </Modal>
@@ -79,7 +132,7 @@ export function CommentCell(props:CommentProps) {
     //TODO - Eventually refactor to handle multiple comments / process for grabbing user 
     useEffect(() => {
         // If empty, create stubbed empty one to leave our comments at - eventually refactor to just add this to the end as the current users comments?
-        if (props.comments === undefined) {
+        /*if (props.comments === undefined) {
             //Create one empty comment 
             setComments([{
                 AuthorID:"<TODO Fill this in at some point>", 
@@ -88,7 +141,7 @@ export function CommentCell(props:CommentProps) {
                 Content:"",
                 State: CellStatus.Active 
             }]); 
-        }
+        }*/
         //Supervisor/Admins have the right to edit comments/reports
         if (props.user.Type === "Supervisor" || props.user.Type === "Admin") {
           setEditable(true);
@@ -101,35 +154,28 @@ export function CommentCell(props:CommentProps) {
         props.setComment("Comment", comments); 
     } 
 
-    // change this
-    // so change to be a button 
-    // pop up comment modal
-    // basically add in functionality for comment/report
-
-    //<input defaultValue={comments[comments.length - 1].Content} onChange={() => onUpdate} />
-    //<IconButton colorScheme="blue" aria-label='Comment' icon={<ChatIcon />} onClick={() => onUpdate} /> 
-
-    //<input placeholder="Any comments?" onChange={() => onUpdate} />
-
-    // Currently the view for employee
-
     if (props.comments !== undefined) {
+        // abstract out the button components 
         return (
             <>
-                {reports.length > 0 ? <CommentModal comment={reports[reports.length - 1]} icon={<WarningIcon />} color={"red"} editable={editable}/> : <></>}
-                <CommentModal comment={comments[comments.length - 1]} icon={<ChatIcon />} color={"blue"} editable={editable}/>
+                {reports.length > 0  ? 
+                  <ShowCommentModal setComments={setComments} comments={comments} icon={<WarningIcon />} color={"red"} editable={editable}/> :
+                  <Button>Add Report</Button>}
+                {comments.length > 0 ? 
+                  <ShowCommentModal setComments={setComments} comments={comments} icon={<ChatIcon />} color={"blue"} editable={editable}/> :
+                  <Button>Add Comment</Button>}
             </>
         )
     } else {
         // if editable is true, then the user is an supervisor or admin and should be able to add reports/comments as well
         return (
-        <>
-          {editable ? 
-            <>
-              <Button>add Report</Button>    
-              <Button>add Comment</Button>
-            </> : <></>}
-        </>
+          <>
+            {editable &&
+              <>
+                <Button>Add Report</Button>    
+                <Button>Add Comment</Button>
+              </>}
+          </>
         )
     }
 
