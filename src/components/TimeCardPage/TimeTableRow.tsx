@@ -17,11 +17,13 @@ import { DateCell } from './CellTypes/DateCell';
 import { TypeCell } from './CellTypes/CellType';
 import { CommentCell } from './CellTypes/CommentCell';
 import { RowSchema } from '../../schemas/RowSchema';
+import { UserSchema } from 'src/schemas/UserSchema';
 
 interface RowProps {
     row: RowSchema;
     prevDate: number;
     onRowChange: Function;
+    user: UserSchema
 }
 
 function Row(props: RowProps) {
@@ -51,7 +53,7 @@ function Row(props: RowProps) {
             "Clock-in": <TimeEntry row={fields} field={"Start"} updateFields={updateField} />,
             "Clock-out": <TimeEntry row={fields} field={"End"} updateFields={updateField} />,
             "Hours": <Duration row={fields} />,
-            "Comment": <CommentCell comments={fields.Comment} setComment={updateField} />,
+            "Comment": <CommentCell comments={fields.Comment} setComment={updateField} user={props.user}/>,
         }
         const itemOrdering = ["Type", "Date", "Clock-in", "Clock-out", "Hours", "Comment"];
 

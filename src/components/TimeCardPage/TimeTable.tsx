@@ -8,6 +8,7 @@ import {TimeSheetSchema} from '../../schemas/TimesheetSchema';
 import { Fragment } from 'react';
 import { TIMESHEET_DURATION, TIMEZONE } from 'src/constants';
 import {CellType} from './types'; 
+import { UserSchema } from 'src/schemas/UserSchema';
 
 
 //Can expand upon this further by specifying input types - to allow only dates, numbers, etc for the input https://www.w3schools.com/bootstrap/bootstrap_forms_inputs.asp 
@@ -61,7 +62,8 @@ const formatRows = (providedRows, startDate) => {
 interface TableProps {
   timesheet: TimeSheetSchema; 
   columns: String[]; 
-  onTimesheetChange: Function; 
+  onTimesheetChange: Function;
+  user: UserSchema 
 } 
 
 function TimeTable(props:TableProps) {
@@ -144,7 +146,7 @@ function TimeTable(props:TableProps) {
                             <button onClick={() => {delRow(row, index)}}>-</button>
                         </td>
                         {
-                            <TimeTableRow row={row}  onRowChange={(row) => onRowChange(row, index)} prevDate={dateToSend}/>
+                            <TimeTableRow row={row}  onRowChange={(row) => onRowChange(row, index)} prevDate={dateToSend} user={props.user}/>
                         }  
                     </tr>);  
                 } 

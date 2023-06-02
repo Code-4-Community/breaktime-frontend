@@ -1,6 +1,6 @@
 import moment from 'moment-timezone';
 import React, {useState, useEffect, } from 'react'; 
-import {Button} from '@chakra-ui/react'
+import {Button, ChakraComponent} from '@chakra-ui/react';
 import {
     Modal,
     ModalOverlay,
@@ -10,35 +10,45 @@ import {
     ModalBody,
     ModalCloseButton,
     Text,
+    IconButton,
     useDisclosure
-  } from '@chakra-ui/react'
+  } from '@chakra-ui/react';
+import {
+    ChatIcon,
+    WarningIcon
+  } from '@chakra-ui/icons';
 
 import {CommentSchema} from '../../../schemas/RowSchema'; 
 import {CommentType, CellStatus} from '../types'; 
 import {TIMEZONE} from '../../../constants'; 
+import { UserSchema } from 'src/schemas/UserSchema';
 
 interface CommentProps {
     comments: CommentSchema[] | undefined; 
     setComment: Function; 
+    user: UserSchema
 } 
 
-interface ReportProps{
-    report: CommentSchema
+interface CommentModalProps{
+    comment: CommentSchema;
+    icon;
+    color: string;
+    editable: boolean;
 }
 
-function ReportModal(props:ReportProps) {
+function CommentModal(props:CommentModalProps) {
     const { isOpen, onOpen, onClose } = useDisclosure()
-    console.log(props);
+
     return (
       <>
-        <Button colorScheme="red" onClick={onOpen}>Report</Button>
+        <IconButton colorScheme={props.color} aria-label='Report' icon={props.icon} onClick={onOpen} />
         <Modal isOpen={isOpen} onClose={onClose}>
           <ModalOverlay />
           <ModalContent>
-            <ModalHeader>Report</ModalHeader>
+            <ModalHeader>{props.comment.Type}</ModalHeader>
             <ModalCloseButton />
             <ModalBody>
-              <Text>{props.report.Content}</Text>
+              <Text>{props.comment.Content}</Text>
             </ModalBody>
   
             <ModalFooter>
@@ -64,6 +74,7 @@ export function CommentCell(props:CommentProps) {
 
     const [comments, setComments] = useState(getAllCommentsOfType(CommentType.Comment, props.comments));
     const [reports, setReports] = useState(getAllCommentsOfType(CommentType.Report, props.comments));
+    const [editable, setEditable] = useState(false);
 
     //TODO - Eventually refactor to handle multiple comments / process for grabbing user 
     useEffect(() => {
@@ -77,9 +88,14 @@ export function CommentCell(props:CommentProps) {
                 Content:"",
                 State: CellStatus.Active 
             }]); 
+        }
+        //Supervisor/Admins have the right to edit comments/reports
+        if (props.user.Type === "Supervisor" || props.user.Type === "Admin") {
+          setEditable(true);
         } 
     }, []);  
 
+    // make sure to change
     const onUpdate = (event) => {
         comments[0].Content = event.target.value; 
         props.setComment("Comment", comments); 
@@ -90,15 +106,31 @@ export function CommentCell(props:CommentProps) {
     // pop up comment modal
     // basically add in functionality for comment/report
 
+    //<input defaultValue={comments[comments.length - 1].Content} onChange={() => onUpdate} />
+    //<IconButton colorScheme="blue" aria-label='Comment' icon={<ChatIcon />} onClick={() => onUpdate} /> 
+
+    //<input placeholder="Any comments?" onChange={() => onUpdate} />
+
+    // Currently the view for employee
+
     if (props.comments !== undefined) {
         return (
             <>
-                {reports.length > 0 ? <ReportModal report={reports[reports.length - 1]}/> : <></>}
-                <input defaultValue={comments[comments.length - 1].Content} onChange={() => onUpdate} />
+                {reports.length > 0 ? <CommentModal comment={reports[reports.length - 1]} icon={<WarningIcon />} color={"red"} editable={editable}/> : <></>}
+                <CommentModal comment={comments[comments.length - 1]} icon={<ChatIcon />} color={"blue"} editable={editable}/>
             </>
         )
     } else {
-        return <input placeholder="Any comments?" onChange={() => onUpdate} />
+        // if editable is true, then the user is an supervisor or admin and should be able to add reports/comments as well
+        return (
+        <>
+          {editable ? 
+            <>
+              <Button>add Report</Button>    
+              <Button>add Comment</Button>
+            </> : <></>}
+        </>
+        )
     }
 
 }

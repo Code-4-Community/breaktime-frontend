@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, createContext } from 'react';
 import TimeTable from './TimeTable'
 import { useEffect } from 'react';
 import SubmitCard from './SubmitCard';
@@ -154,16 +154,18 @@ export default function Page() {
 
     // this hook should always run first
     useEffect(() => {
-        apiClient.getUser().then(userInfo => {
-            setUser(userInfo);
-            if (userInfo.Type === "Supervisor" || userInfo.Type === "Admin") {
-                apiClient.getAllUsers().then(users => {
-                    setAssociates(users);
-                    setSelectedUser(users[0]);
-                })
-            }
-            setSelectedUser(userInfo)
-        })
+        setUser({ UserID: "abc", FirstName: "joe", LastName: "jane", Type: "Associate", Picture: "https://www.google.com/koala.png" })
+        
+        //apiClient.getUser().then(userInfo => {
+        //    setUser(userInfo);
+        //    if (userInfo.Type === "Supervisor" || userInfo.Type === "Admin") {
+        //        apiClient.getAllUsers().then(users => {
+        //            setAssociates(users);
+        //            setSelectedUser(users[0]);
+        //        })
+        //    }
+        //    setSelectedUser(userInfo)
+        //})
         // if employee setSelectedUSer to be userinfo
         // if supervisor/admin get all users
         // set selected user
@@ -273,7 +275,7 @@ export default function Page() {
             </Tabs>
             {selectedTimesheet?.CompanyID === "Total" ?
                 (<AggregationTable Date={selectedDate} timesheets={currentTimesheets} />)
-                : (<TimeTable columns={TABLE_COLUMNS} timesheet={selectedTimesheet} onTimesheetChange={processTimesheetChange} />)}
+                : (<TimeTable columns={TABLE_COLUMNS} timesheet={selectedTimesheet} onTimesheetChange={processTimesheetChange} user={user} />)}
 
         </>
     )
