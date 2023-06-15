@@ -32,7 +32,7 @@ import {
 
 import {CommentSchema} from '../../../schemas/RowSchema'; 
 import {CommentType, CellStatus} from '../types'; 
-import {TIMEZONE} from '../../../constants'; 
+import CommentModal from '../CommentModal'
 import { UserSchema } from 'src/schemas/UserSchema';
 
 interface CommentProps {
@@ -47,6 +47,7 @@ interface ShowCommentModalProps{
     icon;
     color: string;
     editable: boolean;
+    user: UserSchema;
 }
 
 const createNewComment = (type: CommentType, content: string) => {
@@ -71,7 +72,7 @@ function ShowCommentModal(props:ShowCommentModalProps) {
         getEditButtonProps,
       } = useEditableControls()
       
-      // change this later
+      // change this later to reflect figma
       return isEditing ? (
         <ButtonGroup justifyContent='center' size='sm'>
           <Button leftIcon={<CheckIcon />} {...getSubmitButtonProps()} />
@@ -84,6 +85,20 @@ function ShowCommentModal(props:ShowCommentModalProps) {
       )
     }
 
+    const elevatedUserPrivileges = (props.user.Type === "Supervisor" || props.user.Type === "Admin")
+
+    // probably need to add some more validation
+    const addNewComment = (value: string) => {
+      if (value !== ""){
+        setComment(createNewComment(comment.Type, value))
+      }
+    }
+
+    const saveComment = () => {
+      props.setComments([...props.comments, comment])
+      // save to DB
+    }
+
     // make the editable work as intended later, without the odd preview box and whatever
     return (
       <>
@@ -94,11 +109,14 @@ function ShowCommentModal(props:ShowCommentModalProps) {
             <ModalHeader>{comment.Type}</ModalHeader>
             <ModalCloseButton />
             <ModalBody>
-                <Editable isDisabled={!props.editable} defaultValue={comment.Content} onSubmit={(value) => setComment(createNewComment(comment.Type, value))}>
+                <Editable isDisabled={!props.editable} defaultValue={comment.Content} onSubmit={(value) => addNewComment(value)}>
                   <Input as={EditableInput} />
                   <EditablePreview />
+                  {elevatedUserPrivileges && 
+                  <>
                   <EditableTextarea />
                   <EditableControls />
+                  </>}
                 </Editable> 
             </ModalBody>
   
@@ -106,8 +124,8 @@ function ShowCommentModal(props:ShowCommentModalProps) {
               <Button colorScheme='blue' mr={3} onClick={onClose}>
                 Close
               </Button>
-              {/* add in api call*/}
-              {props.editable && <Button colorScheme='green' onClick={() => {props.setComments(...props.comments, comment); console.log("save to Db and show user it was saved", comment);}}>Save</Button>}
+              {/* add in api call, fix empty save just add if cases, also add in only user supervisor/admin can save*/}
+              {props.editable && elevatedUserPrivileges && <Button colorScheme='green' onClick={() => {console.log("show user it was saved", comment)}}>Save</Button>}
             </ModalFooter>
           </ModalContent>
         </Modal>
@@ -148,22 +166,15 @@ export function CommentCell(props:CommentProps) {
         } 
     }, []);  
 
-    // make sure to change
-    const onUpdate = (event) => {
-        comments[0].Content = event.target.value; 
-        props.setComment("Comment", comments); 
-    } 
-
     if (props.comments !== undefined) {
-        // abstract out the button components 
         return (
             <>
                 {reports.length > 0  ? 
-                  <ShowCommentModal setComments={setComments} comments={comments} icon={<WarningIcon />} color={"red"} editable={editable}/> :
-                  <Button>Add Report</Button>}
+                  <ShowCommentModal setComments={setReports} comments={reports} icon={<WarningIcon />} color={"red"} editable={editable} user={props.user}/> :
+                  <CommentModal />}
                 {comments.length > 0 ? 
-                  <ShowCommentModal setComments={setComments} comments={comments} icon={<ChatIcon />} color={"blue"} editable={editable}/> :
-                  <Button>Add Comment</Button>}
+                  <ShowCommentModal setComments={setComments} comments={comments} icon={<ChatIcon />} color={"blue"} editable={editable} user={props.user}/> :
+                  <CommentModal />}
             </>
         )
     } else {
@@ -172,11 +183,13 @@ export function CommentCell(props:CommentProps) {
           <>
             {editable &&
               <>
-                <Button>Add Report</Button>    
-                <Button>Add Comment</Button>
+                <CommentModal />
+                <CommentModal />
               </>}
           </>
         )
     }
 
 }
+
+// modify current comment modal to add for weekly or daily

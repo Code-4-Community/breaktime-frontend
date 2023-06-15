@@ -17,7 +17,7 @@ export const enum PAGE_ROUTES {
 // Example data that can be used in testing until we re-format DB 
 export const EXAMPLE_ROW = {
     Type: CellType.Regular,  
-    Date: moment().tz(TIMEZONE).unix(),  
+    Date: moment().tz(TIMEZONE).weekday(1).unix(),  
     Associate: { 
         Start: 120,  End:300, Author:0
     },  
@@ -26,14 +26,38 @@ export const EXAMPLE_ROW = {
     Comment: [{
         AuthorID: "Joseph", 
         Type: CommentType.Comment, 
-        Timestamp: moment().tz(TIMEZONE).subtract(1, 'days').unix(), 
+        Timestamp: moment().tz(TIMEZONE).weekday(1).unix(), 
         Content: "Great job with this entry!", 
         State: CellStatus.Active
     },
     {
         AuthorID: "David", 
         Type: CommentType.Report, 
-        Timestamp: moment().tz(TIMEZONE).subtract(1, 'days').unix(), 
+        Timestamp: moment().tz(TIMEZONE).weekday(1).unix(), 
+        Content: "Something went wrong :(", 
+        State: CellStatus.Active
+    }], 
+}
+
+export const EXAMPLE_ROW2 = {
+    Type: CellType.Regular,  
+    Date: moment().tz(TIMEZONE).weekday(2).unix(),  
+    Associate: { 
+        Start: 120,  End:300, Author:0
+    },  
+    Supervisor: undefined, 
+    Admin: undefined , 
+    Comment: [{
+        AuthorID: "Joseph", 
+        Type: CommentType.Comment, 
+        Timestamp: moment().tz(TIMEZONE).weekday(2).unix(), 
+        Content: "Great job with this entry!", 
+        State: CellStatus.Active
+    },
+    {
+        AuthorID: "David", 
+        Type: CommentType.Report, 
+        Timestamp: moment().tz(TIMEZONE).weekday(2).unix(), 
         Content: "Something went wrong :(", 
         State: CellStatus.Active
     }], 
@@ -57,7 +81,7 @@ export const EXAMPLE_TIMESHEET = {
         Finalized: undefined
     }, 
     WeekNotes:[], 
-    TableData: [{...EXAMPLE_ROW}], 
+    TableData: [{...EXAMPLE_ROW2, ...EXAMPLE_ROW}], 
     ScheduleTableData: [{...SCHEDULE_ENTRY}]
 }
 export const EXAMPLE_TIMESHEET_2 = {

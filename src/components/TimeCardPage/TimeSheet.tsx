@@ -155,7 +155,7 @@ export default function Page() {
     // this hook should always run first
     useEffect(() => {
         // Uncomment this if you want the default one loaded 
-        setUser({ UserID: "abc", FirstName: "joe", LastName: "jane", Type: "Supervisor", Picture: "https://www.google.com/koala.png" })
+        setUser({ UserID: "abc", FirstName: "joe", LastName: "jane", Type: "Associate", Picture: "https://www.google.com/koala.png" })
         
         //apiClient.getUser().then(userInfo => {
         //    setUser(userInfo);
