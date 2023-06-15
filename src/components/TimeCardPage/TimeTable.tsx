@@ -63,7 +63,6 @@ interface TableProps {
   timesheet: TimeSheetSchema; 
   columns: String[]; 
   onTimesheetChange: Function;
-  user: UserSchema 
 } 
 
 function TimeTable(props:TableProps) {
@@ -146,7 +145,7 @@ function TimeTable(props:TableProps) {
                             <button onClick={() => {delRow(row, index)}}>-</button>
                         </td>
                         {
-                            <TimeTableRow row={row}  onRowChange={(row) => onRowChange(row, index)} prevDate={dateToSend} user={props.user}/>
+                            <TimeTableRow row={row}  onRowChange={(row) => onRowChange(row, index)} prevDate={dateToSend}/>
                         }  
                     </tr>);  
                 } 

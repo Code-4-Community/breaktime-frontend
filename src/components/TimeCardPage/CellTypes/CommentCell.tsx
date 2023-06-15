@@ -1,6 +1,6 @@
-import moment from 'moment-timezone';
-import React, {useState, useEffect, } from 'react'; 
-import {Button, ChakraComponent} from '@chakra-ui/react';
+import React, {useState, useEffect, useContext} from 'react'; 
+import {Button} from '@chakra-ui/react';
+import { UserContext } from '../UserContext';
 import {
     Modal,
     ModalOverlay,
@@ -33,12 +33,10 @@ import {
 import {CommentSchema} from '../../../schemas/RowSchema'; 
 import {CommentType, CellStatus} from '../types'; 
 import CommentModal from '../CommentModal'
-import { UserSchema } from 'src/schemas/UserSchema';
 
 interface CommentProps {
     comments: CommentSchema[] | undefined; 
     setComment: Function; 
-    user: UserSchema;
 } 
 
 interface ShowCommentModalProps{
@@ -47,7 +45,6 @@ interface ShowCommentModalProps{
     icon;
     color: string;
     editable: boolean;
-    user: UserSchema;
 }
 
 const createNewComment = (type: CommentType, content: string) => {
@@ -63,6 +60,7 @@ const createNewComment = (type: CommentType, content: string) => {
 function ShowCommentModal(props:ShowCommentModalProps) {
     const { isOpen, onOpen, onClose } = useDisclosure()
     const [comment, setComment] = useState(props.comments[props.comments.length - 1]);
+    const user = useContext(UserContext);
 
     const EditableControls = () => {
       const {
@@ -85,7 +83,7 @@ function ShowCommentModal(props:ShowCommentModalProps) {
       )
     }
 
-    const elevatedUserPrivileges = (props.user.Type === "Supervisor" || props.user.Type === "Admin")
+    const elevatedUserPrivileges = (user.Type === "Supervisor" || user.Type === "Admin")
 
     // probably need to add some more validation
     const addNewComment = (value: string) => {
@@ -124,8 +122,7 @@ function ShowCommentModal(props:ShowCommentModalProps) {
               <Button colorScheme='blue' mr={3} onClick={onClose}>
                 Close
               </Button>
-              {/* add in api call, fix empty save just add if cases, also add in only user supervisor/admin can save*/}
-              {props.editable && elevatedUserPrivileges && <Button colorScheme='green' onClick={() => {console.log("show user it was saved", comment)}}>Save</Button>}
+              {props.editable && elevatedUserPrivileges && <Button colorScheme='green' onClick={saveComment}>Save</Button>}
             </ModalFooter>
           </ModalContent>
         </Modal>
@@ -146,6 +143,7 @@ export function CommentCell(props:CommentProps) {
     const [comments, setComments] = useState(getAllCommentsOfType(CommentType.Comment, props.comments));
     const [reports, setReports] = useState(getAllCommentsOfType(CommentType.Report, props.comments));
     const [editable, setEditable] = useState(false);
+    const user = useContext(UserContext);
 
     //TODO - Eventually refactor to handle multiple comments / process for grabbing user 
     useEffect(() => {
@@ -161,7 +159,7 @@ export function CommentCell(props:CommentProps) {
             }]); 
         }*/
         //Supervisor/Admins have the right to edit comments/reports
-        if (props.user.Type === "Supervisor" || props.user.Type === "Admin") {
+        if (user.Type === "Supervisor" || user.Type === "Admin") {
           setEditable(true);
         } 
     }, []);  
@@ -170,10 +168,10 @@ export function CommentCell(props:CommentProps) {
         return (
             <>
                 {reports.length > 0  ? 
-                  <ShowCommentModal setComments={setReports} comments={reports} icon={<WarningIcon />} color={"red"} editable={editable} user={props.user}/> :
+                  <ShowCommentModal setComments={setReports} comments={reports} icon={<WarningIcon />} color={"red"} editable={editable} /> :
                   <CommentModal />}
                 {comments.length > 0 ? 
-                  <ShowCommentModal setComments={setComments} comments={comments} icon={<ChatIcon />} color={"blue"} editable={editable} user={props.user}/> :
+                  <ShowCommentModal setComments={setComments} comments={comments} icon={<ChatIcon />} color={"blue"} editable={editable} /> :
                   <CommentModal />}
             </>
         )
@@ -192,4 +190,4 @@ export function CommentCell(props:CommentProps) {
 
 }
 
-// modify current comment modal to add for weekly or daily
+//TODO: modify current comment modal to add for weekly or daily

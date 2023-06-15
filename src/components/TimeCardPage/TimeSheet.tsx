@@ -1,8 +1,9 @@
-import React, { useState, useMemo, createContext } from 'react';
+import React, { useState, useMemo, useContext } from 'react';
 import TimeTable from './TimeTable'
 import { useEffect } from 'react';
 import SubmitCard from './SubmitCard';
 import DateSelectorCard from './SelectWeekCard'
+import { UserContext } from './UserContext';
 
 import {
     Alert,
@@ -150,12 +151,12 @@ export default function Page() {
     const [userTimesheets, setUserTimesheets] = useState([]);
     const [currentTimesheets, setCurrentTimesheets] = useState([]);
     const [selectedTimesheet, setTimesheet] = useState(undefined);
-
+    
 
     // this hook should always run first
     useEffect(() => {
         // Uncomment this if you want the default one loaded 
-        setUser({ UserID: "abc", FirstName: "joe", LastName: "jane", Type: "Associate", Picture: "https://www.google.com/koala.png" })
+        setUser({ UserID: "abc", FirstName: "joe", LastName: "jane", Type: "Supervisor", Picture: "https://www.google.com/koala.png" })
         
         //apiClient.getUser().then(userInfo => {
         //    setUser(userInfo);
@@ -276,7 +277,9 @@ export default function Page() {
             </Tabs>
             {selectedTimesheet?.CompanyID === "Total" ?
                 (<AggregationTable Date={selectedDate} timesheets={currentTimesheets} />)
-                : (<TimeTable columns={TABLE_COLUMNS} timesheet={selectedTimesheet} onTimesheetChange={processTimesheetChange} user={user} />)}
+                : (<UserContext.Provider value={user}>
+                    <TimeTable columns={TABLE_COLUMNS} timesheet={selectedTimesheet} onTimesheetChange={processTimesheetChange} />
+                </UserContext.Provider>)}
 
         </>
     )
