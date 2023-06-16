@@ -39,6 +39,8 @@ interface CommentProps {
     setComment: Function; 
 } 
 
+
+// setComments can be used for comments or reports
 interface ShowCommentModalProps{
     comments: CommentSchema[];
     setComments: Function;
@@ -47,7 +49,7 @@ interface ShowCommentModalProps{
     editable: boolean;
 }
 
-const createNewComment = (type: CommentType, content: string) => {
+export const createNewComment = (type: CommentType, content: string) => {
     return {
       AuthorID:"david", 
       Type: type, 
@@ -164,15 +166,15 @@ export function CommentCell(props:CommentProps) {
         } 
     }, []);  
 
-    if (props.comments !== undefined) {
+    if (comments !== undefined || reports !== undefined) {
         return (
             <>
                 {reports.length > 0  ? 
                   <ShowCommentModal setComments={setReports} comments={reports} icon={<WarningIcon />} color={"red"} editable={editable} /> :
-                  <CommentModal />}
+                  <CommentModal setComments={setReports} comments={reports} type={CommentType.Report} />}
                 {comments.length > 0 ? 
                   <ShowCommentModal setComments={setComments} comments={comments} icon={<ChatIcon />} color={"blue"} editable={editable} /> :
-                  <CommentModal />}
+                  <CommentModal setComments={setComments} comments={comments} type={CommentType.Comment}/>}
             </>
         )
     } else {
@@ -181,8 +183,8 @@ export function CommentCell(props:CommentProps) {
           <>
             {editable &&
               <>
-                <CommentModal />
-                <CommentModal />
+                <CommentModal setComments={setReports} comments={reports} type={CommentType.Report} />
+                <CommentModal setComments={setComments} comments={comments} type={CommentType.Comment} />
               </>}
           </>
         )
@@ -190,4 +192,5 @@ export function CommentCell(props:CommentProps) {
 
 }
 
-//TODO: modify current comment modal to add for weekly or daily
+// TODO: modify current comment modal to add for weekly or daily
+// TODO: add delete functionality

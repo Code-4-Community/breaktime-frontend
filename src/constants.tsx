@@ -81,7 +81,7 @@ export const EXAMPLE_TIMESHEET = {
         Finalized: undefined
     }, 
     WeekNotes:[], 
-    TableData: [{...EXAMPLE_ROW2, ...EXAMPLE_ROW}], 
+    TableData: [{...EXAMPLE_ROW}], 
     ScheduleTableData: [{...SCHEDULE_ENTRY}]
 }
 export const EXAMPLE_TIMESHEET_2 = {

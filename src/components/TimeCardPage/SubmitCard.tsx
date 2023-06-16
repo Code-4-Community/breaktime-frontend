@@ -4,7 +4,7 @@ import Button from 'react-bootstrap/Button';
 import CommentModal from './CommentModal';
 import { Box } from '@chakra-ui/react';
 import { CardState } from './types'
-
+import { CommentType } from './types';
 //https://react-bootstrap.github.io/components/cards/
 
 
@@ -44,7 +44,8 @@ export default function SubmitCard() {
                 {submitted && <Card.Footer>
                     {submitDate}
                     {state}
-                    <CommentModal></CommentModal>
+                    {/* use a diff component for weekly */ }
+                    <CommentModal setComments={() => console.log("record weekly comment")} comments={[]} type={CommentType.Comment}></CommentModal>
 
                 </Card.Footer>}
             </Card>
