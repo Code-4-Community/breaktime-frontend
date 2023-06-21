@@ -1,8 +1,7 @@
 import React, {useState, useEffect, useContext} from 'react'; 
 import { UserContext } from '../UserContext';
 import {
-    Button, 
-    ChakraComponent,
+    Button,
     Modal,
     ModalOverlay,
     ModalContent,
@@ -155,37 +154,23 @@ export function CommentCell(props:CommentProps) {
     const [isEditable, setisEditable] = useState(false);
     const user = useContext(UserContext);
 
-    //TODO - Eventually refactor to handle multiple comments / process for grabbing user 
     useEffect(() => {
         //Supervisor/Admins have the right to edit comments/reports
         if (user.Type === "Supervisor" || user.Type === "Admin") {
           setisEditable(true);
         } 
-    }, []);  
+    }, [user.Type]);  
 
-    if (comments !== undefined || reports !== undefined) {
-        return (
-            <>
-                {reports.length > 0  ? 
-                  <ShowCommentModal setComments={setReports} comments={reports} icon={<WarningIcon />} color={Color.Red} isEditable={isEditable} /> :
-                  <CommentModal setComments={setReports} comments={reports} type={CommentType.Report} />}
-                {comments.length > 0 ? 
-                  <ShowCommentModal setComments={setComments} comments={comments} icon={<ChatIcon />} color={Color.Blue} isEditable={isEditable} /> :
-                  <CommentModal setComments={setComments} comments={comments} type={CommentType.Comment}/>}
-            </>
-        )
-    } else {
-        // if editable is true, then the user is an supervisor or admin and should be able to add reports/comments as well
-        return (
-          <>
-            {isEditable &&
-              <>
-                <CommentModal setComments={setReports} comments={reports} type={CommentType.Report} />
-                <CommentModal setComments={setComments} comments={comments} type={CommentType.Comment} />
-              </>}
-          </>
-        )
-    }
+    return (
+        <>
+            {reports.length > 0  ? 
+              <ShowCommentModal setComments={setReports} comments={reports} icon={<WarningIcon />} color={Color.Red} isEditable={isEditable} /> :
+              <CommentModal setComments={setReports} comments={reports} type={CommentType.Report} />}
+            {comments.length > 0 ? 
+              <ShowCommentModal setComments={setComments} comments={comments} icon={<ChatIcon />} color={Color.Blue} isEditable={isEditable} /> :
+              <CommentModal setComments={setComments} comments={comments} type={CommentType.Comment}/>}
+        </>
+    )
 
 }
 
