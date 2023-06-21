@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
-import CommentModal from './CommentModal';
+import { DailyCommentModal } from './CommentModal'; // change to weekly comment modal theme
 import { Box } from '@chakra-ui/react';
 import { CardState } from './types'
 import { CommentType } from './types';
@@ -45,7 +45,7 @@ export default function SubmitCard() {
                     {submitDate}
                     {state}
                     {/* use a diff component for weekly */ }
-                    <CommentModal setComments={() => console.log("record weekly comment")} comments={[]} type={CommentType.Comment}></CommentModal>
+                    <DailyCommentModal setComments={() => console.log("record weekly comment")} comments={[]} type={CommentType.Comment} />
 
                 </Card.Footer>}
             </Card>

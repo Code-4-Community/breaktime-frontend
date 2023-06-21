@@ -24,7 +24,7 @@ interface DailyCommentModalProps {
   type: CommentType;
 }
 
-export default function DailyCommentModal({
+export function DailyCommentModal({
   setComments,
   comments,
   type,
@@ -53,13 +53,13 @@ export default function DailyCommentModal({
           bg="white"
           color="black"
         >
-          Comments/Reports
+          Add {type}
         </Button>
       </Center>
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalContent>
           <VStack spacing={4} divider={<StackDivider />}>
-            <ModalHeader>New {type}</ModalHeader>
+            <ModalHeader>{type}</ModalHeader>
 
             <form id="Form" onSubmit={handleSubmit}>
               <HStack spacing={4}>
@@ -88,3 +88,5 @@ export default function DailyCommentModal({
     </>
   );
 }
+
+// TODO: add seperate Comment Modal for Weekly

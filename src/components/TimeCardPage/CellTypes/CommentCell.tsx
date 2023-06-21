@@ -31,7 +31,7 @@ import {
 import { CommentSchema } from "../../../schemas/RowSchema";
 import { UserSchema } from "src/schemas/UserSchema";
 import { CommentType, CellStatus, Color } from "../types";
-import CommentModal from "../CommentModal";
+import { DailyCommentModal } from "../CommentModal";
 import moment from "moment-timezone";
 
 interface CommentProps {
@@ -195,7 +195,7 @@ export function CommentCell(props: CommentProps) {
           isEditable={isEditable}
         />
       ) : (
-        <CommentModal
+        <DailyCommentModal
           setComments={setReports}
           comments={reports}
           type={CommentType.Report}
@@ -210,7 +210,7 @@ export function CommentCell(props: CommentProps) {
           isEditable={isEditable}
         />
       ) : (
-        <CommentModal
+        <DailyCommentModal
           setComments={setComments}
           comments={comments}
           type={CommentType.Comment}
@@ -220,5 +220,4 @@ export function CommentCell(props: CommentProps) {
   );
 }
 
-// TODO: modify current comment modal to add for weekly or daily
 // TODO: add delete functionality
