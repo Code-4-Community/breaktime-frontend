@@ -3,11 +3,12 @@ import {
     Input, Button, useDisclosure, Modal,
     ModalContent, ModalHeader, VStack, StackDivider, ModalFooter, HStack, Center
 } from '@chakra-ui/react'
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { Select } from '@chakra-ui/react'
 import { CommentType } from './types';
 import { CommentSchema } from 'src/schemas/RowSchema';
 import { createNewComment } from './CellTypes/CommentCell';
+import { UserContext } from './UserContext';
 // for now display samething for weekly and daily, if needed split into two components later
 
 // setComments can be used for comments or reports
@@ -21,6 +22,7 @@ export default function DailyCommentModal(props:DailyCommentModalProps) {
 
     const { isOpen, onOpen, onClose } = useDisclosure()
     const [remark, setRemark] = useState()
+    const user = useContext(UserContext);
 
     // stores the remark that was made
     const handleRemarkChange = (e) => {
@@ -29,7 +31,7 @@ export default function DailyCommentModal(props:DailyCommentModalProps) {
 
     // duplicated code, can def be abstracted if needed
     const handleSubmit = () => {
-        props.setComments([...props.comments, createNewComment(props.type, remark)])
+        props.setComments([...props.comments, createNewComment(user, props.type, remark)])
         console.log("saved")
         // clean up abstractions and duplication otherwise fully done
         // call to db

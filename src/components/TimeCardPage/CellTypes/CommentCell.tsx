@@ -1,7 +1,8 @@
 import React, {useState, useEffect, useContext} from 'react'; 
-import {Button} from '@chakra-ui/react';
 import { UserContext } from '../UserContext';
 import {
+    Button, 
+    ChakraComponent,
     Modal,
     ModalOverlay,
     ModalContent,
@@ -9,12 +10,16 @@ import {
     ModalFooter,
     ModalBody,
     ModalCloseButton,
+    Editable,
+    EditableTextarea,
+    EditablePreview,
+    EditableInput,
     Input,
     IconButton,
     ButtonGroup,
     Flex,
     useDisclosure,
-    useEditableControls
+    useEditableControls,
   } from '@chakra-ui/react';
 import {
     ChatIcon,
@@ -23,20 +28,17 @@ import {
     CloseIcon,
     EditIcon
   } from '@chakra-ui/icons';
-import {
-  Editable,
-  EditableTextarea,
-  EditablePreview,
-  EditableInput
-  } from '@chakra-ui/react';
+
 
 import {CommentSchema} from '../../../schemas/RowSchema'; 
-import {CommentType, CellStatus} from '../types'; 
+import { UserSchema } from 'src/schemas/UserSchema';
+import {CommentType, CellStatus, Color} from '../types'; 
 import CommentModal from '../CommentModal'
+import moment from 'moment-timezone';
 
 interface CommentProps {
     comments: CommentSchema[] | undefined; 
-    setComment: Function; 
+    setComment: Function; // TODO: fix type 
 } 
 
 
@@ -44,24 +46,30 @@ interface CommentProps {
 interface ShowCommentModalProps{
     comments: CommentSchema[];
     setComments: Function;
-    icon;
-    color: string;
-    editable: boolean;
+    icon; // TODO: add type
+    color: Color;
+    isEditable: boolean;
 }
 
-export const createNewComment = (type: CommentType, content: string) => {
+export const createNewComment = (user: UserSchema, type: CommentType, content: string) => {
     return {
-      AuthorID:"david", 
+      AuthorID: user.UserID, 
       Type: type, 
-      Timestamp: 1312313, 
+      Timestamp: moment().unix(), // TODO: possibly change it to be more specific formatting
       Content: content, 
       State: CellStatus.Active
     }
 }
 
-function ShowCommentModal(props:ShowCommentModalProps) {
+function ShowCommentModal({
+  comments,
+  setComments,
+  icon,
+  color,
+  isEditable
+}: ShowCommentModalProps) {
     const { isOpen, onOpen, onClose } = useDisclosure()
-    const [comment, setComment] = useState(props.comments[props.comments.length - 1]);
+    const [displayedComment, setDisplayedComment] = useState(comments[comments.length - 1]);
     const user = useContext(UserContext);
 
     const EditableControls = () => {
@@ -72,7 +80,7 @@ function ShowCommentModal(props:ShowCommentModalProps) {
         getEditButtonProps,
       } = useEditableControls()
       
-      // change this later to reflect figma
+      // TODO: change this later to reflect figma
       return isEditing ? (
         <ButtonGroup justifyContent='center' size='sm'>
           <Button leftIcon={<CheckIcon />} {...getSubmitButtonProps()} />
@@ -90,26 +98,26 @@ function ShowCommentModal(props:ShowCommentModalProps) {
     // probably need to add some more validation
     const addNewComment = (value: string) => {
       if (value !== ""){
-        setComment(createNewComment(comment.Type, value))
+        setDisplayedComment(createNewComment(user, displayedComment.Type, value))
       }
     }
 
     const saveComment = () => {
-      props.setComments([...props.comments, comment])
-      // save to DB
+      setComments([...comments, displayedComment])
+      // TODO: save to DB
     }
 
     // make the editable work as intended later, without the odd preview box and whatever
     return (
       <>
-        <IconButton colorScheme={props.color} aria-label='Report' icon={props.icon} onClick={onOpen} />
+        <IconButton colorScheme={color} aria-label='Report' icon={icon} onClick={onOpen} />
         <Modal isOpen={isOpen} onClose={onClose}>
           <ModalOverlay />
           <ModalContent>
-            <ModalHeader>{comment.Type}</ModalHeader>
+            <ModalHeader>{displayedComment.Type}</ModalHeader>
             <ModalCloseButton />
             <ModalBody>
-                <Editable isDisabled={!props.editable} defaultValue={comment.Content} onSubmit={(value) => addNewComment(value)}>
+                <Editable isDisabled={!isEditable} defaultValue={displayedComment.Content} onSubmit={(value) => addNewComment(value)}>
                   <Input as={EditableInput} />
                   <EditablePreview />
                   {elevatedUserPrivileges && 
@@ -121,10 +129,10 @@ function ShowCommentModal(props:ShowCommentModalProps) {
             </ModalBody>
   
             <ModalFooter>
-              <Button colorScheme='blue' mr={3} onClick={onClose}>
+              <Button colorScheme={Color.Blue} mr={3} onClick={onClose}>
                 Close
               </Button>
-              {props.editable && elevatedUserPrivileges && <Button colorScheme='green' onClick={saveComment}>Save</Button>}
+              {isEditable && elevatedUserPrivileges && <Button colorScheme={Color.Green} onClick={saveComment}>Save</Button>}
             </ModalFooter>
           </ModalContent>
         </Modal>
@@ -144,25 +152,14 @@ export function CommentCell(props:CommentProps) {
 
     const [comments, setComments] = useState(getAllCommentsOfType(CommentType.Comment, props.comments));
     const [reports, setReports] = useState(getAllCommentsOfType(CommentType.Report, props.comments));
-    const [editable, setEditable] = useState(false);
+    const [isEditable, setisEditable] = useState(false);
     const user = useContext(UserContext);
 
     //TODO - Eventually refactor to handle multiple comments / process for grabbing user 
     useEffect(() => {
-        // If empty, create stubbed empty one to leave our comments at - eventually refactor to just add this to the end as the current users comments?
-        /*if (props.comments === undefined) {
-            //Create one empty comment 
-            setComments([{
-                AuthorID:"<TODO Fill this in at some point>", 
-                Type: CommentType.Comment, 
-                Timestamp: moment().tz(TIMEZONE).unix(), 
-                Content:"",
-                State: CellStatus.Active 
-            }]); 
-        }*/
         //Supervisor/Admins have the right to edit comments/reports
         if (user.Type === "Supervisor" || user.Type === "Admin") {
-          setEditable(true);
+          setisEditable(true);
         } 
     }, []);  
 
@@ -170,10 +167,10 @@ export function CommentCell(props:CommentProps) {
         return (
             <>
                 {reports.length > 0  ? 
-                  <ShowCommentModal setComments={setReports} comments={reports} icon={<WarningIcon />} color={"red"} editable={editable} /> :
+                  <ShowCommentModal setComments={setReports} comments={reports} icon={<WarningIcon />} color={Color.Red} isEditable={isEditable} /> :
                   <CommentModal setComments={setReports} comments={reports} type={CommentType.Report} />}
                 {comments.length > 0 ? 
-                  <ShowCommentModal setComments={setComments} comments={comments} icon={<ChatIcon />} color={"blue"} editable={editable} /> :
+                  <ShowCommentModal setComments={setComments} comments={comments} icon={<ChatIcon />} color={Color.Blue} isEditable={isEditable} /> :
                   <CommentModal setComments={setComments} comments={comments} type={CommentType.Comment}/>}
             </>
         )
@@ -181,7 +178,7 @@ export function CommentCell(props:CommentProps) {
         // if editable is true, then the user is an supervisor or admin and should be able to add reports/comments as well
         return (
           <>
-            {editable &&
+            {isEditable &&
               <>
                 <CommentModal setComments={setReports} comments={reports} type={CommentType.Report} />
                 <CommentModal setComments={setComments} comments={comments} type={CommentType.Comment} />

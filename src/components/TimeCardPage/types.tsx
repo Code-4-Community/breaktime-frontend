@@ -13,6 +13,12 @@ export enum CommentType {
     Report = "Report",
 };
 
+export enum Color {
+    Red = "red",
+    Blue = "blue",
+    Green = "green"
+}
+
 export const enum Review_Stages {
     UNSUBMITTED = "Not-Submitted",
     EMPLOYEE_SUBMITTED = "Employee Submitted",
@@ -21,7 +27,6 @@ export const enum Review_Stages {
 };
 
 export const TABLE_COLUMNS = ['Type', 'Date', 'Clock-in', 'Clock-Out', 'Hours', 'Comment'];
-
 
 export enum CardState {
     Rejected = "Rejected",
