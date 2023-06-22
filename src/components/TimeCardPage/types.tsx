@@ -13,6 +13,12 @@ export enum CommentType {
   Report = "Report",
 }
 
+export enum UserType {
+    Associate = "Associate",
+    Supervisor = "Supervisor",
+    Admin = "Admin"
+}
+
 export const enum Review_Stages {
   UNSUBMITTED = "Not-Submitted",
   EMPLOYEE_SUBMITTED = "Employee Submitted",

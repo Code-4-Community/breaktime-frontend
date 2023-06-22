@@ -3,7 +3,7 @@ import TimeTable from "./TimeTable";
 import { useEffect } from "react";
 import SubmitCard from "./SubmitCard";
 import DateSelectorCard from "./SelectWeekCard";
-import AuthorComponent from "../UserComponents/UserDisplay";
+import { AuthorComponent } from "../UserComponents/UserDisplay";
 
 import {
   Alert,
@@ -28,7 +28,7 @@ import {
   EXAMPLE_TIMESHEET_2,
 } from "src/constants";
 
-import { Review_Stages, TABLE_COLUMNS } from "./types";
+import { Review_Stages, TABLE_COLUMNS, UserType } from "./types";
 import { SizeType } from '../../constants'
 import moment, { Moment } from "moment-timezone";
 
@@ -174,7 +174,7 @@ export default function Page() {
   useEffect(() => {
     apiClient.getUser().then((userInfo) => {
       setUser(userInfo);
-      if (userInfo.Type === "Supervisor" || userInfo.Type === "Admin") {
+      if (userInfo.Type === UserType.Supervisor || userInfo.Type === UserType.Admin) {
         apiClient.getAllUsers().then((users) => {
           setAssociates(users);
           setSelectedUser(users[0]);
@@ -285,7 +285,7 @@ export default function Page() {
     <>
       <HStack spacing="120px">
         <AuthorComponent user={user} size={SizeType.large}/>
-        {user?.Type === "Supervisor" || user?.Type === "Admin" && (
+        {user?.Type === UserType.Supervisor || user?.Type === UserType.Admin && (
           <>
             <SearchEmployeeTimesheet
               employees={associates}

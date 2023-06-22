@@ -16,7 +16,7 @@ interface AuthorProps {
   size: SizeType;
 }
 
-export default function AuthorComponent({ user, size }: AuthorProps) {
+export function AuthorComponent({ user, size }: AuthorProps) {
   //TODO: loading/error handling
   if (user === undefined) {
     return <></>;
