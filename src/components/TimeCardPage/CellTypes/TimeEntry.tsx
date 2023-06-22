@@ -15,7 +15,6 @@ export function TimeEntry(props: TimeEntryProps) {
     let calculatedTime;
     // TODO: account for possible time deletions when updating DB and whatnot
     if (time === null) {
-      const currentHours = null;
       calculatedTime = undefined;
     } else {
       const [currentHours, parsedMinutes] = time.split(":");
