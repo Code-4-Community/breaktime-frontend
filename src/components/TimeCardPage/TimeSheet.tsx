@@ -64,7 +64,7 @@ const createEmptyTable = (startDate, company) => {
     }
 }
 
-const user = 'Example User'
+const user = "Example User";
 
 const testingEmployees = [
     { UserID: "abc", FirstName: "joe", LastName: "jane", Type: "Employee", Picture: "https://www.google.com/koala.png" },

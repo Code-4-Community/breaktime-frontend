@@ -5,10 +5,9 @@ import moment, { Moment } from 'moment-timezone';
 import { TimeSheetSchema } from '../../schemas/TimesheetSchema'
 
 interface AggregationProps {
-	Date: Moment,
-	timesheets: TimeSheetSchema[]
-}
-
+	Date: Moment, 
+	timesheets: TimeSheetSchema[] 
+  }
 
 function AggregationTable(props: AggregationProps) {
 	//NOTE: Aggregation is only applying to associate entries currently - TODO is to develop logic for all user types 

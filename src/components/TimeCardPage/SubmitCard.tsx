@@ -5,8 +5,6 @@ import CommentModal from './CommentModal';
 import { Box } from '@chakra-ui/react';
 import { CardState } from './types'
 
-//https://react-bootstrap.github.io/components/cards/
-
 
 export default function SubmitCard() {
 
@@ -49,6 +47,5 @@ export default function SubmitCard() {
                 </Card.Footer>}
             </Card>
         </Box >
-    )
-
+    );
 }

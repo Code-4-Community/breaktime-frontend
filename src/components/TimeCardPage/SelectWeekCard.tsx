@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from 'react'
-import moment from 'moment';
+import React, { useState, useEffect } from "react";
+import moment from "moment";
 
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
-//TODO - Refactor to chakra 
+//TODO - Refactor to chakra
 
 export default function DateCard(props) {
-    const [date, setDate] = useState(undefined);
+  const [date, setDate] = useState(undefined);
 
     useEffect(() => {
         const providedDate = props.date;
@@ -29,5 +29,3 @@ export default function DateCard(props) {
         <DatePicker selected={date} onChange={(date) => setDate(date)} />
     );
 }
-
-

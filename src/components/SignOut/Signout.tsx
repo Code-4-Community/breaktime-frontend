@@ -1,15 +1,13 @@
-
-import React from 'react';
-import ApiClient from '../Auth/apiClient'; 
+import React from "react";
+import ApiClient from "../Auth/apiClient";
 
 export default function HomePage() {
-    ApiClient.signout() 
+  ApiClient.signout();
   return (
-    <div className="App"> 
+    <div className="App">
       <header className="App-header">
         <h3>Logged out</h3>
-        
       </header>
     </div>
-  ); 
+  );
 }

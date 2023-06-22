@@ -10,7 +10,7 @@ export const StatusEntryType = z.union(
   }),
   z.undefined()]);
 
-// Status type contains the four stages of the pipeline we have defined 
+// Status type contains the four stages of the pipeline we have defined
 export const StatusType = z.object({
   HoursSubmitted: StatusEntryType,
   HoursReviewed: StatusEntryType,
@@ -29,4 +29,4 @@ export const TimeSheetSchema = z.object({
   WeekNotes: z.union([z.undefined(), z.array(CommentSchema)]),
 });
 
-export type TimeSheetSchema = z.infer<typeof TimeSheetSchema>
+export type TimeSheetSchema = z.infer<typeof TimeSheetSchema>;

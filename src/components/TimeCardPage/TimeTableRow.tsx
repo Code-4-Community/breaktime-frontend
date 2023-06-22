@@ -66,4 +66,4 @@ function Row(props: RowProps) {
     }
 }
 
-export default Row; 
+export default Row;
