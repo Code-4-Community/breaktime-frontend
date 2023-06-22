@@ -9,7 +9,7 @@ interface AggregationProps {
 	timesheets: TimeSheetSchema[] 
   }
 
-function AggregationTable(props:AggregationProps) {
+function AggregationTable(props: AggregationProps) {
 	//NOTE: Aggregation is only applying to associate entries currently - TODO is to develop logic for all user types 
 
 	const totalHoursForEachDay = {};
