@@ -1,14 +1,24 @@
 import React, { useState, useEffect } from 'react'
 import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
-import { DailyCommentModal } from './CommentModal'; // change to weekly comment modal theme
+import { WeeklyCommentModal } from './CommentModal';
 import { Box } from '@chakra-ui/react';
 import { CardState } from './types'
-import { CommentType } from './types';
-//https://react-bootstrap.github.io/components/cards/
+import { CommentSchema } from 'src/schemas/RowSchema';
 
+interface SubmitCardProps {
+    setWeeklyComments: Function;
+    setWeeklyReports: Function;
+    weeklyComments: CommentSchema[];
+    weeklyReports: CommentSchema[];
+}
 
-export default function SubmitCard() {
+export default function SubmitCard({
+    setWeeklyComments,
+    setWeeklyReports,
+    weeklyComments,
+    weeklyReports
+}: SubmitCardProps) {
 
     const [submitted, setSubmitted] = useState(false);
     const [submitDate, setSubmitDate] = useState(null);
@@ -44,9 +54,7 @@ export default function SubmitCard() {
                 {submitted && <Card.Footer>
                     {submitDate}
                     {state}
-                    {/* use a diff component for weekly */ }
-                    <DailyCommentModal setComments={() => console.log("record weekly comment")} comments={[]} type={CommentType.Comment} />
-
+                    <WeeklyCommentModal setWeeklyComments={setWeeklyComments} setWeeklyReports={setWeeklyReports} weeklyComments={weeklyComments} weeklyReports={weeklyReports}/>
                 </Card.Footer>}
             </Card>
         </Box >

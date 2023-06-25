@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useContext } from 'react';
+import React, { useState, useMemo } from 'react';
 import TimeTable from './TimeTable'
 import { useEffect } from 'react';
 import SubmitCard from './SubmitCard';
@@ -29,7 +29,7 @@ import {
 
 import { TIMESHEET_DURATION, TIMEZONE, EXAMPLE_TIMESHEET, EXAMPLE_TIMESHEET_2 } from 'src/constants';
 
-import { Review_Stages, TABLE_COLUMNS } from './types';
+import { Review_Stages, TABLE_COLUMNS , CommentType } from './types';
 import moment, { Moment } from 'moment-timezone';
 
 import apiClient from '../Auth/apiClient';
@@ -39,7 +39,11 @@ import { UserSchema } from '../../schemas/UserSchema'
 
 import { SearchIcon, WarningIcon, DownloadIcon } from '@chakra-ui/icons';
 import { Select, components } from 'chakra-react-select'
-
+import { TimeSheetSchema } from 'src/schemas/TimesheetSchema';
+import { CommentSchema, RowSchema } from 'src/schemas/RowSchema';
+import { getAllActiveCommentsOfType } from './utils';
+import { Stack } from 'react-bootstrap';
+import { Divider } from '@aws-amplify/ui-react';
 //TODO - Refactor to backend calls once setup to pull rows, etc. 
 
 
@@ -65,11 +69,9 @@ const createEmptyTable = (startDate, company) => {
     }
 }
 
-const user = 'Example User'
-
 const testingEmployees = [
-    { UserID: "abc", FirstName: "joe", LastName: "jane", Type: "Employee", Picture: "https://www.google.com/koala.png" },
-    { UserID: "bcd", FirstName: "david", LastName: "lev", Type: "Employee", Picture: "https://www.google.com/panda.png" },
+    { UserID: "abc", FirstName: "joe", LastName: "jane", Type: "Employee", Picture: "https://upload.wikimedia.org/wikipedia/commons/4/49/Koala_climbing_tree.jpg" },
+    { UserID: "bcd", FirstName: "david", LastName: "lev", Type: "Employee", Picture: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/Grosser_Panda.JPG/1200px-Grosser_Panda.JPG" },
     { UserID: "cde", FirstName: "crys", LastName: "tal", Type: "Employee", Picture: "https://www.google.com/capybara.png" },
     { UserID: "def", FirstName: "ken", LastName: "ney", Type: "Employee", Picture: "https://www.google.com/koala.png" },
 ]
@@ -125,6 +127,55 @@ function SearchEmployeeTimesheet({ employees, setSelected }) {
     )
 }
 
+interface WeeklyCommentSectionProps {
+    weeklyComments: CommentSchema[];
+    weeklyReports: CommentSchema[];
+}
+
+// undefined or Comment Schema from timesheet object
+function WeeklyCommentSection({
+    weeklyComments, 
+    weeklyReports
+}: WeeklyCommentSectionProps) {
+    // row of Comments
+    // row of Reports
+
+    // repetitive but readable code and should be more extensible
+    return (
+        <HStack>
+            <Text>Weekly Feedback</Text>
+            <Divider orientation='vertical' />
+            <Stack>
+                <HStack>
+                    <Stack>
+                        {weeklyComments.map(
+                            (comment) => (
+                                <HStack>
+                                    {/* TODO: later replace w api call to get user from userID*/}
+                                    <ProfileCard employee={testingEmployees[0]} />
+                                    <Text>{comment.Content}</Text>
+                                </HStack>
+                            ))}
+                    </Stack>
+                </HStack>
+                <Divider/>
+                <HStack>
+                    <Stack>
+                        {weeklyReports.map(
+                            (report) => (
+                                <HStack>
+                                    {/* TODO: later replace w api call to get user from userID*/}
+                                    <ProfileCard employee={testingEmployees[1]} />
+                                    <Text>{report.Content}</Text>
+                                </HStack>
+                            ))}
+                    </Stack>
+                </HStack>
+            </Stack>
+        </HStack>
+    )
+}
+
 export default function Page() {
     //const today = moment(); 
     const [selectedDate, setSelectedDate] = useState(moment().startOf('week').day(0));
@@ -152,22 +203,21 @@ export default function Page() {
     const [currentTimesheets, setCurrentTimesheets] = useState([]);
     const [selectedTimesheet, setTimesheet] = useState(undefined);
 
+    const [weeklyComments, setWeeklyComments] = useState<CommentSchema[]>([]);
+    const [weeklyReports, setWeeklyReports] = useState<CommentSchema[]>([]);
 
     // this hook should always run first
     useEffect(() => {
-        // Uncomment this if you want the default one loaded 
-        setUser({ UserID: "abc", FirstName: "joe", LastName: "jane", Type: "Supervisor", Picture: "https://www.google.com/koala.png" })
-        
-        //apiClient.getUser().then(userInfo => {
-        //    setUser(userInfo);
-        //    if (userInfo.Type === "Supervisor" || userInfo.Type === "Admin") {
-        //        apiClient.getAllUsers().then(users => {
-        //            setAssociates(users);
-        //            setSelectedUser(users[0]);
-        //        })
-        //    }
-        //    setSelectedUser(userInfo)
-        //})
+        apiClient.getUser().then(userInfo => {
+            setUser(userInfo);
+            if (userInfo.Type === "Supervisor" || userInfo.Type === "Admin") {
+                apiClient.getAllUsers().then(users => {
+                    setAssociates(users);
+                    setSelectedUser(users[0]);
+                })
+            }
+            setSelectedUser(userInfo)
+        })
         // if employee setSelectedUSer to be userinfo
         // if supervisor/admin get all users
         // set selected user
@@ -177,6 +227,9 @@ export default function Page() {
     useEffect(() => {
         // Uncomment this if you want the default one loaded 
         setUserTimesheets([EXAMPLE_TIMESHEET, EXAMPLE_TIMESHEET_2]);
+
+        setWeeklyComments(getAllActiveCommentsOfType(CommentType.Comment, EXAMPLE_TIMESHEET.WeekNotes))
+        setWeeklyReports(getAllActiveCommentsOfType(CommentType.Report, EXAMPLE_TIMESHEET.WeekNotes))
 
         //apiClient.getUserTimesheets(selectedUser?.UserID).then(timesheets => {
         //    setUserTimesheets(timesheets); 
@@ -214,6 +267,13 @@ export default function Page() {
         // selectedTimesheet.TableData = rows; 
     }
 
+    const changeTimesheet = (sheet) => {
+        setTimesheet(sheet)
+        setWeeklyComments(getAllActiveCommentsOfType(CommentType.Comment, sheet.WeekNotes))
+        setWeeklyReports(getAllActiveCommentsOfType(CommentType.Report, sheet.WeekNotes))
+    }
+
+
     const setCurrentTimesheetsToDisplay = (timesheets, currentStartDate: Moment) => {
         const newCurrentTimesheets = timesheets.filter(sheet => moment.unix(sheet.StartDate).isSame(currentStartDate, 'day'));
 
@@ -226,7 +286,8 @@ export default function Page() {
         }
 
         setCurrentTimesheets(newCurrentTimesheets);
-        setTimesheet(newCurrentTimesheets[0]);
+        changeTimesheet(newCurrentTimesheets[0])
+
     }
 
     const renderWarning = () => {
@@ -262,15 +323,14 @@ export default function Page() {
                         <IconButton aria-label='Report' icon={<WarningIcon />} />
                     </> : <></>}
                 <DateSelectorCard onDateChange={updateDateRange} date={selectedDate} />
-                {selectedTimesheet && <SubmitCard />}
-
+                {selectedTimesheet && <SubmitCard setWeeklyComments={setWeeklyComments} setWeeklyReports={setWeeklyReports} weeklyComments={weeklyComments} weeklyReports={weeklyReports} />}
             </HStack>
             {useMemo(() => renderWarning(), [selectedDate])}
             <Tabs>
                 <TabList>
                     {currentTimesheets.map(
                         (sheet) => (
-                            <Tab onClick={() => setTimesheet(sheet)}>{sheet.CompanyID}</Tab>
+                            <Tab onClick={() => changeTimesheet(sheet)}>{sheet.CompanyID}</Tab>
                         )
                     )}
                 </TabList>
@@ -280,7 +340,7 @@ export default function Page() {
                 : (<UserContext.Provider value={user}>
                     <TimeTable columns={TABLE_COLUMNS} timesheet={selectedTimesheet} onTimesheetChange={processTimesheetChange} />
                 </UserContext.Provider>)}
-
+            <WeeklyCommentSection weeklyComments={weeklyComments} weeklyReports={weeklyReports}/>
         </>
     )
 }

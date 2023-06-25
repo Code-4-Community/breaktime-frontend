@@ -19,6 +19,7 @@ import {
   Flex,
   useDisclosure,
   useEditableControls,
+  Stack,
 } from "@chakra-ui/react";
 import {
   ChatIcon,
@@ -29,10 +30,9 @@ import {
 } from "@chakra-ui/icons";
 
 import { CommentSchema } from "../../../schemas/RowSchema";
-import { UserSchema } from "src/schemas/UserSchema";
 import { CommentType, CellStatus, Color } from "../types";
 import { DailyCommentModal } from "../CommentModal";
-import moment from "moment-timezone";
+import { getAllActiveCommentsOfType, createNewComment } from "../utils";
 
 interface CommentProps {
   comments: CommentSchema[] | undefined;
@@ -47,20 +47,6 @@ interface ShowCommentModalProps {
   color: Color;
   isEditable: boolean;
 }
-
-export const createNewComment = (
-  user: UserSchema,
-  type: CommentType,
-  content: string
-) => {
-  return {
-    AuthorID: user.UserID,
-    Type: type,
-    Timestamp: moment().unix(), // TODO: possibly change it to be more specific formatting
-    Content: content,
-    State: CellStatus.Active,
-  };
-};
 
 function ShowCommentModal({
   comments,
@@ -97,9 +83,9 @@ function ShowCommentModal({
   };
 
   const elevatedUserPrivileges =
-    user.Type === "Supervisor" || user.Type === "Admin";
+    user?.Type === "Supervisor" || user?.Type === "Admin";
 
-  // probably need to add some more validation
+  // TODO: probably need to add some more validation
   const addNewComment = (value: string) => {
     if (value !== "") {
       setDisplayedComment(createNewComment(user, displayedComment.Type, value));
@@ -111,7 +97,7 @@ function ShowCommentModal({
     // TODO: save to DB
   };
 
-  // make the editable work as intended later, without the odd preview box and whatever
+  // TODO: make the editable work as intended later, without the odd preview box and whatever
   return (
     <>
       <IconButton
@@ -159,33 +145,25 @@ function ShowCommentModal({
   );
 }
 
-const getAllCommentsOfType = (type, commentArray) => {
-  if (commentArray === undefined) {
-    return [];
-  } else {
-    return commentArray.filter((comment) => comment.Type === type);
-  }
-};
-
 export function CommentCell(props: CommentProps) {
   const [comments, setComments] = useState(
-    getAllCommentsOfType(CommentType.Comment, props.comments)
+    getAllActiveCommentsOfType(CommentType.Comment, props.comments)
   );
   const [reports, setReports] = useState(
-    getAllCommentsOfType(CommentType.Report, props.comments)
+    getAllActiveCommentsOfType(CommentType.Report, props.comments)
   );
   const [isEditable, setisEditable] = useState(false);
   const user = useContext(UserContext);
 
   useEffect(() => {
     //Supervisor/Admins have the right to edit comments/reports
-    if (user.Type === "Supervisor" || user.Type === "Admin") {
+    if (user?.Type === "Supervisor" || user?.Type === "Admin") {
       setisEditable(true);
     }
-  }, [user.Type]);
+  }, [user?.Type]);
 
   return (
-    <>
+    <Stack direction='row'>
       {reports.length > 0 ? (
         <ShowCommentModal
           setComments={setReports}
@@ -216,7 +194,7 @@ export function CommentCell(props: CommentProps) {
           type={CommentType.Comment}
         />
       )}
-    </>
+    </Stack>
   );
 }
 

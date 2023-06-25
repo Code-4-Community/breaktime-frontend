@@ -69,9 +69,40 @@ export const SCHEDULE_ENTRY = {
     AuthorID: "<UUID OF AUTHOR>"
 }
 
+const EXAMPLE_WEEKNOTES = [
+    {
+        AuthorID: "Joseph", 
+        Type: CommentType.Comment, 
+        Timestamp: moment().tz(TIMEZONE).weekday(1).unix(), 
+        Content: "Great job with this entry!", 
+        State: CellStatus.Active
+    },
+    {
+        AuthorID: "Ben", 
+        Type: CommentType.Comment, 
+        Timestamp: moment().tz(TIMEZONE).weekday(1).unix(), 
+        Content: "Great job again!", 
+        State: CellStatus.Active
+    },
+    {
+        AuthorID: "David", 
+        Type: CommentType.Report, 
+        Timestamp: moment().tz(TIMEZONE).weekday(1).unix(), 
+        Content: "Something went wrong :(", 
+        State: CellStatus.Active
+    },
+    {
+        AuthorID: "David", 
+        Type: CommentType.Report, 
+        Timestamp: moment().tz(TIMEZONE).weekday(1).unix(), 
+        Content: "Someth", 
+        State: CellStatus.Active
+    }
+]
+
 export const EXAMPLE_TIMESHEET = {
     UserID: "b43227a4-0b42-4cfc-8a2c-16e2f2e64fbe", 
-    TimesheetID: "1231231", 
+    TimesheetID: 1231231, 
     CompanyID: "NEU", 
     StartDate: moment().tz(TIMEZONE).startOf('week').day(0).unix(), 
     Status: {
@@ -80,13 +111,13 @@ export const EXAMPLE_TIMESHEET = {
         ScheduleSubmitted: undefined, 
         Finalized: undefined
     }, 
-    WeekNotes:[], 
-    TableData: [{...EXAMPLE_ROW}], 
+    WeekNotes: EXAMPLE_WEEKNOTES, 
+    TableData: [{...EXAMPLE_ROW}, {...EXAMPLE_ROW2}], 
     ScheduleTableData: [{...SCHEDULE_ENTRY}]
 }
 export const EXAMPLE_TIMESHEET_2 = {
     UserID: "b43227a4-0b42-4cfc-8a2c-16e2f2e64fbe", 
-    TimesheetID: "1293219", 
+    TimesheetID: 1293219, 
     CompanyID: "Star Market", 
     StartDate: moment().tz(TIMEZONE).startOf('week').day(0).unix(), 
     Status: {
