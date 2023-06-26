@@ -25,7 +25,6 @@ interface WeeklyCommentModalProps {
   weeklyReports: CommentSchema[];
 }
 
-// copy over basics of what they had with the type switch
 export function WeeklyCommentModal({
   setWeeklyComments,
   setWeeklyReports,
@@ -126,7 +125,6 @@ export function DailyCommentModal({
   const [remark, setRemark] = useState();
   const user = useContext(UserContext);
 
-  // stores the remark that was made
   const handleRemarkChange = (e) => {
     setRemark(e.target.value);
   };
