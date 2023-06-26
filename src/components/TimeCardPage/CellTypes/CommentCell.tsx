@@ -42,6 +42,7 @@ interface CommentProps {
 // setComments can be used for comments or reports
 interface ShowCommentModalProps {
   comments: CommentSchema[];
+  currentComment: CommentSchema;
   setComments: Function;
   icon; // TODO: add type
   color: Color;
@@ -50,6 +51,7 @@ interface ShowCommentModalProps {
 
 function ShowCommentModal({
   comments,
+  currentComment,
   setComments,
   icon,
   color,
@@ -57,7 +59,7 @@ function ShowCommentModal({
 }: ShowCommentModalProps) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [displayedComment, setDisplayedComment] = useState(
-    comments[comments.length - 1]
+    currentComment
   );
   const user = useContext(UserContext);
 
@@ -93,11 +95,20 @@ function ShowCommentModal({
   };
 
   const saveComment = () => {
-    setComments([...comments, displayedComment]);
+    // Do we want people to be able to delete comments by saving empty comments?
+    currentComment.State = CellStatus.Deleted
+    setComments(getAllActiveCommentsOfType(displayedComment.Type, [...comments, displayedComment]));
     // TODO: save to DB
   };
 
+  const deleteComment = () => {
+    currentComment.State = CellStatus.Deleted
+    setComments(getAllActiveCommentsOfType(currentComment.Type, comments));
+    // TODO: save to DB
+  }
+
   // TODO: make the editable work as intended later, without the odd preview box and whatever
+  // TODO: also display multiple comments
   return (
     <>
       <IconButton
@@ -133,11 +144,16 @@ function ShowCommentModal({
             <Button colorScheme={Color.Blue} mr={3} onClick={onClose}>
               Close
             </Button>
-            {isEditable && elevatedUserPrivileges && (
-              <Button colorScheme={Color.Green} onClick={saveComment}>
+            {isEditable && elevatedUserPrivileges && 
+            <>
+              <Button colorScheme={Color.Red} mr={3} onClick={deleteComment}>
+                Delete
+              </Button>
+              <Button colorScheme={Color.Green} mr={3} onClick={saveComment}>
                 Save
               </Button>
-            )}
+            </>
+            }
           </ModalFooter>
         </ModalContent>
       </Modal>
@@ -168,6 +184,7 @@ export function CommentCell(props: CommentProps) {
         <ShowCommentModal
           setComments={setReports}
           comments={reports}
+          currentComment={reports[reports.length - 1]}
           icon={<WarningIcon />}
           color={Color.Red}
           isEditable={isEditable}
@@ -183,6 +200,7 @@ export function CommentCell(props: CommentProps) {
         <ShowCommentModal
           setComments={setComments}
           comments={comments}
+          currentComment={comments[comments.length - 1]}
           icon={<ChatIcon />}
           color={Color.Blue}
           isEditable={isEditable}
@@ -198,4 +216,4 @@ export function CommentCell(props: CommentProps) {
   );
 }
 
-// TODO: add delete functionality
+// TODO: merge components

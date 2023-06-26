@@ -3,7 +3,7 @@ import { CommentSchema } from "src/schemas/RowSchema";
 import { UserSchema } from "src/schemas/UserSchema";
 import moment from "moment";
 
-export const getAllActiveCommentsOfType = (type, commentArray: CommentSchema[]) => {
+export const getAllActiveCommentsOfType = (type: CommentType, commentArray: CommentSchema[]) => {
     if (commentArray === undefined) {
       return [];
     } else {
