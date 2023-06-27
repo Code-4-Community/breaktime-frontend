@@ -17,9 +17,9 @@ export const getAllActiveCommentsOfType = (type: CommentType, commentArray: Comm
     content: string
   ) => {
     return {
-      AuthorID: user?.UserID, // need to add loading logic so user is defined before anything occurs
+      AuthorID: user?.UserID, // TODO: need to add loading logic so user is defined before anything occurs
       Type: type,
-      Timestamp: moment().unix(), // TODO: possibly change it to be more specific formatting
+      Timestamp: moment().unix(), // possibly change it to be more specific formatting
       Content: content,
       State: CellStatus.Active,
     };
