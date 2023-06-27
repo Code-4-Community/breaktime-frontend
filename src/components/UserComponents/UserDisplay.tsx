@@ -16,6 +16,7 @@ interface AuthorProps {
   size: SizeType;
 }
 
+// Renders a specific users information in various sizes
 export function AuthorComponent({ user, size }: AuthorProps) {
   //TODO: loading/error handling
   if (user === undefined) {
