@@ -16,7 +16,8 @@ export enum CommentType {
 export enum Color {
     Red = "red",
     Blue = "blue",
-    Green = "green"
+    Green = "green",
+    Gray = "gray"
 }
 
 export const enum Review_Stages {

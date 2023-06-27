@@ -152,6 +152,7 @@ function WeeklyCommentSection({
                             (comment) => (
                                 <HStack>
                                     {/* TODO: later replace w api call to get user from userID*/}
+                                    {/* also use display card once it gets merged in*/}
                                     <ProfileCard employee={testingEmployees[0]} />
                                     <Text>{comment.Content}</Text>
                                 </HStack>

@@ -14,12 +14,18 @@ import {
   EditablePreview,
   EditableInput,
   Input,
-  IconButton,
+  Box,
   ButtonGroup,
   Flex,
   useDisclosure,
   useEditableControls,
   Stack,
+  StackDivider,
+  HStack,
+  VStack,
+  Text,
+  CloseButton,
+  IconButton
 } from "@chakra-ui/react";
 import {
   ChatIcon,
@@ -27,6 +33,8 @@ import {
   CheckIcon,
   CloseIcon,
   EditIcon,
+  AddIcon,
+  DeleteIcon
 } from "@chakra-ui/icons";
 
 import { CommentSchema } from "../../../schemas/RowSchema";
@@ -39,10 +47,16 @@ interface CommentProps {
   setComment: Function; // TODO: fix type
 }
 
-// setComments can be used for comments or reports
+function ShowReportModal(){
+
+  return (
+    <></>
+  )
+}
+
 interface ShowCommentModalProps {
   comments: CommentSchema[];
-  currentComment: CommentSchema;
+  typeOfComment: CommentType;
   setComments: Function;
   icon; // TODO: add type
   color: Color;
@@ -51,16 +65,14 @@ interface ShowCommentModalProps {
 
 function ShowCommentModal({
   comments,
-  currentComment,
+  typeOfComment,
   setComments,
   icon,
   color,
   isEditable,
 }: ShowCommentModalProps) {
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const [displayedComment, setDisplayedComment] = useState(
-    currentComment
-  );
+  const { isOpen: isOpenDisplay, onOpen: onOpenDisplay, onClose: onCloseDisplay } = useDisclosure();
+  const { isOpen: isOpenAdd, onOpen: onOpenAdd, onClose: onCloseAdd } = useDisclosure();
   const user = useContext(UserContext);
 
   const EditableControls = () => {
@@ -87,76 +99,151 @@ function ShowCommentModal({
   const elevatedUserPrivileges =
     user?.Type === "Supervisor" || user?.Type === "Admin";
 
-  // TODO: probably need to add some more validation
-  const addNewComment = (value: string) => {
-    if (value !== "") {
-      setDisplayedComment(createNewComment(user, displayedComment.Type, value));
-    }
-  };
-
-  const saveComment = () => {
+  const saveComment = (comment: CommentSchema) => {
     // Do we want people to be able to delete comments by saving empty comments?
-    currentComment.State = CellStatus.Deleted
-    setComments(getAllActiveCommentsOfType(displayedComment.Type, [...comments, displayedComment]));
+    comment.State = CellStatus.Deleted
+    setComments(getAllActiveCommentsOfType(typeOfComment, comments));
     // TODO: save to DB
   };
 
-  const deleteComment = () => {
-    currentComment.State = CellStatus.Deleted
-    setComments(getAllActiveCommentsOfType(currentComment.Type, comments));
+  const deleteComment = (comment: CommentSchema) => {
+    comment.State = CellStatus.Deleted
+    setComments(getAllActiveCommentsOfType(comment.Type, comments));
+    // 1 since after deletion there will be 0 but wont update in here
+    if (comments.length === 1) {
+      onCloseDisplay()
+    }
     // TODO: save to DB
   }
 
+  const doCommentsExist = comments.length > 0
+
+  // no comments so gray it out
+  if (doCommentsExist === false) {
+    color = Color.Gray
+  }
+
   // TODO: make the editable work as intended later, without the odd preview box and whatever
-  // TODO: also display multiple comments
-  return (
-    <>
-      <IconButton
-        colorScheme={color}
-        aria-label="Report"
-        icon={icon}
-        onClick={onOpen}
-      />
-      <Modal isOpen={isOpen} onClose={onClose}>
+  // TODO: also display multiple comments, fix up styling
+
+  const DisplayCommentsModal = () => {
+    // TODO: make it match figma
+    return (
+      <Modal isOpen={isOpenDisplay} onClose={onCloseDisplay}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>{displayedComment.Type}</ModalHeader>
+          <ModalHeader>
+            <HStack>
+              <Text>View Comments</Text>  
+              <Button onClick={onOpenAdd}>
+                New
+              </Button>
+              <CloseButton onClick={onCloseDisplay} />
+            </HStack>
+          </ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <Editable
-              isDisabled={!isEditable}
-              defaultValue={displayedComment.Content}
-              onSubmit={(value) => addNewComment(value)}
-            >
-              <Input as={EditableInput} />
-              <EditablePreview />
-
-              {elevatedUserPrivileges && (
-                <>
-                  <EditableTextarea />
-                  <EditableControls />
-                </>
-              )}
-            </Editable>
+            {comments.map(
+              (comment) => (
+                <HStack>
+                  {/* add UserDisplay card*/}
+                  <Text>{comment.Content}</Text>
+                  <IconButton aria-label="Edit" icon={<EditIcon />}/>
+                  <IconButton aria-label="Delete" icon={<DeleteIcon />} onClick={() => deleteComment(comment)}/>
+                </HStack>
+              ))}
           </ModalBody>
 
           <ModalFooter>
-            <Button colorScheme={Color.Blue} mr={3} onClick={onClose}>
-              Close
-            </Button>
-            {isEditable && elevatedUserPrivileges && 
-            <>
-              <Button colorScheme={Color.Red} mr={3} onClick={deleteComment}>
-                Delete
-              </Button>
-              <Button colorScheme={Color.Green} mr={3} onClick={saveComment}>
-                Save
-              </Button>
-            </>
-            }
           </ModalFooter>
         </ModalContent>
       </Modal>
+    )
+  }
+
+  const AddCommentModal = () => {
+    const [remark, setRemark] = useState();
+    const user = useContext(UserContext);
+
+    const handleRemarkChange = (e) => {
+      setRemark(e.target.value);
+    };
+
+    const handleSubmit = () => {
+      // TODO: reuse comment validation
+      setComments([...comments, createNewComment(user, typeOfComment, remark)]);
+      alert(`Your ${typeOfComment} has been submitted!`);
+      onCloseAdd()
+      onCloseDisplay()
+      // TODO: call to db
+    };
+
+    return (
+        <Modal isOpen={isOpenAdd} onClose={onCloseAdd}>
+          <ModalContent>
+            <VStack spacing={4} divider={<StackDivider />}>
+              <ModalHeader>{typeOfComment}</ModalHeader>
+
+              <form id="Form" onSubmit={handleSubmit}>
+                <HStack spacing={4}>
+                  <label htmlFor="remarks">Remarks</label>
+                  <Input
+                    id="remarks"
+                    name="remarks"
+                    type="text"
+                    onChange={handleRemarkChange}
+                    autoComplete="off"
+                  />
+                </HStack>
+              </form>
+
+              <ModalFooter>
+                <HStack spacing={10}>
+                  <Button onClick={onCloseAdd}>Close</Button>
+                  <Button type="submit" onClick={handleSubmit}>
+                    Submit
+                  </Button>
+                </HStack>
+              </ModalFooter>
+            </VStack>
+          </ModalContent>
+        </Modal>
+    )
+  }
+
+  return (
+    <>
+    <Box color={color}>
+    {doCommentsExist ?
+      <>
+        <Button
+          colorScheme={color}
+          aria-label="Report"
+          leftIcon={icon}
+          onClick={onOpenDisplay} >
+            {comments.length}
+        </Button>
+        {isEditable && 
+          <Button
+            colorScheme={color}
+            aria-label="Add Feedback"
+            leftIcon={<AddIcon />}
+            onClick={onOpenAdd} />
+        }
+        </> : 
+        <>
+          <Button
+          colorScheme={color}
+          aria-label="Report"
+          leftIcon={icon}
+          onClick={onOpenAdd}>
+            <AddIcon />
+          </Button>
+        </>
+        }
+    </Box>
+      <DisplayCommentsModal />
+      <AddCommentModal />
     </>
   );
 }
@@ -180,40 +267,22 @@ export function CommentCell(props: CommentProps) {
 
   return (
     <Stack direction='row'>
-      {reports.length > 0 ? (
-        <ShowCommentModal
-          setComments={setReports}
-          comments={reports}
-          currentComment={reports[reports.length - 1]}
-          icon={<WarningIcon />}
-          color={Color.Red}
-          isEditable={isEditable}
-        />
-      ) : (
-        <DailyCommentModal
-          setComments={setReports}
-          comments={reports}
-          type={CommentType.Report}
-        />
-      )}
-      {comments.length > 0 ? (
-        <ShowCommentModal
+      <ShowCommentModal
+        setComments={setReports}
+        comments={reports}
+        typeOfComment={CommentType.Report}
+        icon={<WarningIcon />}
+        color={Color.Red}
+        isEditable={isEditable}
+      />
+      <ShowCommentModal
           setComments={setComments}
           comments={comments}
-          currentComment={comments[comments.length - 1]}
+          typeOfComment={CommentType.Comment}
           icon={<ChatIcon />}
           color={Color.Blue}
           isEditable={isEditable}
         />
-      ) : (
-        <DailyCommentModal
-          setComments={setComments}
-          comments={comments}
-          type={CommentType.Comment}
-        />
-      )}
     </Stack>
   );
 }
-
-// TODO: merge components
