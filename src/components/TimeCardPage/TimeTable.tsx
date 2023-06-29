@@ -1,7 +1,7 @@
-import Table from 'react-bootstrap/Table' 
-import React, {useEffect, useState} from 'react'; 
-import moment from 'moment-timezone';
-import { v4 as uuidv4 } from 'uuid';
+import Table from "react-bootstrap/Table";
+import React, { useEffect, useState } from "react";
+import moment from "moment-timezone";
+import { v4 as uuidv4 } from "uuid";
 
 import TimeTableRow from "./TimeTableRow"; 
 import {TimeSheetSchema} from '../../schemas/TimesheetSchema'; 
@@ -14,6 +14,7 @@ import * as updateSchemas from 'src/schemas/backend/UpdateTimesheet'
 
 //Can expand upon this further by specifying input types - to allow only dates, numbers, etc for the input https://www.w3schools.com/bootstrap/bootstrap_forms_inputs.asp 
 
+//Can expand upon this further by specifying input types - to allow only dates, numbers, etc for the input https://www.w3schools.com/bootstrap/bootstrap_forms_inputs.asp
 
 function uploadNewRow(row, timesheetid:number) {
     ApiClient.updateTimesheet(
@@ -150,7 +151,6 @@ function TimeTable(props:TableProps) {
         </tbody>
     </Table>
     );  
-
 }
 
-export default TimeTable; 
+export default TimeTable;
