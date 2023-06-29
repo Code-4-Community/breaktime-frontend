@@ -13,18 +13,25 @@ export function TimeEntry(props:TimeEntryProps) {
     const [minutes, setMinutes] = useState(undefined); 
 
     const onChange = (time) => {
-        const [hours, parsedMinutes] = time.split(":");   
-        const calculatedTime = Number(hours) * 60 + Number(parsedMinutes)
-        setMinutes(calculatedTime); 
-        
-        //Triggering parent class to update its references here as well 
         var rowToMutate = props.row.Associate; 
         if (rowToMutate === undefined) {
             rowToMutate = {
                 Start:undefined, End:undefined, AuthorID:"<TODO-add ID>"
             }
         }
-        rowToMutate[props.field] = calculatedTime; 
+
+
+        if (time !== null) {
+            const [hours, parsedMinutes] = time.split(":");   
+            const calculatedTime = Number(hours) * 60 + Number(parsedMinutes)
+            setMinutes(calculatedTime); 
+            rowToMutate[props.field] = calculatedTime; 
+        } else {
+            // Value is null, so mark it as undefined in our processing 
+            rowToMutate[props.field] = undefined; 
+            setMinutes(undefined); 
+        }
+        //Triggering parent class to update its references here as well 
         props.updateFields("Associate", rowToMutate); 
     }
     useEffect(() => {

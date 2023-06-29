@@ -49,7 +49,6 @@ interface TableProps {
 } 
 
 function TimeTable(props:TableProps) {
-
     //When a row is updated, replace it in our list of rows 
     const onRowChange = (row, rowIndex) => {
         const updatedRows = [
