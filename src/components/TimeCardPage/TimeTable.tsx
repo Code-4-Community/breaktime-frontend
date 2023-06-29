@@ -30,7 +30,6 @@ function uploadNewRow(row, timesheetid:number) {
 }
 
 const createEmptyRow = (date) => {
-    console.log("Creating empty row ", moment.unix(date).format("MM DD")); 
     // We assign uuid to provide a unique key identifier to each row for reacts rendering 
     return {
         UUID: uuidv4(), 
