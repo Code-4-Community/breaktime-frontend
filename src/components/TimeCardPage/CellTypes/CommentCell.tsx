@@ -98,9 +98,10 @@ function ShowCommentModal({
     );
   };
 
-  const saveComment = (comment: CommentSchema) => {
-    comment.State = CellStatus.Deleted
-    setComments(getAllActiveCommentsOfType(typeOfComment, comments));
+  const saveEditedComment = (prevComment: CommentSchema, newComment: CommentSchema) => {
+    // previous comment edited over so set it to deleted
+    prevComment.State = CellStatus.Deleted
+    setComments(getAllActiveCommentsOfType(typeOfComment, [...comments, newComment]));
     // TODO: save to DB
   };
 
@@ -145,10 +146,24 @@ function ShowCommentModal({
               (comment) => (
                 <HStack>
                   {/* add UserDisplay card*/}
-                  <Text>{comment.Content}</Text>
-                  {/* add in the edit functionality*/}
-                  {isEditable && <IconButton aria-label="Edit" icon={<EditIcon />}/>}
-                  {isEditable && <IconButton aria-label="Delete" icon={<DeleteIcon />} onClick={() => deleteComment(comment)}/>}
+                  <Editable
+                  isDisabled={!isEditable}
+                  defaultValue={comment.Content}
+                  onSubmit={(value) => saveEditedComment(comment, createNewComment(user, typeOfComment, value))}
+                >
+                  <EditablePreview />
+
+                  {isEditable && (
+                    <>
+                      <Input as={EditableInput} />
+                      <HStack>
+                        <EditableControls />
+                        <IconButton aria-label="Delete" icon={<DeleteIcon />} onClick={() => deleteComment(comment)}/>
+                      </HStack>
+                    </>
+                  )}
+                </Editable>
+                 
                 </HStack>
               ))}
           </ModalBody>
@@ -160,7 +175,6 @@ function ShowCommentModal({
     )
   }
 
-  // Not abstracted to not tightly couple comments and reports together
   const AddReportModal = () => {
     const [remark, setRemark] = useState<ReportOptions>(ReportOptions.Late);
     const user = useContext(UserContext);
@@ -177,7 +191,6 @@ function ShowCommentModal({
 
       alert(`Your ${typeOfComment} has been submitted!`);
       onCloseAdd()
-      onCloseDisplay()
       // TODO: call to db
     };
 
@@ -224,7 +237,6 @@ function ShowCommentModal({
       setComments([...comments, createNewComment(user, typeOfComment, remark)]);
       alert(`Your ${typeOfComment} has been submitted!`);
       onCloseAdd()
-      onCloseDisplay()
       // TODO: call to db
     };
 
