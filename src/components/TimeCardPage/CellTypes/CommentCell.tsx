@@ -24,9 +24,18 @@ import {
   HStack,
   VStack,
   Text,
+  Select,
   CloseButton,
   IconButton
 } from "@chakra-ui/react";
+
+import {
+  FormControl,
+  FormLabel,
+  FormErrorMessage,
+  FormHelperText,
+} from '@chakra-ui/react'
+
 import {
   ChatIcon,
   WarningIcon,
@@ -45,13 +54,6 @@ import { getAllActiveCommentsOfType, createNewComment } from "../utils";
 interface CommentProps {
   comments: CommentSchema[] | undefined;
   setComment: Function; // TODO: fix type
-}
-
-function ShowReportModal(){
-
-  return (
-    <></>
-  )
 }
 
 interface ShowCommentModalProps {
@@ -134,7 +136,7 @@ function ShowCommentModal({
         <ModalContent>
           <ModalHeader>
             <HStack>
-              <Text>View Comments</Text>  
+              <Text>View {typeOfComment}</Text>  
               <Button onClick={onOpenAdd}>
                 New
               </Button>
@@ -158,6 +160,57 @@ function ShowCommentModal({
           </ModalFooter>
         </ModalContent>
       </Modal>
+    )
+  }
+
+  // Not abstracted to not tightly couple comments and reports together
+  const AddReportModal = () => {
+    // TODO: add enum for report options
+    const [remark, setRemark] = useState("Late");
+    const user = useContext(UserContext);
+
+    
+    const handleRemarkChange = (e) => {
+      setRemark(e.target.value);
+    };
+
+    const handleSubmit = () => {
+      if (comments.filter(comment => comment.Content === remark).length === 0) {
+        setComments([...comments, createNewComment(user, typeOfComment, remark)]);
+      }
+
+      alert(`Your ${typeOfComment} has been submitted!`);
+      onCloseAdd()
+      onCloseDisplay()
+      // TODO: call to db
+    };
+
+    return (
+        <Modal isOpen={isOpenAdd} onClose={onCloseAdd}>
+          <ModalContent>
+            <VStack spacing={4} divider={<StackDivider />}>
+              <ModalHeader>{typeOfComment}</ModalHeader>
+
+              <FormControl onSubmit={handleSubmit}>
+                <HStack spacing={4}>
+                  <FormLabel htmlFor="reports">Reports</FormLabel>
+                  <Select placeholder="Late" onChange={handleRemarkChange}>
+                    <option value="Absent">Absent</option>
+                  </Select>
+                </HStack>
+              </FormControl>
+
+              <ModalFooter>
+                <HStack spacing={10}>
+                  <Button onClick={onCloseAdd}>Close</Button>
+                  <Button type="submit" onClick={handleSubmit}>
+                    Submit
+                  </Button>
+                </HStack>
+              </ModalFooter>
+            </VStack>
+          </ModalContent>
+        </Modal>
     )
   }
 
@@ -243,7 +296,10 @@ function ShowCommentModal({
         }
     </Box>
       <DisplayCommentsModal />
+      {typeOfComment === CommentType.Comment ? 
       <AddCommentModal />
+      : <AddReportModal />}
+      
     </>
   );
 }
