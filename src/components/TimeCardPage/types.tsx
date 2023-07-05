@@ -13,6 +13,12 @@ export enum CommentType {
     Report = "Report",
 };
 
+export enum ReportOptions {
+    Late = "Late Arrival",
+    LeftEarly = "Early Departure",
+    Absent = "No Show"
+}
+
 export enum Color {
     Red = "red",
     Blue = "blue",

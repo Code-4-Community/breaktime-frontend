@@ -48,7 +48,7 @@ import {
 
 import { CommentSchema } from "../../../schemas/RowSchema";
 import { CommentType, CellStatus, Color } from "../types";
-import { DailyCommentModal } from "../CommentModal";
+import { ReportOptions } from "../types";
 import { getAllActiveCommentsOfType, createNewComment } from "../utils";
 
 interface CommentProps {
@@ -98,17 +98,14 @@ function ShowCommentModal({
     );
   };
 
-  const elevatedUserPrivileges =
-    user?.Type === "Supervisor" || user?.Type === "Admin";
-
   const saveComment = (comment: CommentSchema) => {
-    // Do we want people to be able to delete comments by saving empty comments?
     comment.State = CellStatus.Deleted
     setComments(getAllActiveCommentsOfType(typeOfComment, comments));
     // TODO: save to DB
   };
 
   const deleteComment = (comment: CommentSchema) => {
+    // TODO: add confirmation popup
     comment.State = CellStatus.Deleted
     setComments(getAllActiveCommentsOfType(comment.Type, comments));
     // 1 since after deletion there will be 0 but wont update in here
@@ -126,10 +123,10 @@ function ShowCommentModal({
   }
 
   // TODO: make the editable work as intended later, without the odd preview box and whatever
-  // TODO: also display multiple comments, fix up styling
+  // TODO: fix up styling
 
   const DisplayCommentsModal = () => {
-    // TODO: make it match figma
+
     return (
       <Modal isOpen={isOpenDisplay} onClose={onCloseDisplay}>
         <ModalOverlay />
@@ -140,7 +137,6 @@ function ShowCommentModal({
               <Button onClick={onOpenAdd}>
                 New
               </Button>
-              <CloseButton onClick={onCloseDisplay} />
             </HStack>
           </ModalHeader>
           <ModalCloseButton />
@@ -150,8 +146,9 @@ function ShowCommentModal({
                 <HStack>
                   {/* add UserDisplay card*/}
                   <Text>{comment.Content}</Text>
-                  <IconButton aria-label="Edit" icon={<EditIcon />}/>
-                  <IconButton aria-label="Delete" icon={<DeleteIcon />} onClick={() => deleteComment(comment)}/>
+                  {/* add in the edit functionality*/}
+                  {isEditable && <IconButton aria-label="Edit" icon={<EditIcon />}/>}
+                  {isEditable && <IconButton aria-label="Delete" icon={<DeleteIcon />} onClick={() => deleteComment(comment)}/>}
                 </HStack>
               ))}
           </ModalBody>
@@ -165,8 +162,7 @@ function ShowCommentModal({
 
   // Not abstracted to not tightly couple comments and reports together
   const AddReportModal = () => {
-    // TODO: add enum for report options
-    const [remark, setRemark] = useState("Late");
+    const [remark, setRemark] = useState<ReportOptions>(ReportOptions.Late);
     const user = useContext(UserContext);
 
     
@@ -194,8 +190,9 @@ function ShowCommentModal({
               <FormControl onSubmit={handleSubmit}>
                 <HStack spacing={4}>
                   <FormLabel htmlFor="reports">Reports</FormLabel>
-                  <Select placeholder="Late" onChange={handleRemarkChange}>
-                    <option value="Absent">Absent</option>
+                  <Select placeholder={ReportOptions.Late} onChange={handleRemarkChange}>
+                    <option value={ReportOptions.LeftEarly}>{ReportOptions.LeftEarly}</option>
+                    <option value={ReportOptions.Absent}>{ReportOptions.Absent}</option>
                   </Select>
                 </HStack>
               </FormControl>
@@ -285,13 +282,13 @@ function ShowCommentModal({
         }
         </> : 
         <>
-          <Button
+        {isEditable && <Button
           colorScheme={color}
           aria-label="Report"
           leftIcon={icon}
           onClick={onOpenAdd}>
             <AddIcon />
-          </Button>
+          </Button>}
         </>
         }
     </Box>
