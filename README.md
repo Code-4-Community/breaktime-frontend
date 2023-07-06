@@ -1,7 +1,8 @@
+![](https://static.wixstatic.com/media/1193ef_371853f9145b445fb883f16ed7741b60~mv2.jpg/v1/crop/x_0,y_2,w_1842,h_332/fill/w_466,h_84,al_c,q_80,usm_0.66_1.00_0.01,enc_auto/Breaktime%20Logo%20Comfortaa-2.jpg)
+
 # Breaktime Frontend 
 
 This repo contains the frontend code for Project Breaktime, an application attempting to create a time tracking dashboard. 
-
 
 ## Installation 
 
