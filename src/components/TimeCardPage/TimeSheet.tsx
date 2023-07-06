@@ -39,32 +39,8 @@ import { UserSchema } from '../../schemas/UserSchema'
 import { SearchIcon, WarningIcon, DownloadIcon } from '@chakra-ui/icons';
 import { Select, components } from 'chakra-react-select'
 
-//TODO - Refactor to backend calls once setup to pull rows, etc. 
-
-
-//To test uploading a timesheet 
-// apiClient.updateUserTimesheet(testingTimesheetResp); 
-
-const createEmptyTable = (startDate, company) => {
-    // We assign uuid to provide a unique key identifier to each row for reacts rendering 
-
-    //TODO's: Pull UserID automatically
-    return {
-        UserID: "77566d69-3b61-452a-afe8-73dcda96f876",
-        TimesheetID: uuidv4(),
-        CompanyID: company,
-        StartDate: startDate,
-        Status: {
-            Stage: Review_Stages.APPROVED,
-            Timestamp: undefined
-        },
-        WeekComments: [],
-        TableData: [],
-        ScheduledData: undefined
-    }
-}
-
-const user = "Example User";
+//TODO - Eventually automate this 
+const user = 'Example User'
 
 const testingEmployees = [
     { UserID: "abc", FirstName: "joe", LastName: "jane", Type: "Employee", Picture: "https://www.google.com/koala.png" },
@@ -150,6 +126,7 @@ export default function Page() {
     const [userTimesheets, setUserTimesheets] = useState([]);
     const [currentTimesheets, setCurrentTimesheets] = useState([]);
     const [selectedTimesheet, setTimesheet] = useState(undefined);
+    const [selectedTab, setTab] = useState(undefined); 
 
 
     // this hook should always run first
@@ -171,14 +148,11 @@ export default function Page() {
 
     // Pulls user timesheets, marking first returned as the active one
     useEffect(() => {
-        // Uncomment this if you want the default one loaded 
-        setUserTimesheets([EXAMPLE_TIMESHEET, EXAMPLE_TIMESHEET_2]);
-
-        //apiClient.getUserTimesheets(selectedUser?.UserID).then(timesheets => {
-        //    setUserTimesheets(timesheets); 
-        //    //By Default just render / select the first timesheet for now 
-        //    setCurrentTimesheetsToDisplay(timesheets, startDate);
-        //});
+        apiClient.getUserTimesheets(selectedUser?.UserID).then(timesheets => {
+           setUserTimesheets(timesheets); 
+           //By Default just render / select the first timesheet for now 
+           setCurrentTimesheetsToDisplay(timesheets, selectedDate);
+        });
     }, [selectedUser])
 
     const processTimesheetChange = (updated_sheet) => {
@@ -213,16 +187,11 @@ export default function Page() {
     const setCurrentTimesheetsToDisplay = (timesheets, currentStartDate: Moment) => {
         const newCurrentTimesheets = timesheets.filter(sheet => moment.unix(sheet.StartDate).isSame(currentStartDate, 'day'));
 
-        if (newCurrentTimesheets.length < 1) {
-            newCurrentTimesheets.push(createEmptyTable(currentStartDate.unix(), "new")); // TODO: change to make correct timesheets for the week
-        }
-
-        if (newCurrentTimesheets.length > 1) {
-            newCurrentTimesheets.push(createEmptyTable(currentStartDate.unix(), "Total"));
-        }
-
         setCurrentTimesheets(newCurrentTimesheets);
         setTimesheet(newCurrentTimesheets[0]);
+        if (newCurrentTimesheets.length > 0) {
+            setTab(newCurrentTimesheets[0].CompanyID)
+        }
     }
 
     const renderWarning = () => {
@@ -263,18 +232,19 @@ export default function Page() {
             </HStack>
             {useMemo(() => renderWarning(), [selectedDate])}
             <Tabs>
-                <TabList>
-                    {currentTimesheets.map(
-                        (sheet) => (
-                            <Tab onClick={() => setTimesheet(sheet)}>{sheet.CompanyID}</Tab>
-                        )
-                    )}
-                </TabList>
+            <TabList> 
+                {currentTimesheets.map(
+                    (sheet) => (
+                        <Tab onClick={() => {setTimesheet(sheet); setTab(sheet.CompanyID)}}>{sheet.CompanyID}</Tab>
+                    ) 
+                )}
+                {currentTimesheets.length > 1 && <Tab onClick={() => setTab("Total")}>Total</Tab> }
+            </TabList>
             </Tabs>
-            {selectedTimesheet?.CompanyID === "Total" ?
-                (<AggregationTable Date={selectedDate} timesheets={currentTimesheets} />)
-                : (<TimeTable columns={TABLE_COLUMNS} timesheet={selectedTimesheet} onTimesheetChange={processTimesheetChange} />)}
-
+            {selectedTab === "Total" ? 
+            (<AggregationTable Date={selectedDate} timesheets={currentTimesheets}/>)
+            : (currentTimesheets.length > 0 && <TimeTable columns={TABLE_COLUMNS} timesheet={selectedTimesheet} onTimesheetChange={processTimesheetChange}/>)}
+            
         </>
     )
 }

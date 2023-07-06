@@ -11,30 +11,29 @@ interface TimeEntryProps {
 export function TimeEntry(props: TimeEntryProps) {
   const [minutes, setMinutes] = useState(undefined);
 
-  const onChange = (time) => {
-    let calculatedTime;
-    // TODO: account for possible time deletions when updating DB and whatnot
-    if (time === null) {
-      calculatedTime = undefined;
-    } else {
-      const [currentHours, parsedMinutes] = time.split(":");
-      calculatedTime = Number(currentHours) * 60 + Number(parsedMinutes);
-    }
+    const onChange = (time) => {
+        var rowToMutate = props.row.Associate; 
+        if (rowToMutate === undefined) {
+            rowToMutate = {
+                Start:undefined, End:undefined, AuthorID:"<TODO-add ID>"
+            }
+        }
 
-    setMinutes(calculatedTime);
 
-    //Triggering parent class to update its references here as well
-    var rowToMutate = props.row.Associate;
-    if (rowToMutate === undefined) {
-      rowToMutate = {
-        Start: undefined,
-        End: undefined,
-        AuthorID: "<TODO-add ID>",
-      };
+        if (time !== null) {
+            const [hours, parsedMinutes] = time.split(":");   
+            const calculatedTime = Number(hours) * 60 + Number(parsedMinutes)
+            setMinutes(calculatedTime); 
+            rowToMutate[props.field] = calculatedTime; 
+        } else {
+            // Value is null, so mark it as undefined in our processing 
+            rowToMutate[props.field] = undefined; 
+            setMinutes(undefined); 
+        }
+        //Triggering parent class to update its references here as well 
+        props.updateFields("Associate", rowToMutate); 
     }
-    rowToMutate[props.field] = calculatedTime;
-    props.updateFields("Associate", rowToMutate);
-  };
+  
   useEffect(() => {
     if (props.row.Associate !== undefined) {
       setMinutes(props.row.Associate[props.field]);

@@ -47,35 +47,32 @@ export const SCHEDULE_ENTRY = {
 };
 
 export const EXAMPLE_TIMESHEET = {
-  UserID: "b43227a4-0b42-4cfc-8a2c-16e2f2e64fbe",
-  TimesheetID: "1231231",
-  CompanyID: "NEU",
-  StartDate: moment().tz(TIMEZONE).startOf("week").day(0).unix(),
-  Status: {
-    HoursSubmitted: undefined,
-    HoursReviewed: undefined,
-    ScheduleSubmitted: undefined,
-    Finalized: undefined,
-  },
-  WeekNotes: [],
-  TableData: [{ ...EXAMPLE_ROW }],
-  ScheduleTableData: [{ ...SCHEDULE_ENTRY }],
-};
+    UserID: "b43227a4-0b42-4cfc-8a2c-16e2f2e64fbe", 
+    TimesheetID: "1231231", 
+    CompanyID: "NEU", 
+    StartDate: moment().tz(TIMEZONE).startOf('week').day(0).unix(), 
+    Status: {
+        HoursSubmitted: undefined, 
+        HoursReviewed: undefined, 
+        ScheduleSubmitted: undefined, 
+        Finalized: undefined
+    }, 
+    WeekNotes:[], 
+    TableData: [{...EXAMPLE_ROW}], 
+    ScheduleTableData: undefined 
+}
 export const EXAMPLE_TIMESHEET_2 = {
-  UserID: "b43227a4-0b42-4cfc-8a2c-16e2f2e64fbe",
-  TimesheetID: "1293219",
-  CompanyID: "Star Market",
-  StartDate: moment().tz(TIMEZONE).startOf("week").day(0).unix(),
-  Status: {
-    HoursSubmitted: {
-      Date: moment().tz(TIMEZONE).unix(),
-      Author: "<Some UUID of an author>",
-    },
-    HoursReviewed: undefined,
-    ScheduleSubmitted: undefined,
-    Finalized: undefined,
-  },
-  WeekNotes: [],
-  TableData: [{ ...EXAMPLE_ROW }],
-  ScheduleTableData: [{ ...SCHEDULE_ENTRY }],
-};
+    UserID: "b43227a4-0b42-4cfc-8a2c-16e2f2e64fbe", 
+    TimesheetID: "1293219", 
+    CompanyID: "Star Market", 
+    StartDate: moment().tz(TIMEZONE).startOf('week').day(0).unix(), 
+    Status: {
+        HoursSubmitted: {Date: moment().tz(TIMEZONE).unix(), Author:"<Some UUID of an author>"}, 
+        HoursReviewed: undefined, 
+        ScheduleSubmitted: undefined, 
+        Finalized: undefined
+    }, 
+    WeekNotes:[], 
+    TableData: [{...EXAMPLE_ROW}], 
+    ScheduleTableData:undefined 
+}
