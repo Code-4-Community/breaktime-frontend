@@ -1,70 +1,72 @@
-# Getting Started with Create React App
+# Breaktime Frontend 
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This repo contains the frontend code for Project Breaktime, an application attempting to create a time tracking dashboard. 
 
-## Available Scripts
 
-In the project directory, you can run:
+## Installation 
 
-### `npm start`
+To setup this project ensure that you currently have react installed. 
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+[Install React](https://legacy.reactjs.org/docs/getting-started.html)
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+Once installed, all that is needed to install all required dependencies is the following line: 
+```
+npm install
+```
+You should now be ready to start running things! 
 
-### `npm test`
+*Note*: If you are missing a file in `src/aws-exports.tsx` reach out to the tech-lead for this file, or copy `aws-exports.js` into this name. 
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
 
-### `npm run build`
+## Running the Project
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+To run the frontend several steps are required: 
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+1. 
+    Run the following command: ```npm start``` After this you should see a browser open to `localhost:3000`. 
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+2.  
+    Start the backend - for instructions see [breaktime-backend](https://github.com/Code-4-Community/breaktime-backend) under the c4c repo. Once this is running you should be able to start interacting with the website. 
 
-### `npm run eject`
+3. 
+    From step 1 you should be greeted with a log-in window asking you to sign in with a user name and password. These can either be provided by asking anyone on the breaktime team, or by navigating to the Cognito pool for breaktime and creating this yourself: *Ask a developer on project breaktime for instructions on this*
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+Once logged in, you should be ready to go and interact with the website. 
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+## Code Overview 
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+The frontend is using a typescript / react and currently utilizes AWS Amplify for handling authentication. 
 
-## Learn More
+### Reading Material 
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+* [Introduction to AWS Amplify](https://docs.amplify.aws/)
+* [Introduction to React](https://react.dev/learn)
 
-To learn React, check out the [React documentation](https://reactjs.org/).
 
-### Code Splitting
+### Codebase Design
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+Important directories and files are described below. While not all files are described, these provide a general overview of the structure. 
+```
 
-### Analyzing the Bundle Size
+breaktime-frontend/
+├─ public/ - Static assets that should exist on the frontend 
+├─ src/ - Directory housing almost all code 
+│  ├─ components/ - React Component Modules 
+│  |  ├─ Auth/ - Authenticated API interface and components 
+|  |  |  ├─ apiClient.tsx - The central interface making authenticated calls to the backend. 
+│  |  ├─ HomePage/ - Components for the landing & home page 
+│  |  ├─ NavBar/ - Components for the navigation bar 
+│  |  ├─ SignOut/ - Components for the signout page 
+│  |  ├─ TimeCardPage/ - Components for the timesheet page 
+|  |  |  ├─ CellTypes/ - Contains all types of cells rendered on the timesheet 
+│  ├─ schemas/ - Typescript schemas for complex data types 
+│  ├─ aws-exports.js - AWS configuration file for Cognito 
+│  ├─ constants.tsx - Frontend global constants file 
+│  ├─ index.css - styling for root of the project 
+│  ├─ index.tsx - root JS file 
+├─ .gitignore - files ignored by git 
+├─ package.json - react project configuration files 
+├─ README.md
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
