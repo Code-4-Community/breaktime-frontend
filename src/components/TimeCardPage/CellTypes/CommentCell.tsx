@@ -24,15 +24,12 @@ import {
   VStack,
   Text,
   Select,
-  CloseButton,
   IconButton
 } from "@chakra-ui/react";
 
 import {
   FormControl,
   FormLabel,
-  FormErrorMessage,
-  FormHelperText,
 } from '@chakra-ui/react'
 
 import {
@@ -50,39 +47,38 @@ import { CommentType, CellStatus, Color } from "../types";
 import { ReportOptions } from "../types";
 import { getAllActiveCommentsOfType, createNewComment } from "../utils";
 
+const saveEditedComment = (setComments: Function, comments: CommentSchema[], typeOfComment: CommentType, prevComment: CommentSchema, newComment: CommentSchema) => {
+  // previous comment edited over so set it to deleted
+  prevComment.State = CellStatus.Deleted
+  setComments(getAllActiveCommentsOfType(typeOfComment, [...comments, newComment]));
+  // TODO: save to DB
+};
+
+const deleteComment = (onCloseDisplay: Function, setComments: Function, comments: CommentSchema[], typeOfComment: CommentType, comment: CommentSchema) => {
+  // TODO: add confirmation popup
+  comment.State = CellStatus.Deleted
+  setComments(getAllActiveCommentsOfType(CommentType.Report, comments));
+  if (comments.length === 1) {
+    onCloseDisplay()
+  }
+  // TODO: save to DB
+}
+
 interface ShowReportModalProps {
   reports: CommentSchema[];
-  setComments: Function;
+  setReports: Function;
   isEditable: boolean;
 }
 
 function ShowReportModal({
   reports,
-  setComments,
+  setReports,
   isEditable
 }: ShowReportModalProps){
   const { isOpen: isOpenDisplay, onOpen: onOpenDisplay, onClose: onCloseDisplay } = useDisclosure();
   const { isOpen: isOpenAdd, onOpen: onOpenAdd, onClose: onCloseAdd } = useDisclosure();
   const user = useContext(UserContext);
   let color = Color.Red
-
-  const saveEditedComment = (prevComment: CommentSchema, newComment: CommentSchema) => {
-    // previous comment edited over so set it to deleted
-    prevComment.State = CellStatus.Deleted
-    setComments(getAllActiveCommentsOfType(CommentType.Report, [...reports, newComment]));
-    // TODO: save to DB
-  };
-
-  const deleteComment = (comment: CommentSchema) => {
-    // TODO: add confirmation popup
-    comment.State = CellStatus.Deleted
-    setComments(getAllActiveCommentsOfType(CommentType.Report, reports));
-    // 1 since after deletion there will be 0 but wont update in here
-    if (reports.length === 1) {
-      onCloseDisplay()
-    }
-    // TODO: save to DB
-  }
 
   const doReportsExist = reports.length > 0
 
@@ -117,7 +113,7 @@ function ShowReportModal({
                   <Editable
                   isDisabled={!isEditable}
                   defaultValue={report.Content}
-                  onSubmit={(value) => saveEditedComment(report, createNewComment(user, CommentType.Report, value))}
+                  onSubmit={(value) => saveEditedComment(setReports, reports, CommentType.Report, report, createNewComment(user, CommentType.Report, value))}
                 >
                   <EditablePreview />
 
@@ -125,7 +121,7 @@ function ShowReportModal({
                     <>
                       <Input as={EditableInput} />
                       <HStack>
-                        <IconButton aria-label="Delete" icon={<DeleteIcon />} onClick={() => deleteComment(report)}/>
+                        <IconButton aria-label="Delete" icon={<DeleteIcon />} onClick={() => deleteComment(onCloseDisplay, setReports, reports, CommentType.Report, report)}/>
                       </HStack>
                     </>
                   )}
@@ -153,7 +149,7 @@ function ShowReportModal({
 
     const handleSubmit = () => {
       if (reports.filter(report => report.Content === remark).length === 0) {
-        setComments([...reports, createNewComment(user, CommentType.Report, remark)]);
+        setReports([...reports, createNewComment(user, CommentType.Report, remark)]);
       }
 
       alert(`Your ${CommentType.Report} has been submitted!`);
@@ -266,25 +262,6 @@ function ShowCommentModal({
     );
   };
 
-  const saveEditedComment = (prevComment: CommentSchema, newComment: CommentSchema) => {
-    // previous comment edited over so set it to deleted
-    console.log(prevComment.Content)
-    prevComment.State = CellStatus.Deleted
-    setComments(getAllActiveCommentsOfType(CommentType.Comment, [...comments, newComment]));
-    // TODO: save to DB
-  };
-
-  const deleteComment = (comment: CommentSchema) => {
-    // TODO: add confirmation popup
-    comment.State = CellStatus.Deleted
-    setComments(getAllActiveCommentsOfType(CommentType.Comment, comments));
-    // 1 since after deletion there will be 0 but wont update in here
-    if (comments.length === 1) {
-      onCloseDisplay()
-    }
-    // TODO: save to DB
-  }
-
   const doCommentsExist = comments.length > 0
 
   // no comments so gray it out
@@ -318,7 +295,7 @@ function ShowCommentModal({
                   <Editable
                   isDisabled={!isEditable}
                   defaultValue={comment.Content}
-                  onSubmit={(value) => saveEditedComment(comment, createNewComment(user, CommentType.Comment, value))}
+                  onSubmit={(value) => saveEditedComment(setComments, comments, CommentType.Comment, comment, createNewComment(user, CommentType.Comment, value))}
                 >
                   <EditablePreview />
 
@@ -327,7 +304,7 @@ function ShowCommentModal({
                       <Input as={EditableInput} />
                       <HStack>
                         <EditableControls />
-                        <IconButton aria-label="Delete" icon={<DeleteIcon />} onClick={() => deleteComment(comment)}/>
+                        <IconButton aria-label="Delete" icon={<DeleteIcon />} onClick={() => deleteComment(onCloseDisplay, setComments, comments, CommentType.Comment, comment)}/>
                       </HStack>
                     </>
                   )}
@@ -461,10 +438,10 @@ export function CommentCell(props: CommentProps) {
         isEditable={isEditable}
       />
       <ShowReportModal
-          setComments={setReports}
-          reports={reports}
-          isEditable={isEditable}
-        />
+        setReports={setReports}
+        reports={reports}
+        isEditable={isEditable}
+      />
     </Stack>
   );
 }
