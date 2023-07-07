@@ -10,7 +10,6 @@ import {
   ModalBody,
   ModalCloseButton,
   Editable,
-  EditableTextarea,
   EditablePreview,
   EditableInput,
   Input,
@@ -51,82 +50,51 @@ import { CommentType, CellStatus, Color } from "../types";
 import { ReportOptions } from "../types";
 import { getAllActiveCommentsOfType, createNewComment } from "../utils";
 
-interface CommentProps {
-  comments: CommentSchema[] | undefined;
-  setComment: Function; // TODO: fix type
-}
-
-interface ShowCommentModalProps {
-  comments: CommentSchema[];
-  typeOfComment: CommentType;
+interface ShowReportModalProps {
+  reports: CommentSchema[];
   setComments: Function;
-  icon; // TODO: add type
-  color: Color;
   isEditable: boolean;
 }
 
-function ShowCommentModal({
-  comments,
-  typeOfComment,
+function ShowReportModal({
+  reports,
   setComments,
-  icon,
-  color,
-  isEditable,
-}: ShowCommentModalProps) {
+  isEditable
+}: ShowReportModalProps){
   const { isOpen: isOpenDisplay, onOpen: onOpenDisplay, onClose: onCloseDisplay } = useDisclosure();
   const { isOpen: isOpenAdd, onOpen: onOpenAdd, onClose: onCloseAdd } = useDisclosure();
   const user = useContext(UserContext);
-
-  const EditableControls = () => {
-    const {
-      isEditing,
-      getSubmitButtonProps,
-      getCancelButtonProps,
-      getEditButtonProps,
-    } = useEditableControls();
-
-    // TODO: change this later to reflect figma
-    return isEditing ? (
-      <ButtonGroup justifyContent="center" size="sm">
-        <Button leftIcon={<CheckIcon />} {...getSubmitButtonProps()} />
-        <Button leftIcon={<CloseIcon />} {...getCancelButtonProps()} />
-      </ButtonGroup>
-    ) : (
-      <Flex justifyContent="right">
-        <Button size="sm" leftIcon={<EditIcon />} {...getEditButtonProps()} />
-      </Flex>
-    );
-  };
+  let color = Color.Red
 
   const saveEditedComment = (prevComment: CommentSchema, newComment: CommentSchema) => {
     // previous comment edited over so set it to deleted
     prevComment.State = CellStatus.Deleted
-    setComments(getAllActiveCommentsOfType(typeOfComment, [...comments, newComment]));
+    setComments(getAllActiveCommentsOfType(CommentType.Report, [...reports, newComment]));
     // TODO: save to DB
   };
 
   const deleteComment = (comment: CommentSchema) => {
     // TODO: add confirmation popup
     comment.State = CellStatus.Deleted
-    setComments(getAllActiveCommentsOfType(comment.Type, comments));
+    setComments(getAllActiveCommentsOfType(CommentType.Report, reports));
     // 1 since after deletion there will be 0 but wont update in here
-    if (comments.length === 1) {
+    if (reports.length === 1) {
       onCloseDisplay()
     }
     // TODO: save to DB
   }
 
-  const doCommentsExist = comments.length > 0
+  const doReportsExist = reports.length > 0
 
-  // no comments so gray it out
-  if (doCommentsExist === false) {
+  // no reports so gray it out
+  if (doReportsExist === false) {
     color = Color.Gray
   }
 
   // TODO: make the editable work as intended later, without the odd preview box and whatever
   // TODO: fix up styling
-
-  const DisplayCommentsModal = () => {
+  // Fix this to match figma
+  const DisplayReportsModal = () => {
 
     return (
       <Modal isOpen={isOpenDisplay} onClose={onCloseDisplay}>
@@ -134,7 +102,7 @@ function ShowCommentModal({
         <ModalContent>
           <ModalHeader>
             <HStack>
-              <Text>View {typeOfComment}</Text>  
+              <Text>View {CommentType.Report}</Text>  
               <Button onClick={onOpenAdd}>
                 New
               </Button>
@@ -142,14 +110,14 @@ function ShowCommentModal({
           </ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            {comments.map(
-              (comment) => (
+            {reports.map(
+              (report) => (
                 <HStack>
-                  {/* add UserDisplay card*/}
+                  {/* add UserDisplay card once pr merged in*/}
                   <Editable
                   isDisabled={!isEditable}
-                  defaultValue={comment.Content}
-                  onSubmit={(value) => saveEditedComment(comment, createNewComment(user, typeOfComment, value))}
+                  defaultValue={report.Content}
+                  onSubmit={(value) => saveEditedComment(report, createNewComment(user, CommentType.Report, value))}
                 >
                   <EditablePreview />
 
@@ -157,8 +125,7 @@ function ShowCommentModal({
                     <>
                       <Input as={EditableInput} />
                       <HStack>
-                        <EditableControls />
-                        <IconButton aria-label="Delete" icon={<DeleteIcon />} onClick={() => deleteComment(comment)}/>
+                        <IconButton aria-label="Delete" icon={<DeleteIcon />} onClick={() => deleteComment(report)}/>
                       </HStack>
                     </>
                   )}
@@ -185,11 +152,11 @@ function ShowCommentModal({
     };
 
     const handleSubmit = () => {
-      if (comments.filter(comment => comment.Content === remark).length === 0) {
-        setComments([...comments, createNewComment(user, typeOfComment, remark)]);
+      if (reports.filter(report => report.Content === remark).length === 0) {
+        setComments([...reports, createNewComment(user, CommentType.Report, remark)]);
       }
 
-      alert(`Your ${typeOfComment} has been submitted!`);
+      alert(`Your ${CommentType.Report} has been submitted!`);
       onCloseAdd()
       // TODO: call to db
     };
@@ -198,7 +165,7 @@ function ShowCommentModal({
         <Modal isOpen={isOpenAdd} onClose={onCloseAdd}>
           <ModalContent>
             <VStack spacing={4} divider={<StackDivider />}>
-              <ModalHeader>{typeOfComment}</ModalHeader>
+              <ModalHeader>{CommentType.Report}</ModalHeader>
 
               <FormControl onSubmit={handleSubmit}>
                 <HStack spacing={4}>
@@ -224,6 +191,159 @@ function ShowCommentModal({
     )
   }
 
+  return (
+    <>
+    <Box color={color}>
+    {doReportsExist ?
+      <>
+        <Button
+          colorScheme={color}
+          aria-label="Report"
+          leftIcon={<WarningIcon />}
+          onClick={onOpenDisplay} >
+            {reports.length}
+        </Button>
+        {isEditable && 
+          <Button
+            colorScheme={color}
+            aria-label="Add Feedback"
+            leftIcon={<AddIcon />}
+            onClick={onOpenAdd} />
+        }
+        </> : 
+        <>
+        {isEditable && <Button
+          colorScheme={color}
+          aria-label="Report"
+          leftIcon={<WarningIcon />}
+          onClick={onOpenAdd}>
+            <AddIcon />
+          </Button>}
+        </>
+        }
+    </Box>
+      <DisplayReportsModal />
+      <AddReportModal />
+    </>
+  );
+}
+
+
+interface ShowCommentModalProps {
+  comments: CommentSchema[];
+  setComments: Function;
+  isEditable: boolean;
+}
+
+function ShowCommentModal({
+  comments,
+  setComments,
+  isEditable,
+}: ShowCommentModalProps) {
+  const { isOpen: isOpenDisplay, onOpen: onOpenDisplay, onClose: onCloseDisplay } = useDisclosure();
+  const { isOpen: isOpenAdd, onOpen: onOpenAdd, onClose: onCloseAdd } = useDisclosure();
+  const user = useContext(UserContext);
+  let color = Color.Blue
+
+  const EditableControls = () => {
+    const {
+      isEditing,
+      getSubmitButtonProps,
+      getCancelButtonProps,
+      getEditButtonProps,
+    } = useEditableControls();
+
+    // TODO: change this later to reflect figma
+    return isEditing ? (
+      <ButtonGroup justifyContent="center" size="sm">
+        <Button leftIcon={<CheckIcon />} {...getSubmitButtonProps()} />
+        <Button leftIcon={<CloseIcon />} {...getCancelButtonProps()} />
+      </ButtonGroup>
+    ) : (
+      <Flex justifyContent="right">
+        <Button size="sm" leftIcon={<EditIcon />} {...getEditButtonProps()} />
+      </Flex>
+    );
+  };
+
+  const saveEditedComment = (prevComment: CommentSchema, newComment: CommentSchema) => {
+    // previous comment edited over so set it to deleted
+    console.log(prevComment.Content)
+    prevComment.State = CellStatus.Deleted
+    setComments(getAllActiveCommentsOfType(CommentType.Comment, [...comments, newComment]));
+    // TODO: save to DB
+  };
+
+  const deleteComment = (comment: CommentSchema) => {
+    // TODO: add confirmation popup
+    comment.State = CellStatus.Deleted
+    setComments(getAllActiveCommentsOfType(CommentType.Comment, comments));
+    // 1 since after deletion there will be 0 but wont update in here
+    if (comments.length === 1) {
+      onCloseDisplay()
+    }
+    // TODO: save to DB
+  }
+
+  const doCommentsExist = comments.length > 0
+
+  // no comments so gray it out
+  if (doCommentsExist === false) {
+    color = Color.Gray
+  }
+
+  // TODO: make the editable work as intended later, without the odd preview box and whatever
+  // TODO: fix up styling
+
+  const DisplayCommentsModal = () => {
+
+    return (
+      <Modal isOpen={isOpenDisplay} onClose={onCloseDisplay}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>
+            <HStack>
+              <Text>View {CommentType.Comment}</Text>  
+              <Button onClick={onOpenAdd}>
+                New
+              </Button>
+            </HStack>
+          </ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            {comments.map(
+              (comment) => (
+                <HStack>
+                  {/* add UserDisplay card once pr merged in*/}
+                  <Editable
+                  isDisabled={!isEditable}
+                  defaultValue={comment.Content}
+                  onSubmit={(value) => saveEditedComment(comment, createNewComment(user, CommentType.Comment, value))}
+                >
+                  <EditablePreview />
+
+                  {isEditable && (
+                    <>
+                      <Input as={EditableInput} />
+                      <HStack>
+                        <EditableControls />
+                        <IconButton aria-label="Delete" icon={<DeleteIcon />} onClick={() => deleteComment(comment)}/>
+                      </HStack>
+                    </>
+                  )}
+                </Editable>
+                 
+                </HStack>
+              ))}
+          </ModalBody>
+
+          <ModalFooter>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+    )
+  }
+
   const AddCommentModal = () => {
     const [remark, setRemark] = useState();
     const user = useContext(UserContext);
@@ -234,8 +354,8 @@ function ShowCommentModal({
 
     const handleSubmit = () => {
       // TODO: reuse comment validation
-      setComments([...comments, createNewComment(user, typeOfComment, remark)]);
-      alert(`Your ${typeOfComment} has been submitted!`);
+      setComments([...comments, createNewComment(user, CommentType.Comment, remark)]);
+      alert(`Your ${CommentType.Comment} has been submitted!`);
       onCloseAdd()
       // TODO: call to db
     };
@@ -244,7 +364,7 @@ function ShowCommentModal({
         <Modal isOpen={isOpenAdd} onClose={onCloseAdd}>
           <ModalContent>
             <VStack spacing={4} divider={<StackDivider />}>
-              <ModalHeader>{typeOfComment}</ModalHeader>
+              <ModalHeader>{CommentType.Comment}</ModalHeader>
 
               <form id="Form" onSubmit={handleSubmit}>
                 <HStack spacing={4}>
@@ -281,7 +401,7 @@ function ShowCommentModal({
         <Button
           colorScheme={color}
           aria-label="Report"
-          leftIcon={icon}
+          leftIcon={<ChatIcon/>}
           onClick={onOpenDisplay} >
             {comments.length}
         </Button>
@@ -297,7 +417,7 @@ function ShowCommentModal({
         {isEditable && <Button
           colorScheme={color}
           aria-label="Report"
-          leftIcon={icon}
+          leftIcon={<ChatIcon/>}
           onClick={onOpenAdd}>
             <AddIcon />
           </Button>}
@@ -305,12 +425,15 @@ function ShowCommentModal({
         }
     </Box>
       <DisplayCommentsModal />
-      {typeOfComment === CommentType.Comment ? 
       <AddCommentModal />
-      : <AddReportModal />}
-      
     </>
   );
+}
+
+
+interface CommentProps {
+  comments: CommentSchema[] | undefined;
+  setComment: Function; // TODO: fix type
 }
 
 export function CommentCell(props: CommentProps) {
@@ -333,19 +456,13 @@ export function CommentCell(props: CommentProps) {
   return (
     <Stack direction='row'>
       <ShowCommentModal
-        setComments={setReports}
-        comments={reports}
-        typeOfComment={CommentType.Report}
-        icon={<WarningIcon />}
-        color={Color.Red}
+        setComments={setComments}
+        comments={comments}
         isEditable={isEditable}
       />
-      <ShowCommentModal
-          setComments={setComments}
-          comments={comments}
-          typeOfComment={CommentType.Comment}
-          icon={<ChatIcon />}
-          color={Color.Blue}
+      <ShowReportModal
+          setComments={setReports}
+          reports={reports}
           isEditable={isEditable}
         />
     </Stack>
