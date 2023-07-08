@@ -11,7 +11,7 @@ export const getAllActiveCommentsOfType = (type: CommentType, commentArray: Comm
     }
   };
 
-  export const createNewComment = (
+export const createNewComment = (
     user: UserSchema,
     type: CommentType,
     content: string

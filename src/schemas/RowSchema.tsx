@@ -1,5 +1,5 @@
 import { z } from "zod";
-import {CellType, CommentType, Review_Stages, CellStatus} from '../components/TimeCardPage/types'; 
+import {CellType, CommentType, Review_Stages, CellStatus, ReportOptions} from '../components/TimeCardPage/types'; 
 
 const optionalNumber = z.union([z.undefined(), z.number()]) 
 const optionalString = z.union([z.undefined(), z.string()]); 
@@ -12,21 +12,31 @@ const optionalMember = z.union([z.undefined(), z.object({
 
 export const CommentSchema = z.object({
     AuthorID:z.string(), 
-    Type: z.enum([CommentType.Comment, CommentType.Report]), 
+    Type: z.nativeEnum(CommentType), // remove this
     Timestamp: z.number(), 
     Content: z.string(), 
-    State: z.enum([CellStatus.Active, CellStatus.Deleted]), 
+    State: z.nativeEnum(CellStatus),
 }); 
 
-export type CommentSchema = z.infer<typeof CommentSchema> 
+export type CommentSchema = z.infer<typeof CommentSchema>
+
+export const ReportSchema = z.object({
+    AuthorID:z.string(), 
+    Timestamp: z.number(), 
+    CorrectTime: z.number(),
+    Content: z.nativeEnum(ReportOptions), 
+    State: z.nativeEnum(CellStatus), 
+}); 
+
+export type ReportSchema = z.infer<typeof ReportSchema>
 
 export const RowSchema = z.object({
-    Type: z.enum([CellType.Regular, CellType.PTO]), 
+    Type: z.nativeEnum(CellType), 
     Date: z.number(), 
     Associate: optionalMember, 
     Supervisor: optionalMember, 
     Admin: optionalMember, 
-    Comment: z.union([z.undefined(), z.array(CommentSchema)])
+    Comment: z.union([z.undefined(), z.array(CommentSchema || ReportSchema)])
 }); 
 export type RowSchema = z.infer<typeof RowSchema>
 
