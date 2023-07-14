@@ -1,13 +1,13 @@
-import React from "react";
-import ApiClient from "../Auth/apiClient";
+
+import React from 'react';
+import ApiClient from '../Auth/apiClient';
+import { Heading } from '@chakra-ui/react';
 
 export default function HomePage() {
-  ApiClient.signout();
+  ApiClient.signout()
   return (
-    <div className="App">
-      <header className="App-header">
-        <h3>Logged out</h3>
-      </header>
-    </div>
+    <Heading>
+      Logged out
+    </Heading>
   );
 }

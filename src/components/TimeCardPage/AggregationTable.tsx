@@ -1,13 +1,22 @@
-import Table from 'react-bootstrap/Table';
+import {
+	Table,
+	Thead,
+	Tbody,
+	Tfoot,
+	Tr,
+	Th,
+	Td
+} from '@chakra-ui/react';
 import React from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import moment, { Moment } from 'moment-timezone';
 import { TimeSheetSchema } from '../../schemas/TimesheetSchema'
 
 interface AggregationProps {
-	Date: Moment, 
-	timesheets: TimeSheetSchema[] 
-  }
+	Date: Moment,
+	timesheets: TimeSheetSchema[]
+}
+
 
 function AggregationTable(props: AggregationProps) {
 	//NOTE: Aggregation is only applying to associate entries currently - TODO is to develop logic for all user types 
@@ -45,37 +54,37 @@ function AggregationTable(props: AggregationProps) {
 	const totalHours = aggregatedRows.reduce((acc, row) => acc + row.Duration, 0);
 
 	return (
-		<Table striped bordered hover>
-			<thead>
-				<tr>
-					<th key={0}>Date</th>
-					<th key={1}>Hours</th>
-				</tr>
-			</thead>
-			<tbody>
+		<Table>
+			<Thead>
+				<Tr>
+					<Th key={0}>Date</Th>
+					<Th key={1}>Hours</Th>
+				</Tr>
+			</Thead>
+			<Tbody>
 				{aggregatedRows.map(
 					(totalRow) => {
 						return (
-							<tr key={uuidv4()}>
-								<td>
+							<Tr key={uuidv4()}>
+								<Td>
 									{totalRow.Date}
-								</td>
-								<td>
+								</Td>
+								<Td>
 									{(totalRow.Duration / 60).toFixed(2)}
-								</td>
-							</tr>
+								</Td>
+							</Tr>
 						)
 					}
 				)}
-				<tr>
-					<td>
+				<Tr>
+					<Td>
 						Total Hours
-					</td>
-					<td>
+					</Td>
+					<Td>
 						{(totalHours / 60).toFixed(2)}
-					</td>
-				</tr>
-			</tbody>
+					</Td>
+				</Tr>
+			</Tbody>
 		</Table>
 	);
 }
