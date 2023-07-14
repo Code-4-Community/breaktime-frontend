@@ -2,7 +2,7 @@ import React, { useState, useMemo } from 'react';
 import TimeTable from './TimeTable'
 import { useEffect } from 'react';
 import SubmitCard from './SubmitCard';
-import DateCard from './SelectWeekCard'
+import DateSelectorCard from './SelectWeekCard';
 
 import {
   Alert,
@@ -39,31 +39,7 @@ import { UserSchema } from '../../schemas/UserSchema'
 import { SearchIcon, WarningIcon, DownloadIcon } from '@chakra-ui/icons';
 import { Select, components } from 'chakra-react-select'
 
-//TODO - Refactor to backend calls once setup to pull rows, etc. 
-
-
-//To test uploading a timesheet 
-// apiClient.updateUserTimesheet(testingTimesheetResp); 
-
-const createEmptyTable = (startDate, company) => {
-  // We assign uuid to provide a unique key identifier to each row for reacts rendering 
-
-  //TODO's: Pull UserID automatically
-  return {
-    UserID: "77566d69-3b61-452a-afe8-73dcda96f876",
-    TimesheetID: uuidv4(),
-    CompanyID: company,
-    StartDate: startDate,
-    Status: {
-      Stage: Review_Stages.APPROVED,
-      Timestamp: undefined
-    },
-    WeekComments: [],
-    TableData: [],
-    ScheduledData: undefined
-  }
-}
-
+//TODO - Eventually automate this 
 const user = 'Example User'
 
 const testingEmployees = [
@@ -76,12 +52,10 @@ const testingEmployees = [
 function ProfileCard({ employee }) {
 
   return (
-    <Card align={'center'} width={'100%'}>
+    <Card direction="row" width="50%">
+      <Avatar src={employee?.Picture} name={employee?.FirstName + " " + employee?.LastName} size='md' showBorder={true} borderColor='black' borderWidth='thick' />
       <CardBody>
-        <HStack>
-          <Avatar src={employee?.Picture} name={employee?.FirstName + " " + employee?.LastName} size='md' showBorder={true} borderColor='black' borderWidth='thick' />
-          <Text>{employee?.FirstName + " " + employee?.LastName}</Text>
-        </HStack>
+        <Text>{employee?.FirstName + " " + employee?.LastName}</Text>
       </CardBody>
     </Card>
   )
@@ -108,9 +82,6 @@ function SearchEmployeeTimesheet({ employees, setSelected }) {
     );
   };
 
-  // TODO: fix styling
-  // at the moment defaultValue is the first user in the employees array
-  // which is currently an invariant that matches the useState in Page
   return (
     <Box width={'100%'}>
       <Select isSearchable={true}
@@ -147,11 +118,12 @@ export default function Page() {
   // associates is only used by supervisor/admin for the list of all associates they have access to
   const [associates, setAssociates] = useState<UserSchema[]>([]);
 
-  // A list of the timesheet objects 
+  // A list of the timesheet objects
   // TODO: add types
   const [userTimesheets, setUserTimesheets] = useState([]);
   const [currentTimesheets, setCurrentTimesheets] = useState([]);
   const [selectedTimesheet, setTimesheet] = useState(undefined);
+  const [selectedTab, setTab] = useState(undefined);
 
 
   // this hook should always run first
@@ -173,18 +145,15 @@ export default function Page() {
 
   // Pulls user timesheets, marking first returned as the active one
   useEffect(() => {
-    // Uncomment this if you want the default one loaded 
-    setUserTimesheets([EXAMPLE_TIMESHEET, EXAMPLE_TIMESHEET_2]);
-
-    //apiClient.getUserTimesheets(selectedUser?.UserID).then(timesheets => {
-    //    setUserTimesheets(timesheets); 
-    //    //By Default just render / select the first timesheet for now 
-    //    setCurrentTimesheetsToDisplay(timesheets, startDate);
-    //});
+    apiClient.getUserTimesheets(selectedUser?.UserID).then(timesheets => {
+      setUserTimesheets(timesheets);
+      //By Default just render / select the first timesheet for now
+      setCurrentTimesheetsToDisplay(timesheets, selectedDate);
+    });
   }, [selectedUser])
 
   const processTimesheetChange = (updated_sheet) => {
-    // Updating the rows of the selected timesheets from our list of timesheets 
+    // Updating the rows of the selected timesheets from our list of timesheets
     const modifiedTimesheets = userTimesheets.map((entry) => {
       if (entry.TimesheetID === selectedTimesheet.TimesheetID) {
         return {
@@ -196,7 +165,7 @@ export default function Page() {
     });
     setUserTimesheets(modifiedTimesheets);
 
-    //Also need to update our list of currently selected - TODO come up with a way to not need these duplicated lists 
+    //Also need to update our list of currently selected - TODO come up with a way to not need these duplicated lists
     setCurrentTimesheets(currentTimesheets.map(
       (entry) => {
         if (entry.TimesheetID === selectedTimesheet.TimesheetID) {
@@ -209,22 +178,17 @@ export default function Page() {
       }
     ));
 
-    // selectedTimesheet.TableData = rows; 
+    // selectedTimesheet.TableData = rows;
   }
 
   const setCurrentTimesheetsToDisplay = (timesheets, currentStartDate: Moment) => {
     const newCurrentTimesheets = timesheets.filter(sheet => moment.unix(sheet.StartDate).isSame(currentStartDate, 'day'));
 
-    if (newCurrentTimesheets.length < 1) {
-      newCurrentTimesheets.push(createEmptyTable(currentStartDate.unix(), "new")); // TODO: change to make correct timesheets for the week
-    }
-
-    if (newCurrentTimesheets.length > 1) {
-      newCurrentTimesheets.push(createEmptyTable(currentStartDate.unix(), "Total"));
-    }
-
     setCurrentTimesheets(newCurrentTimesheets);
     setTimesheet(newCurrentTimesheets[0]);
+    if (newCurrentTimesheets.length > 0) {
+      setTab(newCurrentTimesheets[0].CompanyID)
+    }
   }
 
   const renderWarning = () => {
@@ -249,37 +213,35 @@ export default function Page() {
   }
 
 
+
   return (
     <>
-      <Flex align={'end'} m={'1%'} gap={'1%'}>
-        <VStack align={'start'}>
-          <ProfileCard employee={user} />
-          <DateCard onDateChange={updateDateRange} date={selectedDate} />
-        </VStack>
-        <Spacer/>
+      <HStack spacing="120px">
+        <ProfileCard employee={user} />
         {(user?.Type === "Supervisor" || user?.Type === "Admin") ?
-          <VStack align={'end'} width={'30%'}>
-            <ButtonGroup>
-              <IconButton aria-label='Download' icon={<DownloadIcon />} />
-              <IconButton aria-label='Report' icon={<WarningIcon />} />
-            </ButtonGroup>
+          <>
             <SearchEmployeeTimesheet employees={associates} setSelected={setSelectedUser} />
-          </VStack> : <></>}
-        <SubmitCard />
-      </Flex>
+            <IconButton aria-label='Download' icon={<DownloadIcon />} />
+            <IconButton aria-label='Report' icon={<WarningIcon />} />
+          </> : <></>}
+        <DateSelectorCard onDateChange={updateDateRange} date={selectedDate} />
+        {selectedTimesheet && <SubmitCard />}
+
+      </HStack>
       {useMemo(() => renderWarning(), [selectedDate])}
       <Tabs>
         <TabList>
           {currentTimesheets.map(
             (sheet) => (
-              <Tab onClick={() => setTimesheet(sheet)}>{sheet.CompanyID}</Tab>
+              <Tab onClick={() => { setTimesheet(sheet); setTab(sheet.CompanyID) }}>{sheet.CompanyID}</Tab>
             )
           )}
+          {currentTimesheets.length > 1 && <Tab onClick={() => setTab("Total")}>Total</Tab>}
         </TabList>
       </Tabs>
-      {selectedTimesheet?.CompanyID === "Total" ?
+      {selectedTab === "Total" ?
         (<AggregationTable Date={selectedDate} timesheets={currentTimesheets} />)
-        : (<TimeTable columns={TABLE_COLUMNS} timesheet={selectedTimesheet} onTimesheetChange={processTimesheetChange} />)}
+        : (currentTimesheets.length > 0 && <TimeTable columns={TABLE_COLUMNS} timesheet={selectedTimesheet} onTimesheetChange={processTimesheetChange} />)}
 
     </>
   )

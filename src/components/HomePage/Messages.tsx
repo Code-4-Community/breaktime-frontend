@@ -5,12 +5,16 @@ import { BiMessageDetail } from 'react-icons/bi';
 
 enum MessageTypes {
   Reminder = "Reminder",
-  Approved = "Approved"
-};
+  Approved = "Approved",
+}
 
 const SAMPLE_MESSAGES_LIST = [
-  { type: MessageTypes.Reminder, body: 'Submit timesheet for 11/6-11/12' },
-  { type: MessageTypes.Approved, body: 'Timesheet for 10/30-11/5 by SUPERVISOR' }];
+  { type: MessageTypes.Reminder, body: "Submit timesheet for 11/6-11/12" },
+  {
+    type: MessageTypes.Approved,
+    body: "Timesheet for 10/30-11/5 by SUPERVISOR",
+  },
+];
 
 export default function Messages() {
   const [messages, setMessages] = useState(SAMPLE_MESSAGES_LIST);
@@ -22,7 +26,7 @@ export default function Messages() {
   const deleteMessage = (index) => {
     const delMessage = [...messages];
     delMessage.splice(index, 1);
-    setMessages(delMessage)
+    setMessages(delMessage);
   };
 
   return (

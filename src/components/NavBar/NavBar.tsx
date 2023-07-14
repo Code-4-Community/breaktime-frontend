@@ -30,8 +30,6 @@ const items =
     "link": PAGE_ROUTES.ROOT
   }]
 
-
-
 function NavBar() {
   return (
     <Flex boxShadow={'xl'} mb={'1.5%'} p={'0.75%'}>

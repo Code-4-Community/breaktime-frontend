@@ -11,7 +11,6 @@ import { Pie, Bar } from "react-chartjs-2";
 Chart.register(CategoryScale);
 
 export default function MonthAtAGlance() {
-
   return (
     <Flex gridArea={'MaaG'}>
       <Card width={'100%'} rounded={'lg'}>

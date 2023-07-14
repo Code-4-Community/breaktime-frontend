@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react'
-import moment from 'moment';
+import React, { useState, useEffect } from "react";
+import moment from "moment";
 
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -27,7 +27,7 @@ export default function DateCard(props) {
   }, [date])
 
   return (
-    <Calendar selected={date} onChange={(date) => setDate(date)} rounded='md' backgroundColor={'gray.100'} p={'2%'}/>
+    <Calendar selected={date} onChange={(date) => setDate(date)} rounded='md' backgroundColor={'gray.100'} p={'2%'} />
   );
 }
 

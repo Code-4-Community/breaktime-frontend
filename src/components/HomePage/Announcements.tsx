@@ -4,8 +4,21 @@ import { DEFAULT_COLORS } from 'src/constants';
 import { TfiAnnouncement } from 'react-icons/tfi';
 
 const SAMPLE_EVENT_LIST = [
-  { name: 'LinkedIn Workshop', photo: 'https://schooloflanguages.sa.edu.au/wp-content/uploads/2017/11/placeholder-profile-sq.jpg', url: 'https://www.linkedin.com/', date: '2/30/2023' },
-  { name: 'Resume Workshop', photo: 'https://www.seinstitute.com/wp-content/uploads/2020/01/placeholder-female-300x300-1.jpg', url: 'https://en.wikipedia.org/wiki/Capybara', date: '4/31/2023' }];
+  {
+    name: "LinkedIn Workshop",
+    photo:
+      "https://schooloflanguages.sa.edu.au/wp-content/uploads/2017/11/placeholder-profile-sq.jpg",
+    url: "https://www.linkedin.com/",
+    date: "2/30/2023",
+  },
+  {
+    name: "Resume Workshop",
+    photo:
+      "https://www.seinstitute.com/wp-content/uploads/2020/01/placeholder-female-300x300-1.jpg",
+    url: "https://en.wikipedia.org/wiki/Capybara",
+    date: "4/31/2023",
+  },
+];
 
 export default function Announcements() {
   const [events, setEvents] = useState(SAMPLE_EVENT_LIST);

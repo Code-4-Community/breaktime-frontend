@@ -8,38 +8,37 @@ import { TIMEZONE } from '../../../constants';
 import { Input } from '@chakra-ui/react';
 
 interface CommentProps {
-    comments: CommentSchema[] | undefined;
-    setComment: Function;
+  comments: CommentSchema[] | undefined;
+  setComment: Function;
 }
 
 export function CommentCell(props: CommentProps) {
 
-    const [comments, setComments] = useState(props.comments);
+  const [comments, setComments] = useState(props.comments);
 
-    //TODO - Eventually refactor to handle multiple comments / process for grabbing user 
-    useEffect(() => {
-        // If empty, create stubbed empty one to leave our comments at - eventually refactor to just add this to the end as the current users comments?
-        if (props.comments === undefined) {
-            //Create one empty comment 
-            setComments([{
-                AuthorID: "<TODO Fill this in at some point>",
-                Type: CommentType.Comment,
-                Timestamp: moment().tz(TIMEZONE).unix(),
-                Content: ""
-            }]);
-        }
-    }, []);
-
-
-    const onUpdate = (event) => {
-        comments[0].Content = event.target.value;
-        props.setComment("Comment", comments);
+  //TODO - Eventually refactor to handle multiple comments / process for grabbing user 
+  useEffect(() => {
+    // If empty, create stubbed empty one to leave our comments at - eventually refactor to just add this to the end as the current users comments?
+    if (props.comments === undefined) {
+      //Create one empty comment 
+      setComments([{
+        AuthorID: "<TODO Fill this in at some point>",
+        Type: CommentType.Comment,
+        Timestamp: moment().tz(TIMEZONE).unix(),
+        Content: ""
+      }]);
     }
+  }, []);
 
-    if (comments !== undefined && comments.length > 0) {
-        return <Input variant={'filled'} defaultValue={comments[0].Content} onChange={onUpdate} />
-    } else {
-        return <Input variant={'filled'} placeholder="Any comments?" onChange={onUpdate} />
-    }
 
+  const onUpdate = (event) => {
+    comments[0].Content = event.target.value;
+    props.setComment("Comment", comments);
+  }
+
+  if (comments !== undefined && comments.length > 0) {
+    return <Input variant={'filled'} defaultValue={comments[0].Content} onChange={onUpdate} />
+  } else {
+    return <Input variant={'filled'} placeholder="Any comments?" onChange={onUpdate} />
+  }
 }

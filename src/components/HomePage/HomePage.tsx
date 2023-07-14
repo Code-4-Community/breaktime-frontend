@@ -5,7 +5,6 @@ import MonthAtAGlance from './MonthAtAGlance';
 import React from 'react';
 
 export default function HomePage() {
-
   return (
     <Grid
       templateAreas={`'MaaG Messages'

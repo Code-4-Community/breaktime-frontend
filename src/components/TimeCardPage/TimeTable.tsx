@@ -9,23 +9,38 @@ import {
   IconButton,
 } from '@chakra-ui/react'
 import React, { useEffect, useState } from 'react';
-import moment from 'moment-timezone';
 import { v4 as uuidv4 } from 'uuid';
 
 import TimeTableRow from "./TimeTableRow";
 import { TimeSheetSchema } from '../../schemas/TimesheetSchema';
-import { TIMESHEET_DURATION, TIMEZONE } from 'src/constants';
 import { CellType } from './types';
 import { AddIcon, MinusIcon } from '@chakra-ui/icons';
 
+import * as rowSchemas from 'src/schemas/RowSchema'
+import ApiClient from '../Auth/apiClient';
+import * as updateSchemas from 'src/schemas/backend/UpdateTimesheet'
 
 //Can expand upon this further by specifying input types - to allow only dates, numbers, etc for the input https://www.w3schools.com/bootstrap/bootstrap_forms_inputs.asp 
 
+//Can expand upon this further by specifying input types - to allow only dates, numbers, etc for the input https://www.w3schools.com/bootstrap/bootstrap_forms_inputs.asp
+
+function uploadNewRow(row, timesheetid: number) {
+  ApiClient.updateTimesheet(
+    updateSchemas.TimesheetUpdateRequest.parse({
+      TimesheetID: timesheetid,
+      Operation: updateSchemas.TimesheetOperations.INSERT,
+      Payload: updateSchemas.InsertRequest.parse({
+        Type: updateSchemas.TimesheetListItems.TABLEDATA,
+        Item: row
+      })
+    })
+  );
+}
 
 const createEmptyRow = (date) => {
   // We assign uuid to provide a unique key identifier to each row for reacts rendering 
   return {
-    id: uuidv4(),
+    UUID: uuidv4(),
     Type: CellType.Regular,
     Date: date,
     Associate: undefined,
@@ -35,38 +50,6 @@ const createEmptyRow = (date) => {
   }
 }
 
-// Converts the provided data into our columns / adds entries for days that are missing default ones 
-const formatRows = (providedRows, startDate) => {
-  const updatedRows = []
-
-  var currentDate = moment.unix(startDate).tz(TIMEZONE);
-
-  //This assumes each row is in sorted order by Date / StartTime - if this is not the case things will break 
-  providedRows.forEach(item => {
-    const timeObject = moment.unix(item.Date).tz(TIMEZONE);
-    //If we are missing a day - add it to the json before we process the next day 
-    while (timeObject.isAfter(currentDate, 'day')) {
-      updatedRows.push(createEmptyRow(currentDate.unix()));
-      currentDate = currentDate.add(1, 'day');
-    }
-    if (timeObject.isSame(currentDate, 'day')) {
-      currentDate = currentDate.add(1, 'day');
-    }
-    updatedRows.push(
-      {
-        id: uuidv4(),
-        ...item
-      }
-    );
-  })
-  //Fill in remaining days if we do not have days that go up to start date + total duration 
-  while (!currentDate.isAfter(moment.unix(startDate).tz(TIMEZONE).add(TIMESHEET_DURATION - 1, 'day'), 'day')) {
-    updatedRows.push(createEmptyRow(currentDate.unix()));
-    currentDate = currentDate.add(1, 'day');
-  }
-  return updatedRows;
-}
-
 interface TableProps {
   timesheet: TimeSheetSchema;
   columns: String[];
@@ -74,7 +57,6 @@ interface TableProps {
 }
 
 function TimeTable(props: TableProps) {
-
   //When a row is updated, replace it in our list of rows 
   const onRowChange = (row, rowIndex) => {
     const updatedRows = [
@@ -106,15 +88,30 @@ function TimeTable(props: TableProps) {
       ...props.timesheet,
       TableData: updatedRows
     });
+    //Add this row to the DB 
+    uploadNewRow(newRow, props.timesheet.TimesheetID);
+
   }
 
-  const delRow = (row, index) => {
+  const delRow = (row: rowSchemas.RowSchema, index) => {
     const updatedRows = rows.filter((_, idx) => { return index !== idx });
     setRows(updatedRows);
     props.onTimesheetChange({
       ...props.timesheet,
       TableData: updatedRows
     });
+    //Trigger DB call to remove this from the DB 
+    ApiClient.updateTimesheet(
+      updateSchemas.TimesheetUpdateRequest.parse({
+        TimesheetID: props.timesheet.TimesheetID,
+        Operation: updateSchemas.TimesheetOperations.DELETE,
+        Payload: updateSchemas.DeleteRequest.parse({
+          Type: updateSchemas.TimesheetListItems.TABLEDATA,
+          Id: row.UUID
+        })
+      })
+    );
+
   }
   const [rows, setRows] = useState([]);
 
@@ -122,7 +119,7 @@ function TimeTable(props: TableProps) {
   useEffect(() => {
     const timesheet = props.timesheet;
     if (timesheet !== undefined) {
-      setRows(formatRows(timesheet.TableData, timesheet.StartDate));
+      setRows(timesheet.TableData);
     }
   }, [props.timesheet])
 
@@ -147,7 +144,7 @@ function TimeTable(props: TableProps) {
             const dateToSend = prevDate;
             prevDate = row.StartDate;
             return (
-              <Tr key={row.id}>
+              <Tr key={row.UUID}>
                 <Td>
                   <ButtonGroup>
                     <IconButton aria-label='Add row' onClick={() => { addRow(row, index) }} icon={<AddIcon />} />
@@ -155,16 +152,14 @@ function TimeTable(props: TableProps) {
                   </ButtonGroup>
                 </Td>
                 {
-                  <TimeTableRow row={row} onRowChange={(row) => onRowChange(row, index)} prevDate={dateToSend} />
+                  <TimeTableRow row={row} onRowChange={(row) => onRowChange(row, index)} prevDate={dateToSend} TimesheetID={props.timesheet.TimesheetID} />
                 }
               </Tr>);
           }
         )}
       </Tbody>
     </Table>
-
   );
-
 }
 
-export default TimeTable; 
+export default TimeTable;
