@@ -2,8 +2,7 @@
 
 # Breaktime Frontend 
 
-This repo contains the frontend code for Project Breaktime, an application attempting to create a time tracking dashboard. 
-
+This repo contains all the code for the backend of Project Breaktime, a project developing a time-tracking dashboard. This project utilizes a ReactJS (Frontend) and NodeJS (Backend). 
 ## Installation 
 
 To setup this project ensure that you currently have react installed. 
@@ -41,6 +40,7 @@ The frontend is using a typescript / react and currently utilizes AWS Amplify fo
 
 ### Reading Material 
 
+* [What is a frontend?](https://www.freecodecamp.org/news/front-end-developer-what-is-front-end-development-explained-in-plain-english/)
 * [Introduction to AWS Amplify](https://docs.amplify.aws/)
 * [Introduction to React](https://react.dev/learn)
 
