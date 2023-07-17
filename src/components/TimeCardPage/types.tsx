@@ -22,6 +22,11 @@ export const enum Review_Stages {
 
 export const TABLE_COLUMNS = ['Type', 'Date', 'Clock-in', 'Clock-Out', 'Hours', 'Comment'];
 
+export enum USER_ROLES {
+    ASSOCIATE = "Associate",
+    SUPERVISOR = "Supervisor",
+    ADMIN = "Admin"
+  }
 
 export enum CardState {
     Rejected = "Rejected",

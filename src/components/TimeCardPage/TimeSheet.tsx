@@ -4,6 +4,10 @@ import { useEffect } from 'react';
 import SubmitCard from './SubmitCard';
 import DateSelectorCard from './SelectWeekCard';
 
+import 'react-date-range/dist/styles.css'; // main style file
+import 'react-date-range/dist/theme/default.css'; // theme css file
+import { DateRangePicker } from 'react-date-range';
+
 import {
   Alert,
   AlertIcon,
@@ -20,15 +24,23 @@ import {
   TabList,
   Tab,
   Spacer,
+  Select,
   HStack,
   VStack,
-  ButtonGroup
+  ButtonGroup,
+  useDisclosure,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalCloseButton,
+  ModalBody
 } from '@chakra-ui/react'
 
 
 import { TIMESHEET_DURATION, TIMEZONE, EXAMPLE_TIMESHEET, EXAMPLE_TIMESHEET_2 } from 'src/constants';
 
-import { Review_Stages, TABLE_COLUMNS } from './types';
+import { Review_Stages, TABLE_COLUMNS, USER_ROLES } from './types';
 import moment, { Moment } from 'moment-timezone';
 
 import apiClient from '../Auth/apiClient';
@@ -37,7 +49,8 @@ import { v4 as uuidv4 } from 'uuid';
 import { UserSchema } from '../../schemas/UserSchema'
 
 import { SearchIcon, WarningIcon, DownloadIcon } from '@chakra-ui/icons';
-import { Select, components } from 'chakra-react-select'
+import { components } from 'chakra-react-select';
+import { userHeighted } from 'src/utils';
 
 //TODO - Eventually automate this 
 const user = 'Example User'
@@ -100,6 +113,12 @@ function SearchEmployeeTimesheet({ employees, setSelected }) {
 export default function Page() {
   //const today = moment(); 
   const [selectedDate, setSelectedDate] = useState(moment().startOf('week').day(0));
+  const [exportDateRange, setExportDateRange] = useState();
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  // all the companies the associate is a part of (for associates, it is every company they are in, 
+  // for supervisor, it is the company they are supervising for, for the admin it is every company)
+  const [userCompanies, setUserCompanies] = useState<string[]>([]);
+  const [exportCompany, setExportCompany] = useState("");
 
   const updateDateRange = (date: Moment) => {
     setSelectedDate(date);
@@ -130,7 +149,7 @@ export default function Page() {
   useEffect(() => {
     apiClient.getUser().then(userInfo => {
       setUser(userInfo);
-      if (userInfo.Type === "Supervisor" || userInfo.Type === "Admin") {
+      if (userHeighted(user)) {
         apiClient.getAllUsers().then(users => {
           setAssociates(users);
           setSelectedUser(users[0]);
@@ -212,7 +231,25 @@ export default function Page() {
     }
   }
 
-
+  const RenderExportModal = () => {
+    return (<Modal isOpen={isOpen} onClose={onClose}>
+      <ModalOverlay />
+      <ModalContent>
+        <ModalHeader>Export Timesheet</ModalHeader>
+        <ModalCloseButton />
+        <ModalBody>
+          {(selectedUser?.Type === USER_ROLES.ASSOCIATE || selectedUser?.Type === USER_ROLES.ADMIN) &&
+            <Select onChange={(e) => setExportCompany(e.currentTarget.value)}>
+              {userCompanies.map((company) =>
+                (<option value={company}>{company}</option>)
+              )}
+            </Select>
+          }
+          <DateRangePicker ranges={[]} onChange={(e) => setExportDateRange(e.target.value)}/>
+        </ModalBody>
+      </ModalContent>
+    </Modal>);
+  };
 
   return (
     <>
@@ -221,7 +258,7 @@ export default function Page() {
         {(user?.Type === "Supervisor" || user?.Type === "Admin") ?
           <>
             <SearchEmployeeTimesheet employees={associates} setSelected={setSelectedUser} />
-            <IconButton aria-label='Download' icon={<DownloadIcon />} />
+            <IconButton aria-label='Download' icon={<DownloadIcon />} onClick={onOpen} />
             <IconButton aria-label='Report' icon={<WarningIcon />} />
           </> : <></>}
         <DateSelectorCard onDateChange={updateDateRange} date={selectedDate} />
@@ -242,7 +279,7 @@ export default function Page() {
       {selectedTab === "Total" ?
         (<AggregationTable Date={selectedDate} timesheets={currentTimesheets} />)
         : (currentTimesheets.length > 0 && <TimeTable columns={TABLE_COLUMNS} timesheet={selectedTimesheet} onTimesheetChange={processTimesheetChange} />)}
-
+      <RenderExportModal />
     </>
   )
 }
