@@ -6,6 +6,7 @@ interface TimeEntryProps {
   field: string;
   row: RowSchema;
   updateFields: Function;
+  userType: string; // Associate, Supervisor, or Admin
 }
 
 export function TimeEntry(props: TimeEntryProps) {
@@ -15,7 +16,7 @@ export function TimeEntry(props: TimeEntryProps) {
         // TODO : This seems to be only able to hook up to the associates.
         // We probably want this to easily switch between supervisor vs. associated,
         // maybe an enum passed in via the props, similar to the field?
-        var rowToMutate = props.row.Associate; 
+        var rowToMutate = props.row[props.userType]; 
         if (rowToMutate === undefined) {
             rowToMutate = {
                 Start:undefined, End:undefined, AuthorID:"<TODO-add ID>"
@@ -34,12 +35,12 @@ export function TimeEntry(props: TimeEntryProps) {
             setMinutes(undefined); 
         }
         //Triggering parent class to update its references here as well 
-        props.updateFields("Associate", rowToMutate); 
+        props.updateFields(props.userType, rowToMutate); 
     }
   
   useEffect(() => {
     if (props.row.Associate !== undefined) {
-      setMinutes(props.row.Associate[props.field]);
+      setMinutes(props.row[props.userType][props.field]);
     }
   }, []);
 

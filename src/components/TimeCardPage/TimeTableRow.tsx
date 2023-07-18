@@ -63,8 +63,9 @@ function Row(props: RowProps) {
         const items = {
             "Type": <TypeCell value={fields.Type} setType={updateField} />,
             "Date": <DateCell date={fields.Date} prevDate={props.prevDate} />,
-            "Clock-in": <TimeEntry row={fields} field={"Start"} updateFields={updateField} />,
-            "Clock-out": <TimeEntry row={fields} field={"End"} updateFields={updateField} />,
+            // TODO : The userType is likely able to be adjusted, add this to the props for TimeTableRow
+            "Clock-in": <TimeEntry row={fields} field={"Start"} updateFields={updateField} userType={"Associate"} />,
+            "Clock-out": <TimeEntry row={fields} field={"End"} updateFields={updateField} userType={"Associate"} />,
             "Hours": <Duration row={fields} />,
             "Comment": <CommentCell comments={fields.Comment} setComment={updateField} />,
         }
