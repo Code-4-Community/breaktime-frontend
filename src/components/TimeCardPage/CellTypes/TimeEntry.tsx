@@ -12,6 +12,9 @@ export function TimeEntry(props: TimeEntryProps) {
   const [minutes, setMinutes] = useState(undefined);
 
     const onChange = (time) => {
+        // TODO : This seems to be only able to hook up to the associates.
+        // We probably want this to easily switch between supervisor vs. associated,
+        // maybe an enum passed in via the props, similar to the field?
         var rowToMutate = props.row.Associate; 
         if (rowToMutate === undefined) {
             rowToMutate = {
