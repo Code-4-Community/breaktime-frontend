@@ -2,6 +2,8 @@ import { Auth } from "aws-amplify";
 import axios, { AxiosInstance } from "axios";
 import { TimeSheetSchema } from "../../schemas/TimesheetSchema";
 import { UserSchema } from "../../schemas/UserSchema";
+import { USER_ROLES } from "../TimeCardPage/types";
+import moment from "moment";
 
 const defaultBaseUrl =
   process.env.REACT_APP_API_BASE_URL ?? "http://localhost:3000";
@@ -92,7 +94,7 @@ export class ApiClient {
       UserID: "abc",
       FirstName: "john",
       LastName: "doe",
-      Type: "Supervisor",
+      Type: USER_ROLES.SUPERVISOR,
       Picture: "https://www.google.com/koala.png",
     };
   }
@@ -104,11 +106,17 @@ export class ApiClient {
         UserID: "bcd",
         FirstName: "joe",
         LastName: "jane",
-        Type: "Associate",
+        Type: USER_ROLES.ASSOCIATE,
         Picture: "https://www.google.com/panda.png",
       },
     ];
   }
+
+  public async exportTimesheets(startDate, endDate): Promise<any> {
+    return []; // downloadable objects maybe csv?
+  }
 }
+
+
 
 export default new ApiClient();

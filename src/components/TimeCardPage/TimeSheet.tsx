@@ -34,7 +34,8 @@ import {
   ModalContent,
   ModalHeader,
   ModalCloseButton,
-  ModalBody
+  ModalBody,
+  Button
 } from '@chakra-ui/react'
 
 
@@ -49,7 +50,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { UserSchema } from '../../schemas/UserSchema'
 
 import { SearchIcon, WarningIcon, DownloadIcon } from '@chakra-ui/icons';
-import { components } from 'chakra-react-select';
+import { Select as SearchableSelect, components } from 'chakra-react-select';
 import { userHeighted } from 'src/utils';
 
 //TODO - Eventually automate this 
@@ -97,7 +98,7 @@ function SearchEmployeeTimesheet({ employees, setSelected }) {
 
   return (
     <Box width={'100%'}>
-      <Select isSearchable={true}
+      <SearchableSelect isSearchable={true}
         defaultValue={employees[0]}
         chakraStyles={customStyles}
         size="lg"
@@ -232,6 +233,12 @@ export default function Page() {
   }
 
   const RenderExportModal = () => {
+
+    const handleSubmit = () => {
+      // api calls
+      // gives two date objects, convert to moment, pass to api call
+    }
+
     return (<Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
       <ModalContent>
@@ -246,6 +253,7 @@ export default function Page() {
             </Select>
           }
           <DateRangePicker ranges={[]} onChange={(e) => setExportDateRange(e.target.value)}/>
+          <Button onClick={handleSubmit}> Submit</Button>
         </ModalBody>
       </ModalContent>
     </Modal>);
