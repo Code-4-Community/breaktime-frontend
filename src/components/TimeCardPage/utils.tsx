@@ -1,6 +1,7 @@
 import { CellStatus, CommentType } from "./types";
 import { CommentSchema } from "src/schemas/RowSchema";
 import { UserSchema } from "src/schemas/UserSchema";
+import { ReportOptions } from "./types";
 import moment from "moment";
 
 export const getAllActiveCommentsOfType = (type: CommentType, commentArray: CommentSchema[]) => {
@@ -24,3 +25,17 @@ export const createNewComment = (
       State: CellStatus.Active,
     };
   };
+
+export const createNewReport = (
+  user: UserSchema,
+  content: ReportOptions,
+  correctTime: number
+) => {
+  return {
+    AuthorID: user?.UserID, // TODO: need to add loading logic so user is defined before anything occurs
+    Timestamp: moment().unix(),
+    CorrectTime: correctTime,
+    Content: content,
+    State: CellStatus.Active,
+  };
+};
