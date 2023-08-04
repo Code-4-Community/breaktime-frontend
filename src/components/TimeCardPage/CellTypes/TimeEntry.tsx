@@ -11,9 +11,22 @@ interface TimeEntryProps {
 }
 
 export function TimeEntry(props: TimeEntryProps) {
-  const [convertedTime, setConvertedTime] = useState(undefined);
+  // Date object for the time picker to take in
+  const [convertedTime, setConvertedTime] = useState(null);
 
-  const onChange = (time) => {
+    // converted given epoch to Date() object, and update the converted time
+    const convertEpochToDate = (minutes) => {
+      if (minutes !== undefined) {
+        const newTime = new Date();
+        newTime.setHours(Math.round(minutes / 60));
+        newTime.setMinutes(minutes % 60);
+        setConvertedTime(newTime);
+      } else {
+        setConvertedTime(null);
+      }
+    };
+
+  const handleChange = (time) => {
     // TODO : This seems to be only able to hook up to the associates.
     // We probably want this to easily switch between supervisor vs. associated,
     // maybe an enum passed in via the props, similar to the field?
@@ -30,9 +43,17 @@ export function TimeEntry(props: TimeEntryProps) {
       const [hours, parsedMinutes] = time.split(":");
       const calculatedTime = Number(hours) * 60 + Number(parsedMinutes);
       rowToMutate[props.field] = calculatedTime;
+
+      // Reset the Date object to the new time - this handles what is actually
+      // displayed in the time picker visually before page refresh
+      const newTime = new Date();
+      newTime.setHours(hours);
+      newTime.setMinutes(parsedMinutes);
+      setConvertedTime(newTime);
     } else {
       // Value is null, so mark it as undefined in our processing
       rowToMutate[props.field] = undefined;
+      setConvertedTime(null);
     }
     //Triggering parent class to update its references here as well
     props.updateFields(props.userType, rowToMutate);
@@ -43,33 +64,13 @@ export function TimeEntry(props: TimeEntryProps) {
     if (props.row[props.userType] !== undefined) {
       minutes = (props.row[props.userType][props.field]);
     }
-
-    if (minutes !== undefined) {
-      const newTime = new Date();
-      newTime.setHours(Math.round(minutes / 60));
-      newTime.setMinutes(minutes % 60);
-      setConvertedTime(newTime);
-    } else {
-      setConvertedTime(null);
-    }
+    convertEpochToDate(minutes);
+    console.log(convertedTime);
   }, []);
-
-  useEffect(() => {
-    if (props.time !== undefined) {
-      const newTime = new Date();
-      newTime.setHours(Math.round(props.time / 60));
-      newTime.setMinutes(props.time % 60);
-      setConvertedTime(newTime);
-    } else {
-      setConvertedTime(null);
-    }
-  }, [props.time]);
 
   return (
     <TimePicker
-      onChange={(value) => {
-        onChange(value);
-      }}
+      onChange={handleChange}
       value={convertedTime}
       disableClock={true}
     />
