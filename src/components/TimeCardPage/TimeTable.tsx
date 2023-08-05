@@ -54,6 +54,7 @@ interface TableProps {
   timesheet: TimeSheetSchema;
   columns: String[];
   onTimesheetChange: Function;
+  userType: string; // Associate, Supervisor, or Admin
 }
 
 function TimeTable(props: TableProps) {
@@ -152,7 +153,7 @@ function TimeTable(props: TableProps) {
                   </ButtonGroup>
                 </Td>
                 {
-                  <TimeTableRow row={row} onRowChange={(row) => onRowChange(row, index)} prevDate={dateToSend} TimesheetID={props.timesheet.TimesheetID} />
+                  <TimeTableRow row={row} onRowChange={(row) => onRowChange(row, index)} prevDate={dateToSend} TimesheetID={props.timesheet.TimesheetID} userType={props.userType} />
                 }
               </Tr>);
           }

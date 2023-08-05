@@ -22,6 +22,7 @@ interface RowProps {
   prevDate: number;
   onRowChange: Function;
   TimesheetID: number;
+  userType: string; // Associate, Supervisor, or Admin
 }
 
 function Row(props: RowProps) {
@@ -77,7 +78,7 @@ function Row(props: RowProps) {
           time={null}
         />
       ),
-      Hours: <Duration row={fields} />,
+      Hours: <Duration row={fields} userType={props.userType}/>,
       Comment: (
         <CommentCell comments={fields.Comment} setComment={updateField} />
       ),

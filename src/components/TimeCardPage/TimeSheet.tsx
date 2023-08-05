@@ -242,7 +242,12 @@ export default function Page() {
       </Tabs>
       {selectedTab === "Total" ?
         (<AggregationTable Date={selectedDate} timesheets={currentTimesheets} />)
-        : (currentTimesheets.length > 0 && <TimeTable columns={TABLE_COLUMNS} timesheet={selectedTimesheet} onTimesheetChange={processTimesheetChange} />)}
+        : (currentTimesheets.length > 0 && <TimeTable
+          columns={TABLE_COLUMNS}
+          timesheet={selectedTimesheet}
+          onTimesheetChange={processTimesheetChange}
+          userType={user?.Type}
+        />)}
 
     </>
   )
