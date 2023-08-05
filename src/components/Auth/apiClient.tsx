@@ -48,8 +48,8 @@ export class ApiClient {
     }
   }
 
-  private async get(path: string): Promise<unknown> {
-    return this.axiosInstance.get(path).then((response) => response.data);
+  private async get(path: string, params: any): Promise<unknown> {
+    return this.axiosInstance.get(path, params).then((response) => response.data);
   }
 
   private async post(path: string, body: unknown): Promise<unknown> {
@@ -62,7 +62,7 @@ export class ApiClient {
 
   // TODO: setup endpoint for associate/supervisor/admin so it returns a list of timesheets for given uuid
   public async getUserTimesheets(UUID: string): Promise<TimeSheetSchema[]> {
-    return this.get('auth/timesheet') as Promise<TimeSheetSchema[]>; 
+    return this.get('auth/timesheet', {params: {"uuid": UUID}}) as Promise<TimeSheetSchema[]>; 
   }
 
   public async updateUserTimesheet(updatedEntry): Promise<Boolean> {
@@ -70,29 +70,34 @@ export class ApiClient {
     return this.post('/auth/timesheet', {timesheet:updatedEntry}) as Promise<Boolean>; 
   }
 
-  public async getPasswordTest(): Promise<string> {
-    return this.get('/auth/timesheet') as Promise<string>;
-  }
-
   // TODO: setup endpoint for getting user information
   // all roles -> return UserSchema for the current user that is logged in
-  public async getUser(): Promise<UserSchema> {
+  public async getUser(): Promise<any> {
     return {  UserID: "abc", 
               FirstName: "john",
               LastName: "doe",
-              Type: "Supervisor",
-              Picture: "https://www.google.com/koala.png"
+              Type: "Admin",
+              Picture: "https://www.google.com/koala.png",
+              Company: "Example Company 401" 
           };
   }
 
   //TODO: hook up to backend, izzys pr has it just not merged yet
-  public async getAllUsers(): Promise<UserSchema[]> {
-    return [{  UserID: "bcd", 
+  public async getAllUsers(): Promise<any[]> {
+    return [{  UserID: "77566d69-3b61-452a-afe8-73dcda96f876", 
               FirstName: "joe",
               LastName: "jane",
               Type: "Associate",
-              Picture: "https://www.google.com/panda.png"
-          }];
+              Picture: "https://www.google.com/panda.png",
+              Company: "Example Company 401" 
+          },
+          {  UserID: "88996d69-3b61-452a-afe8-73dcda96f899", 
+          FirstName: "john",
+          LastName: "doe",
+          Type: "Associate",
+          Picture: "https://www.google.com/panda.png",
+          Company: "Example Company 402" 
+      }];
   }
 
  

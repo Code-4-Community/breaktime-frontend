@@ -60,8 +60,10 @@ const createEmptyTable = (startDate, company) => {
         CompanyID: company,
         StartDate: startDate,
         Status: {
-            Stage: Review_Stages.APPROVED,
-            Timestamp: undefined
+            Finalized : {
+                AuthorID: "hi",
+                Date : 0
+            }
         },
         WeekComments: [],
         TableData: [],
@@ -123,6 +125,50 @@ function SearchEmployeeTimesheet({ employees, setSelected }) {
                 components={{ DropdownIndicator }}
                 getOptionLabel={option => `${option.FirstName + " " + option.LastName}`}
                 getOptionValue={option => `${option.FirstName + " " + option.LastName}`} />
+        </div>
+    )
+}
+
+const testCompanies = [
+    {CompanyID: "Example Company 401"},
+    {CompanyID: "Example Company 402"}    
+]
+
+function SearchCompanies({ company, companies, setSelected }) {
+
+    const handleChange = (selectedOption) => {
+        setSelected(selectedOption.CompanyID);
+    }
+
+    const customStyles = {
+        control: (base) => ({
+            ...base,
+            flexDirection: 'row-reverse',
+        }),
+    }
+
+    const DropdownIndicator = (props) => {
+        return (
+            <components.DropdownIndicator {...props}>
+                <SearchIcon />
+            </components.DropdownIndicator>
+        );
+    };
+
+    // TODO: fix styling
+    // at the moment defaultValue is the first user in the employees array
+    // which is currently an invariant that matches the useState in Page
+    return (
+        <div style={{ width: '1000px' }}>
+            <Select isSearchable={true}
+                defaultValue={{CompanyID: 'All Companies'}}
+                chakraStyles={customStyles}
+                size="lg"
+                options={[{CompanyID: 'All Companies'}, ...companies]}
+                onChange={handleChange}
+                components={{ DropdownIndicator }}
+                getOptionLabel={option => `${option.CompanyID}`}
+                getOptionValue={option => `${option.CompanyID}`} />
         </div>
     )
 }
@@ -192,11 +238,13 @@ export default function Page() {
     // if user is a supervisor/admin then selected would contain the information of the user
     // whos timesheet is being looked at and user would contain the supervisor/admins information
     // by default the first user is selected
-    const [selectedUser, setSelectedUser] = useState<UserSchema>();
+    const [selectedUser, setSelectedUser] = useState<any>();
     const [user, setUser] = useState<UserSchema>();
+    const [companies, setCompanies] = useState([]);
+    const [selectedCompany, setSelectedCompany] = useState('');
 
     // associates is only used by supervisor/admin for the list of all associates they have access to
-    const [associates, setAssociates] = useState<UserSchema[]>([]);
+    const [associates, setAssociates] = useState<any[]>([]);
 
     // A list of the timesheet objects 
     // TODO: add types
@@ -219,6 +267,9 @@ export default function Page() {
             }
             setSelectedUser(userInfo)
         })
+
+        setCompanies(testCompanies)
+        setSelectedCompany('All Companies')
         // if employee setSelectedUSer to be userinfo
         // if supervisor/admin get all users
         // set selected user
@@ -317,16 +368,23 @@ export default function Page() {
         <>
             <HStack spacing="120px">
                 <ProfileCard employee={user} />
-                {(user?.Type === "Supervisor" || user?.Type === "Admin") ?
+                {(user?.Type === "Supervisor" || user?.Type === "Admin") &&
                     <>
+                        {(selectedCompany === "All Companies") ?
                         <SearchEmployeeTimesheet employees={associates} setSelected={setSelectedUser} />
+                        :
+                        <SearchEmployeeTimesheet employees={associates.filter((associate) => associate.Company == selectedCompany)} setSelected={setSelectedUser} />}
+                        {(user?.Type === "Admin") &&
+                        <SearchCompanies company={selectedCompany} companies={companies} setSelected={setSelectedCompany} />
+                        }
                         <IconButton aria-label='Download' icon={<DownloadIcon />} />
                         <IconButton aria-label='Report' icon={<WarningIcon />} />
-                    </> : <></>}
+                    </>}
+
                 <DateSelectorCard onDateChange={updateDateRange} date={selectedDate} />
                 {selectedTimesheet && <SubmitCard setWeeklyComments={setWeeklyComments} setWeeklyReports={setWeeklyReports} weeklyComments={weeklyComments} weeklyReports={weeklyReports} />}
             </HStack>
-            {useMemo(() => renderWarning(), [selectedDate])}
+            {selectedTimesheet?.Status?.Finalized === undefined && renderWarning()}
             <Tabs>
                 <TabList>
                     {currentTimesheets.map(
