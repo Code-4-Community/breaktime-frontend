@@ -384,7 +384,7 @@ export default function Page() {
                 <DateSelectorCard onDateChange={updateDateRange} date={selectedDate} />
                 {selectedTimesheet && <SubmitCard setWeeklyComments={setWeeklyComments} setWeeklyReports={setWeeklyReports} weeklyComments={weeklyComments} weeklyReports={weeklyReports} />}
             </HStack>
-            {selectedTimesheet?.Status?.Finalized === undefined && renderWarning()}
+            {selectedTimesheet?.Status?.Finalized && renderWarning()}
             <Tabs>
                 <TabList>
                     {currentTimesheets.map(
@@ -397,7 +397,7 @@ export default function Page() {
             {selectedTimesheet?.CompanyID === "Total" ?
                 (<AggregationTable Date={selectedDate} timesheets={currentTimesheets} />)
                 : (<UserContext.Provider value={user}>
-                    <TimeTable columns={TABLE_COLUMNS} timesheet={selectedTimesheet} onTimesheetChange={processTimesheetChange} />
+                    <TimeTable disabled={selectedTimesheet?.Status?.Finalized ? true : false} columns={TABLE_COLUMNS} timesheet={selectedTimesheet} onTimesheetChange={processTimesheetChange} />
                 </UserContext.Provider>)}
         </>
     )

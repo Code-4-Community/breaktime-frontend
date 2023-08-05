@@ -63,6 +63,7 @@ interface TableProps {
   timesheet: TimeSheetSchema; 
   columns: String[]; 
   onTimesheetChange: Function;
+  disabled: any;
 } 
 
 function TimeTable(props:TableProps) {
@@ -121,7 +122,7 @@ function TimeTable(props:TableProps) {
     var prevDate = undefined; 
     
     return (
-    <Table striped bordered hover>
+    <Table striped bordered hover style={props.disabled ? {pointerEvents: "none", opacity: "0.4"} : {}}>
         <thead>
             <tr key="Index">
                 <th></th>
