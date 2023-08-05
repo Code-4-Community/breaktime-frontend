@@ -14,17 +14,17 @@ export function TimeEntry(props: TimeEntryProps) {
   // Date object for the time picker to take in
   const [convertedTime, setConvertedTime] = useState(null);
 
-    // converted given epoch to Date() object, and update the converted time
-    const convertEpochToDate = (minutes) => {
-      if (minutes !== undefined) {
-        const newTime = new Date();
-        newTime.setHours(Math.round(minutes / 60));
-        newTime.setMinutes(minutes % 60);
-        setConvertedTime(newTime);
-      } else {
-        setConvertedTime(null);
-      }
-    };
+  // converted given minutes (number of minutes from 0:00) to Date() object, and update the converted time
+  const convertMinutesToTime = (minutes) => {
+    if (minutes !== undefined && minutes !== null) {
+      const newTime = new Date();
+      newTime.setHours(Math.round(minutes / 60));
+      newTime.setMinutes(minutes % 60);
+      setConvertedTime(newTime);
+    } else {
+      setConvertedTime(null);
+    }
+  };
 
   const handleChange = (time) => {
     // TODO : This seems to be only able to hook up to the associates.
@@ -64,9 +64,15 @@ export function TimeEntry(props: TimeEntryProps) {
     if (props.row[props.userType] !== undefined) {
       minutes = (props.row[props.userType][props.field]);
     }
-    convertEpochToDate(minutes);
+    convertMinutesToTime(minutes);
     console.log(convertedTime);
   }, []);
+
+  useEffect(() => {
+    convertMinutesToTime(props.time);
+    //handleChange(props.time);
+    console.log("Input time has been changed, " + props.time);
+  }, [props.time]);
 
   return (
     <TimePicker

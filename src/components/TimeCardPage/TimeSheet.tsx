@@ -189,6 +189,7 @@ export default function Page() {
     if (newCurrentTimesheets.length > 0) {
       setTab(newCurrentTimesheets[0].CompanyID)
     }
+    console.log(newCurrentTimesheets[0]);
   }
 
   const renderWarning = () => {

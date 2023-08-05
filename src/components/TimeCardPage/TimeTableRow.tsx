@@ -15,6 +15,7 @@ import ApiClient from "src/components/Auth/apiClient";
 
 import * as updateSchemas from "src/schemas/backend/UpdateTimesheet";
 import apiClient from "src/components/Auth/apiClient";
+import { ConflicatableTimeEntry } from "./CellTypes/ConflictableTimeEntry";
 
 interface RowProps {
   row: RowSchema;
@@ -61,12 +62,10 @@ function Row(props: RowProps) {
       Date: <DateCell date={fields.Date} prevDate={props.prevDate} />,
       // TODO : The userType is likely able to be adjusted, add this to the props for TimeTableRow
       "Clock-in": (
-        <TimeEntry
+        <ConflicatableTimeEntry
           row={fields}
           field={"Start"}
           updateFields={updateField}
-          userType={"Associate"}
-          time={null}
         />
       ),
       "Clock-out": (

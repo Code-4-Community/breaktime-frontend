@@ -2,9 +2,39 @@ import React, { useEffect, useState } from "react";
 import { RowSchema, TimeRowEntry } from "../../../schemas/RowSchema";
 import { TimeEntry } from "./TimeEntry";
 import {
-  IconButton,
-} from '@chakra-ui/react'
-import { WarningIcon } from '@chakra-ui/icons';
+  Button,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
+  Editable,
+  EditablePreview,
+  EditableInput,
+  Input,
+  Box,
+  ButtonGroup,
+  Flex,
+  useDisclosure,
+  useEditableControls,
+  StackDivider,
+  HStack,
+  VStack,
+  Text,
+  IconButton
+} from "@chakra-ui/react";
+
+import {
+  ChatIcon,
+  CheckIcon,
+  CloseIcon,
+  EditIcon,
+  AddIcon,
+  DeleteIcon,
+  WarningIcon
+} from "@chakra-ui/icons";
 
 
 
@@ -19,16 +49,10 @@ interface ConflicatableTimeEntryProps {
  * and allows for conflicts to be shown.
  */
 export function ConflicatableTimeEntry(props: ConflicatableTimeEntryProps) {
-  const [isPopupOpen, setIsPopupOpen] = useState(false);
-  const [selectedTime, setSelectedTime] = useState(undefined);
-
-  const handleTimePickerClick = () => {
-    setIsPopupOpen(true);
-  };
+  const [selectedTime, setSelectedTime] = useState(null);
 
   const handleTimeSelection = (time: number) => {
     setSelectedTime(time);
-    setIsPopupOpen(false);
   };
 
   // determine if the associate and supervisor times are conflicting for this cell
@@ -39,13 +63,19 @@ export function ConflicatableTimeEntry(props: ConflicatableTimeEntryProps) {
   // 1. associate submitted a time, and supervisor did not
   // 2. Supervisor submitted a time for this entry, and associate did not
   // 3. Associate time and supervisor reported time differ
-  var hasConflict =
+  /*var hasConflict =
     hasAssociateTime !== hasSupervisorTime ||
-    props.row.Associate[props.field] !== props.row.Supervisor[props.field];
+    props.row.Associate[props.field] !== props.row.Supervisor[props.field];*/
 
   // TODO: Toggle clicker to display popup with conflict only if hasConflict is true
   return (
     <>
+      <TimeConflictPopup
+        field={props.field}
+        associateEntry={props.row.Associate}
+        supervisorEntry={props.row.Supervisor}
+        onSelectTime={handleTimeSelection}
+      />
       <TimeEntry
         field={props.field}
         row={props.row}
@@ -53,17 +83,6 @@ export function ConflicatableTimeEntry(props: ConflicatableTimeEntryProps) {
         userType="Admin"
         time={selectedTime}
       />
-      {hasConflict && (
-        <>
-          <IconButton aria-label='Report' icon={<WarningIcon onClick={handleTimePickerClick}/>} />
-          {isPopupOpen && (<TimeConflictPopup
-            field={props.field}
-            associateEntry={props.row.Associate}
-            supervisorEntry={props.row.Supervisor}
-            onSelectTime={handleTimeSelection}
-          />)}
-        </>
-      )}
     </>
   );
 
@@ -78,48 +97,44 @@ interface TimeConflictPopupProps {
 }
 
 export function TimeConflictPopup(props: TimeConflictPopupProps) {
-  return
-  <Modal isOpen={isOpenDisplay} onClose={onCloseDisplay}>
-  <ModalOverlay />
-  <ModalContent>
-    <ModalHeader>
-      <HStack>
-        <Text>View {CommentType.Comment}</Text>
-        <Button onClick={onOpenAdd}>
-          New
-        </Button>
-      </HStack>
-    </ModalHeader>
-    <ModalCloseButton />
-    <ModalBody>
-      {comments.map(
-        (comment) => (
-          <HStack>
-            {/* add UserDisplay card once pr merged in*/}
-            <Editable
-              isDisabled={!isEditable}
-              defaultValue={comment.Content}
-              onSubmit={(value) => saveEditedComment(setComments, comments, CommentType.Comment, comment, createNewComment(user, CommentType.Comment, value))}
-            >
-              <EditablePreview />
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
-              {isEditable && (
-                <>
-                  <Input as={EditableInput} />
-                  <HStack>
-                    <EditableControls />
-                    <IconButton aria-label="Delete" icon={<DeleteIcon />} onClick={() => deleteComment(onCloseDisplay, setComments, comments, CommentType.Comment, comment)} />
-                  </HStack>
-                </>
-              )}
-            </Editable>
+  const hasAssociateTime: boolean = props.associateEntry !== undefined && props.associateEntry !== null;
+  const hasSupervisorTime: boolean = props.supervisorEntry !== undefined && props.supervisorEntry !== null;
 
-          </HStack>
-        ))}
-    </ModalBody>
+  const associateTime: number = hasAssociateTime ? props.associateEntry[props.field] : null;
+  const supervisorTime: number = hasSupervisorTime ? props.supervisorEntry[props.field] : null;
 
-    <ModalFooter>
-    </ModalFooter>
-  </ModalContent>
-</Modal>
+  const convertMinutesToTime = (minutes) => {
+    const hours = Math.round(minutes / 60)
+    const mins = minutes % 60;
+    return hours + ":" + mins;
+  }
+
+  return (
+    <>
+      <IconButton aria-label='Conflict' icon={<WarningIcon />} onClick={onOpen}></IconButton>
+      <Modal isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>
+            <HStack>
+              <Text>Time Conflict</Text>
+            </HStack>
+          </ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <Text>These are the entries submitted:</Text>
+            <HStack>
+              <Button onClick={() => { props.onSelectTime(associateTime); onClose(); }}>Use Associate Time</Button>
+              <Button onClick={() => { props.onSelectTime(supervisorTime); onClose();} }>Use Supervisor Time</Button>
+            </HStack>
+            <Text>Associate Time: {hasAssociateTime ? convertMinutesToTime(props.associateEntry[props.field]) : "none"}</Text>
+            <Text>Supervisor Time: {hasSupervisorTime ? convertMinutesToTime(props.supervisorEntry[props.field]) : "none"}</Text>
+          </ModalBody>
+          <ModalFooter>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+    </>)
 }
