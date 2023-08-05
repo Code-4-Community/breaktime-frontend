@@ -1,6 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { RowSchema, TimeRowEntry } from "../../../schemas/RowSchema";
 import { TimeEntry } from "./TimeEntry";
+import {
+  IconButton,
+} from '@chakra-ui/react'
+import { WarningIcon } from '@chakra-ui/icons';
+
+
 
 interface ConflicatableTimeEntryProps {
   field: string;
@@ -49,13 +55,13 @@ export function ConflicatableTimeEntry(props: ConflicatableTimeEntryProps) {
       />
       {hasConflict && (
         <>
-          <button>Button</button>
-          {/* <TimeConflictPopup
+          <IconButton aria-label='Report' icon={<WarningIcon onClick={handleTimePickerClick}/>} />
+          {isPopupOpen && (<TimeConflictPopup
             field={props.field}
             associateEntry={props.row.Associate}
             supervisorEntry={props.row.Supervisor}
             onSelectTime={handleTimeSelection}
-          /> */}
+          />)}
         </>
       )}
     </>
@@ -71,4 +77,49 @@ interface TimeConflictPopupProps {
   onSelectTime: Function;
 }
 
-export function TimeConflictPopup(props: TimeConflictPopupProps) {}
+export function TimeConflictPopup(props: TimeConflictPopupProps) {
+  return
+  <Modal isOpen={isOpenDisplay} onClose={onCloseDisplay}>
+  <ModalOverlay />
+  <ModalContent>
+    <ModalHeader>
+      <HStack>
+        <Text>View {CommentType.Comment}</Text>
+        <Button onClick={onOpenAdd}>
+          New
+        </Button>
+      </HStack>
+    </ModalHeader>
+    <ModalCloseButton />
+    <ModalBody>
+      {comments.map(
+        (comment) => (
+          <HStack>
+            {/* add UserDisplay card once pr merged in*/}
+            <Editable
+              isDisabled={!isEditable}
+              defaultValue={comment.Content}
+              onSubmit={(value) => saveEditedComment(setComments, comments, CommentType.Comment, comment, createNewComment(user, CommentType.Comment, value))}
+            >
+              <EditablePreview />
+
+              {isEditable && (
+                <>
+                  <Input as={EditableInput} />
+                  <HStack>
+                    <EditableControls />
+                    <IconButton aria-label="Delete" icon={<DeleteIcon />} onClick={() => deleteComment(onCloseDisplay, setComments, comments, CommentType.Comment, comment)} />
+                  </HStack>
+                </>
+              )}
+            </Editable>
+
+          </HStack>
+        ))}
+    </ModalBody>
+
+    <ModalFooter>
+    </ModalFooter>
+  </ModalContent>
+</Modal>
+}
