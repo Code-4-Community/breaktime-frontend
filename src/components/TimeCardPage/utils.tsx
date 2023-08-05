@@ -26,6 +26,8 @@ export const createNewComment = (
     };
   };
 
+
+// TODO: fix types and add a new type for report but this will do for demo
 export const createNewReport = (
   user: UserSchema,
   content: ReportOptions,
@@ -33,8 +35,8 @@ export const createNewReport = (
 ) => {
   return {
     AuthorID: user?.UserID, // TODO: need to add loading logic so user is defined before anything occurs
-    Timestamp: moment().unix(),
-    CorrectTime: correctTime,
+    Type: CommentType.Report,
+    Timestamp: correctTime, // TODO: possibly change it to be more specific formatting
     Content: content,
     State: CellStatus.Active,
   };

@@ -83,7 +83,6 @@ export default function ShowReportModal({
   const { isOpen: isOpenDisplay, onOpen: onOpenDisplay, onClose: onCloseDisplay } = useDisclosure();
   const { isOpen: isOpenAdd, onOpen: onOpenAdd, onClose: onCloseAdd } = useDisclosure();
   const user = useContext(UserContext);
-  const correctedTime = moment.unix(date);
   let color = Color.Red
 
   const doReportsExist = reports.length > 0
@@ -119,7 +118,7 @@ export default function ShowReportModal({
                     onSubmit={(value) => saveEditedComment(setReports, reports, CommentType.Report, report, createNewComment(user, CommentType.Report, value))}
                   >
                     <EditablePreview />
-                    {` ${correctedTime.format("h:mm")}`}
+                    {` ${moment.unix(report.Timestamp).format("h:mm")}`}
                     {isEditable && (
                       <>
                         <Input as={EditableInput} />
@@ -145,6 +144,7 @@ export default function ShowReportModal({
   const AddReportModal = () => {
     const [remark, setRemark] = useState<ReportOptions>(ReportOptions.Late);
     const [submitDisabled, setSubmitDisabled] =  useState(true);
+    const [selectedTime, setSelectedTime] = useState(moment(date)); // fix this rn
     const user = useContext(UserContext);
     
 
@@ -159,15 +159,15 @@ export default function ShowReportModal({
     const handleTimeChange = (e) => {
       if (e.target.value) {
         setSubmitDisabled(false);
-        correctedTime.hour(e.target.value.split(":")[0])
-        correctedTime.minute(e.target.value.split(":")[1])
+        setSelectedTime(selectedTime.hour(e.target.value.split(":")[0]))
+        setSelectedTime(selectedTime.minute(e.target.value.split(":")[1]))
       }
     };
 
     const handleSubmit = () => {
       if (reports.filter(report => report.Content === remark).length === 0) {
-        setReports([...reports, createNewReport(user, remark, correctedTime.unix())]);
-        console.log(createNewReport(user, remark, parseInt(correctedTime.format('X')))); // currently gmt TODO: fix later
+        setReports([...reports, createNewReport(user, remark, selectedTime.unix())]);
+        console.log(createNewReport(user, remark, parseInt(selectedTime.format('X')))); // currently gmt TODO: fix later
       }
 
       alert(`Your ${CommentType.Report} has been submitted!`);

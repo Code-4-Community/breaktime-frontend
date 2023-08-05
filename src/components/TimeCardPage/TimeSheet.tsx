@@ -132,7 +132,7 @@ interface WeeklyCommentSectionProps {
     weeklyReports: CommentSchema[];
 }
 
-// undefined or Comment Schema from timesheet object
+// TODO: idk if we're keeping up just gonna remove bc doesnt look great atm
 function WeeklyCommentSection({
     weeklyComments, 
     weeklyReports
@@ -227,16 +227,16 @@ export default function Page() {
     // Pulls user timesheets, marking first returned as the active one
     useEffect(() => {
         // Uncomment this if you want the default one loaded 
-        setUserTimesheets([EXAMPLE_TIMESHEET, EXAMPLE_TIMESHEET_2]);
+        //setUserTimesheets([EXAMPLE_TIMESHEET, EXAMPLE_TIMESHEET_2]);
 
-        setWeeklyComments(getAllActiveCommentsOfType(CommentType.Comment, EXAMPLE_TIMESHEET.WeekNotes))
-        setWeeklyReports(getAllActiveCommentsOfType(CommentType.Report, EXAMPLE_TIMESHEET.WeekNotes))
+        //setWeeklyComments(getAllActiveCommentsOfType(CommentType.Comment, EXAMPLE_TIMESHEET.WeekNotes))
+        //setWeeklyReports(getAllActiveCommentsOfType(CommentType.Report, EXAMPLE_TIMESHEET.WeekNotes))
 
-        //apiClient.getUserTimesheets(selectedUser?.UserID).then(timesheets => {
-        //    setUserTimesheets(timesheets); 
+        apiClient.getUserTimesheets(selectedUser?.UserID).then(timesheets => {
+            setUserTimesheets(timesheets); 
         //    //By Default just render / select the first timesheet for now 
-        //    setCurrentTimesheetsToDisplay(timesheets, startDate);
-        //});
+            setCurrentTimesheetsToDisplay(timesheets, selectedDate);
+        });
     }, [selectedUser])
 
     const processTimesheetChange = (updated_sheet) => {
@@ -341,7 +341,6 @@ export default function Page() {
                 : (<UserContext.Provider value={user}>
                     <TimeTable columns={TABLE_COLUMNS} timesheet={selectedTimesheet} onTimesheetChange={processTimesheetChange} />
                 </UserContext.Provider>)}
-            <WeeklyCommentSection weeklyComments={weeklyComments} weeklyReports={weeklyReports}/>
         </>
     )
 }
