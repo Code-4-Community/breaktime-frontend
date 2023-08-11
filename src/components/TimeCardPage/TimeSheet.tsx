@@ -59,12 +59,7 @@ const createEmptyTable = (startDate, company) => {
         TimesheetID: uuidv4(),
         CompanyID: company,
         StartDate: startDate,
-        Status: {
-            Finalized : {
-                AuthorID: "hi",
-                Date : 0
-            }
-        },
+        Status: {},
         WeekComments: [],
         TableData: [],
         ScheduledData: undefined
@@ -384,7 +379,7 @@ export default function Page() {
                 <DateSelectorCard onDateChange={updateDateRange} date={selectedDate} />
                 {selectedTimesheet && <SubmitCard setWeeklyComments={setWeeklyComments} setWeeklyReports={setWeeklyReports} weeklyComments={weeklyComments} weeklyReports={weeklyReports} />}
             </HStack>
-            {selectedTimesheet?.Status?.Finalized && renderWarning()}
+            {!selectedTimesheet?.Status.Finalized && renderWarning()}
             <Tabs>
                 <TabList>
                     {currentTimesheets.map(
@@ -394,10 +389,11 @@ export default function Page() {
                     )}
                 </TabList>
             </Tabs>
+            {console.log('status', selectedTimesheet)}
             {selectedTimesheet?.CompanyID === "Total" ?
                 (<AggregationTable Date={selectedDate} timesheets={currentTimesheets} />)
                 : (<UserContext.Provider value={user}>
-                    <TimeTable disabled={selectedTimesheet?.Status?.Finalized ? true : false} columns={TABLE_COLUMNS} timesheet={selectedTimesheet} onTimesheetChange={processTimesheetChange} />
+                    <TimeTable disabled={selectedTimesheet?.Status.Finalized} columns={TABLE_COLUMNS} timesheet={selectedTimesheet} onTimesheetChange={processTimesheetChange} />
                 </UserContext.Provider>)}
         </>
     )
