@@ -375,7 +375,6 @@ export default function Page() {
                         <SearchCompanies company={selectedCompany} companies={companies} setSelected={setSelectedCompany} />
                         }
                         <IconButton aria-label='Download' icon={<DownloadIcon />} />
-                        <IconButton aria-label='Report' icon={<WarningIcon />} />
                     </>}
 
                 <DateSelectorCard onDateChange={updateDateRange} date={selectedDate} />

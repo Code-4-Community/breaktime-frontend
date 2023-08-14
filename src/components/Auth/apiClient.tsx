@@ -76,7 +76,7 @@ export class ApiClient {
     return {  UserID: "77566d69-3b61-452a-afe8-73dcda96f876", 
               FirstName: "john",
               LastName: "doe",
-              Type: "Associate",
+              Type: "Supervisor",
               Picture: "https://www.google.com/koala.png",
               Company: "Example Company 401" 
           };
