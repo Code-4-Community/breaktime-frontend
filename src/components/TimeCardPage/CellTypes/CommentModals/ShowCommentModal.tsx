@@ -118,9 +118,9 @@ export default function ShowCommentModal({
             <ModalHeader>
               <HStack>
                 <Text>View {CommentType.Comment}</Text>
-                <Button onClick={onOpenAdd}>
+                {isEditable && <Button onClick={onOpenAdd}>
                   New
-                </Button>
+                </Button>}
               </HStack>
             </ModalHeader>
             <ModalCloseButton />

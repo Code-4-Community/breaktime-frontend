@@ -101,9 +101,9 @@ export default function ShowReportModal({
           <ModalHeader>
             <HStack>
               <Text>View {CommentType.Report}</Text>
-              <Button onClick={onOpenAdd}>
+              {isEditable && <Button onClick={onOpenAdd}>
                 New
-              </Button>
+              </Button>}
             </HStack>
           </ModalHeader>
           <ModalCloseButton />

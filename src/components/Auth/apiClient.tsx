@@ -73,10 +73,10 @@ export class ApiClient {
   // TODO: setup endpoint for getting user information
   // all roles -> return UserSchema for the current user that is logged in
   public async getUser(): Promise<any> {
-    return {  UserID: "abc", 
+    return {  UserID: "77566d69-3b61-452a-afe8-73dcda96f876", 
               FirstName: "john",
               LastName: "doe",
-              Type: "Admin",
+              Type: "Associate",
               Picture: "https://www.google.com/koala.png",
               Company: "Example Company 401" 
           };
