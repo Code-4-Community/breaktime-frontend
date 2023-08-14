@@ -61,7 +61,7 @@ function Row(props: RowProps) {
     const items = {
       Type: <TypeCell value={fields.Type} setType={updateField} />,
       Date: <DateCell date={fields.Date} prevDate={props.prevDate} />,
-      // TODO : The userType is likely able to be adjusted, add this to the props for TimeTableRow
+      // TODO : The userType is likely able to be adjusted, only show conflictable time entry for admins.
       "Clock-in": (
         <ConflicatableTimeEntry
           row={fields}
@@ -70,12 +70,10 @@ function Row(props: RowProps) {
         />
       ),
       "Clock-out": (
-        <TimeEntry
+        <ConflicatableTimeEntry
           row={fields}
           field={"End"}
           updateFields={updateField}
-          userType={"Associate"}
-          time={null}
         />
       ),
       Hours: <Duration row={fields} userType={props.userType}/>,

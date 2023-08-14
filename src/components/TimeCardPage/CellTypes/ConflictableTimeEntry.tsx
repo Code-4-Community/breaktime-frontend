@@ -58,24 +58,39 @@ export function ConflicatableTimeEntry(props: ConflicatableTimeEntryProps) {
   // determine if the associate and supervisor times are conflicting for this cell
   const hasAssociateTime: boolean = props.row.Associate !== undefined;
   const hasSupervisorTime: boolean = props.row.Supervisor !== undefined;
+  const hasAdminTime: boolean = props.row.Admin !== undefined;
+
+  // TODO :
+  //  -- only show conflict button on conflict
+  //  -- auto-populate with the following rules:
+  //  ---- if associate and supervisor times are the same, auto-populate with that time
+  //  ---- if associate and supervisor times are different, auto-populate with null
+  //  -- make sure that time conflict entry cells only show up on admins 
 
   // Conflicts are defined as:
   // 1. associate submitted a time, and supervisor did not
   // 2. Supervisor submitted a time for this entry, and associate did not
   // 3. Associate time and supervisor reported time differ
-  /*var hasConflict =
-    hasAssociateTime !== hasSupervisorTime ||
-    props.row.Associate[props.field] !== props.row.Supervisor[props.field];*/
+  var hasConflict = hasAssociateTime !== hasSupervisorTime || 
+  (hasAssociateTime && hasSupervisorTime && props.row.Associate[props.field] !== props.row.Supervisor[props.field]);
+
+  useEffect(() => {
+      if (!hasConflict && hasAssociateTime && !hasAdminTime) {
+    setSelectedTime(props.row.Associate[props.field])
+  } else if (hasAdminTime) {
+    setSelectedTime(props.row.Admin[props.field])
+  }
+  }, []);
 
   // TODO: Toggle clicker to display popup with conflict only if hasConflict is true
   return (
     <>
-      <TimeConflictPopup
+      { hasConflict && (<TimeConflictPopup
         field={props.field}
         associateEntry={props.row.Associate}
         supervisorEntry={props.row.Supervisor}
         onSelectTime={handleTimeSelection}
-      />
+      /> ) }
       <TimeEntry
         field={props.field}
         row={props.row}

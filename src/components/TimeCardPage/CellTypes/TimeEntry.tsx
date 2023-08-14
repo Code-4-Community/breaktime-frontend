@@ -61,8 +61,10 @@ export function TimeEntry(props: TimeEntryProps) {
 
   useEffect(() => {
     let minutes;
-    if (props.row[props.userType] !== undefined) {
+    if (props.row[props.userType] !== undefined && props.row[props.userType] !== null) {
       minutes = (props.row[props.userType][props.field]);
+    } else if (props.userType === "Admin") {
+      minutes = props.time;
     }
     convertMinutesToTime(minutes);
     console.log(convertedTime);
