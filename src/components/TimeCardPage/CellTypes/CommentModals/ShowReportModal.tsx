@@ -118,7 +118,7 @@ export default function ShowReportModal({
                     onSubmit={(value) => saveEditedComment(setReports, reports, CommentType.Report, report, createNewComment(user, CommentType.Report, value))}
                   >
                     <EditablePreview />
-                    {` ${moment.unix(report.Timestamp).format("h:mm")}`}
+                    {report.Content !== ReportOptions.Absent && ` ${moment.unix(report.Timestamp).format("h:mm")}`}
                     {isEditable && (
                       <>
                         <Input as={EditableInput} />
