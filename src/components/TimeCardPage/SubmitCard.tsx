@@ -11,13 +11,15 @@ interface SubmitCardProps {
     setWeeklyReports: Function;
     weeklyComments: CommentSchema[];
     weeklyReports: CommentSchema[];
+    isEditable: boolean;
 }
 
 export default function SubmitCard({
     setWeeklyComments,
     setWeeklyReports,
     weeklyComments,
-    weeklyReports
+    weeklyReports,
+    isEditable
 }: SubmitCardProps) {
 
     const [submitted, setSubmitted] = useState(false);
@@ -54,7 +56,7 @@ export default function SubmitCard({
                 {submitted && <Card.Footer>
                     {submitDate}
                     {state}
-                    <WeeklyCommentModal setWeeklyComments={setWeeklyComments} setWeeklyReports={setWeeklyReports} weeklyComments={weeklyComments} weeklyReports={weeklyReports}/>
+                    {isEditable && <WeeklyCommentModal setWeeklyComments={setWeeklyComments} setWeeklyReports={setWeeklyReports} weeklyComments={weeklyComments} weeklyReports={weeklyReports}/>}
                 </Card.Footer>}
             </Card>
         </Box >

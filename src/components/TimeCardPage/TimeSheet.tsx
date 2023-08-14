@@ -377,7 +377,7 @@ export default function Page() {
                     </>}
 
                 <DateSelectorCard onDateChange={updateDateRange} date={selectedDate} />
-                {selectedTimesheet && <SubmitCard setWeeklyComments={setWeeklyComments} setWeeklyReports={setWeeklyReports} weeklyComments={weeklyComments} weeklyReports={weeklyReports} />}
+                {selectedTimesheet && <SubmitCard isEditable={user.Type === "Supervisor" || user.Type === "Admin"} setWeeklyComments={setWeeklyComments} setWeeklyReports={setWeeklyReports} weeklyComments={weeklyComments} weeklyReports={weeklyReports} />}
             </HStack>
             {!selectedTimesheet?.Status.Finalized && renderWarning()}
             <Tabs>
