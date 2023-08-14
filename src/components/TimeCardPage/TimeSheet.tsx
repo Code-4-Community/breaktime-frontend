@@ -59,7 +59,9 @@ const createEmptyTable = (startDate, company) => {
         TimesheetID: uuidv4(),
         CompanyID: company,
         StartDate: startDate,
-        Status: {},
+        Status: {
+            Finalized: {AuthorID:"hi", Date:1}
+        },
         WeekComments: [],
         TableData: [],
         ScheduledData: undefined
