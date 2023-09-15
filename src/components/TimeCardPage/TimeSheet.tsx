@@ -189,6 +189,7 @@ export default function Page() {
     if (newCurrentTimesheets.length > 0) {
       setTab(newCurrentTimesheets[0].CompanyID)
     }
+    console.log(newCurrentTimesheets[0]);
   }
 
   const renderWarning = () => {
@@ -241,7 +242,12 @@ export default function Page() {
       </Tabs>
       {selectedTab === "Total" ?
         (<AggregationTable Date={selectedDate} timesheets={currentTimesheets} />)
-        : (currentTimesheets.length > 0 && <TimeTable columns={TABLE_COLUMNS} timesheet={selectedTimesheet} onTimesheetChange={processTimesheetChange} />)}
+        : (currentTimesheets.length > 0 && <TimeTable
+          columns={TABLE_COLUMNS}
+          timesheet={selectedTimesheet}
+          onTimesheetChange={processTimesheetChange}
+          userType={user?.Type}
+        />)}
 
     </>
   )
