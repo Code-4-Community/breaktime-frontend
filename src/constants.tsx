@@ -1,20 +1,27 @@
-import moment from 'moment-timezone';
-import {CellType, CommentType, Review_Stages, CellStatus} from './components/TimeCardPage/types'; 
+import moment from "moment-timezone";
+import {
+  CellType,
+  CommentType,
+  Review_Stages,
+  CellStatus,
+} from "./components/TimeCardPage/types";
 
-export const TIMESHEET_DURATION = 7; 
-export const TIMEZONE = "America/New_York"; 
-export const DATETIME_FORMAT = "MM/DD/YY"; 
+export const TIMESHEET_DURATION = 7;
+export const TIMEZONE = "America/New_York";
+export const DATETIME_FORMAT = "MM/DD/YY";
 
-export const defaultColors = { BREAKTIME_BLUE: '#001D66' };
-
+export const enum DEFAULT_COLORS {
+    BREAKTIME_BLUE = '#001D66',
+    WHITE = '#FFFFFF'
+};
 
 export const enum PAGE_ROUTES {
-    ROOT = "/",
-    TIMECARD = "/timecard", 
-    LOGOUT = "/logout"
-  }
+  ROOT = "/",
+  TIMECARD = "/timecard",
+  LOGOUT = "/logout",
+}
 
-// Example data that can be used in testing until we re-format DB 
+// Example data that can be used in testing until we re-format DB
 export const EXAMPLE_ROW = {
     Type: CellType.Regular,  
     Date: moment().tz(TIMEZONE).weekday(1).unix(),  
@@ -64,10 +71,10 @@ export const EXAMPLE_ROW2 = {
 }
 
 export const SCHEDULE_ENTRY = {
-    Start: 0, 
-    End: 0, 
-    AuthorID: "<UUID OF AUTHOR>"
-}
+  Start: 0,
+  End: 0,
+  AuthorID: "<UUID OF AUTHOR>",
+};
 
 const EXAMPLE_WEEKNOTES = [
     {
@@ -101,14 +108,14 @@ const EXAMPLE_WEEKNOTES = [
 ]
 
 export const EXAMPLE_TIMESHEET = {
-    UserID: "b43227a4-0b42-4cfc-8a2c-16e2f2e64fbe", 
-    TimesheetID: 1231231, 
-    CompanyID: "NEU", 
-    StartDate: moment().tz(TIMEZONE).startOf('week').day(0).unix(), 
+    UserID: "b43227a4-0b42-4cfc-8a2c-16e2f2e64fbe",
+    TimesheetID: 1231231,
+    CompanyID: "NEU",
+    StartDate: moment().tz(TIMEZONE).startOf('week').day(0).unix(),
     Status: {
-        HoursSubmitted: undefined, 
-        HoursReviewed: undefined, 
-        ScheduleSubmitted: undefined, 
+        HoursSubmitted: undefined,
+        HoursReviewed: undefined,
+        ScheduleSubmitted: undefined,
         Finalized: undefined
     }, 
     WeekNotes: EXAMPLE_WEEKNOTES, 
@@ -121,12 +128,12 @@ export const EXAMPLE_TIMESHEET_2 = {
     CompanyID: "Star Market", 
     StartDate: moment().tz(TIMEZONE).startOf('week').day(0).unix(), 
     Status: {
-        HoursSubmitted: {Date: moment().tz(TIMEZONE).unix(), Author:"<Some UUID of an author>"}, 
-        HoursReviewed: undefined, 
-        ScheduleSubmitted: undefined, 
+        HoursSubmitted: { Date: moment().tz(TIMEZONE).unix(), Author: "<Some UUID of an author>" },
+        HoursReviewed: undefined,
+        ScheduleSubmitted: undefined,
         Finalized: undefined
     }, 
     WeekNotes:[], 
     TableData: [{...EXAMPLE_ROW}], 
-    ScheduleTableData: [{...SCHEDULE_ENTRY}]
+    ScheduleTableData:undefined 
 }

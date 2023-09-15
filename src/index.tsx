@@ -1,50 +1,52 @@
-import React from 'react';
-import './index.css';
-import HomePage from './components/HomePage/HomePage';
-import reportWebVitals from './reportWebVitals';
-import 'bootstrap/dist/css/bootstrap.min.css';
+import React from "react";
+import "./index.css";
+import HomePage from "./components/HomePage/HomePage";
+import reportWebVitals from "./reportWebVitals";
+import "bootstrap/dist/css/bootstrap.min.css";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import 'react-date-range/dist/styles.css'; // main style file
-import 'react-date-range/dist/theme/default.css'; // theme css file
-import NavBar from "./components/NavBar/NavBar"
-import {Amplify} from 'aws-amplify';
-import awsmobile from './aws-exports'
+import "react-date-range/dist/styles.css"; // main style file
+import "react-date-range/dist/theme/default.css"; // theme css file
+import NavBar from "./components/NavBar/NavBar";
+import { Amplify } from "aws-amplify";
+import awsmobile from "./aws-exports";
 
-import AuthedApp from './components/Auth/AuthWrapper'
+import AuthedApp from "./components/Auth/AuthWrapper";
 
-import TimeSheet from './components/TimeCardPage/TimeSheet'
-import Signout from './components/SignOut/Signout'
-import 'bootstrap/dist/css/bootstrap.css';
+import TimeSheet from "./components/TimeCardPage/TimeSheet";
+import Signout from "./components/SignOut/Signout";
+import "bootstrap/dist/css/bootstrap.css";
 
-import '@aws-amplify/ui-react/styles.css';
+import "@aws-amplify/ui-react/styles.css";
 
-import { ChakraProvider } from '@chakra-ui/react'; 
+import { ChakraProvider } from "@chakra-ui/react";
 
-import {PAGE_ROUTES} from './constants'; 
+import { PAGE_ROUTES } from "./constants";
 
-Amplify.configure(awsmobile); 
-
-
-
+Amplify.configure(awsmobile);
 
 export default function Landing() {
-    return (
-      <ChakraProvider>
-        <BrowserRouter>
-        <NavBar/> 
+  return (
+    <ChakraProvider>
+      <BrowserRouter>
+        <NavBar />
         <Routes>
-          <Route path={PAGE_ROUTES.ROOT} element={<AuthedApp page={<HomePage/>}/>}/>
-          <Route path={PAGE_ROUTES.TIMECARD} element={<AuthedApp page={<TimeSheet />}/>} />
-          <Route path={PAGE_ROUTES.LOGOUT} element={<Signout/>} />
-
+          <Route
+            path={PAGE_ROUTES.ROOT}
+            element={<AuthedApp page={<HomePage />} />}
+          />
+          <Route
+            path={PAGE_ROUTES.TIMECARD}
+            element={<AuthedApp page={<TimeSheet />} />}
+          />
+          <Route path={PAGE_ROUTES.LOGOUT} element={<Signout />} />
         </Routes>
-      </BrowserRouter> 
+      </BrowserRouter>
     </ChakraProvider>
-    );
-  }
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(<Landing/>);  
+  );
+}
+const root = ReactDOM.createRoot(document.getElementById("root"));
+root.render(<Landing />);
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))
 // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals

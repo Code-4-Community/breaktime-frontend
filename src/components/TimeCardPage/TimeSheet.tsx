@@ -2,28 +2,28 @@ import React, { useState, useMemo } from 'react';
 import TimeTable from './TimeTable'
 import { useEffect } from 'react';
 import SubmitCard from './SubmitCard';
-import DateSelectorCard from './SelectWeekCard'
+import DateSelectorCard from './SelectWeekCard';
 import { UserContext } from './UserContext';
 
 import {
-    Alert,
-    AlertIcon,
-    AlertTitle,
-    AlertDescription,
-} from '@chakra-ui/react'
-import {
-    IconButton,
-    Card,
-    CardBody,
-    Avatar,
-    HStack,
-    Text
-} from '@chakra-ui/react'
-
-import {
-    Tabs,
-    TabList,
-    Tab
+  Alert,
+  AlertIcon,
+  AlertTitle,
+  AlertDescription,
+  Box,
+  IconButton,
+  Card,
+  CardBody,
+  Avatar,
+  Flex,
+  Text,
+  Tabs,
+  TabList,
+  Tab,
+  Spacer,
+  HStack,
+  VStack,
+  ButtonGroup
 } from '@chakra-ui/react'
 
 
@@ -70,44 +70,44 @@ const createEmptyTable = (startDate, company) => {
 }
 
 const testingEmployees = [
-    { UserID: "abc", FirstName: "joe", LastName: "jane", Type: "Employee", Picture: "https://upload.wikimedia.org/wikipedia/commons/4/49/Koala_climbing_tree.jpg" },
-    { UserID: "bcd", FirstName: "david", LastName: "lev", Type: "Employee", Picture: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/Grosser_Panda.JPG/1200px-Grosser_Panda.JPG" },
-    { UserID: "cde", FirstName: "crys", LastName: "tal", Type: "Employee", Picture: "https://www.google.com/capybara.png" },
-    { UserID: "def", FirstName: "ken", LastName: "ney", Type: "Employee", Picture: "https://www.google.com/koala.png" },
+  { UserID: "abc", FirstName: "joe", LastName: "jane", Type: "Employee", Picture: "https://upload.wikimedia.org/wikipedia/commons/4/49/Koala_climbing_tree.jpg" },
+  { UserID: "bcd", FirstName: "david", LastName: "lev", Type: "Employee", Picture: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/Grosser_Panda.JPG/1200px-Grosser_Panda.JPG" },
+  { UserID: "cde", FirstName: "crys", LastName: "tal", Type: "Employee", Picture: "https://www.google.com/capybara.png" },
+  { UserID: "def", FirstName: "ken", LastName: "ney", Type: "Employee", Picture: "https://www.google.com/koala.png" },
 ]
 
 function ProfileCard({ employee }) {
 
-    return (
-        <Card direction="row" width="50%">
-            <Avatar src={employee?.Picture} name={employee?.FirstName + " " + employee?.LastName} size='md' showBorder={true} borderColor='black' borderWidth='thick' />
-            <CardBody>
-                <Text>{employee?.FirstName + " " + employee?.LastName}</Text>
-            </CardBody>
-        </Card>
-    )
+  return (
+    <Card direction="row" width="50%">
+      <Avatar src={employee?.Picture} name={employee?.FirstName + " " + employee?.LastName} size='md' showBorder={true} borderColor='black' borderWidth='thick' />
+      <CardBody>
+        <Text>{employee?.FirstName + " " + employee?.LastName}</Text>
+      </CardBody>
+    </Card>
+  )
 }
 
 function SearchEmployeeTimesheet({ employees, setSelected }) {
 
-    const handleChange = (selectedOption) => {
-        setSelected(selectedOption);
-    }
+  const handleChange = (selectedOption) => {
+    setSelected(selectedOption);
+  }
 
-    const customStyles = {
-        control: (base) => ({
-            ...base,
-            flexDirection: 'row-reverse',
-        }),
-    }
+  const customStyles = {
+    control: (base) => ({
+      ...base,
+      flexDirection: 'row-reverse',
+    }),
+  }
 
-    const DropdownIndicator = (props) => {
-        return (
-            <components.DropdownIndicator {...props}>
-                <SearchIcon />
-            </components.DropdownIndicator>
-        );
-    };
+  const DropdownIndicator = (props) => {
+    return (
+      <components.DropdownIndicator {...props}>
+        <SearchIcon />
+      </components.DropdownIndicator>
+    );
+  };
 
     // TODO: fix styling
     // at the moment defaultValue is the first user in the employees array
@@ -178,92 +178,87 @@ function WeeklyCommentSection({
 }
 
 export default function Page() {
-    //const today = moment(); 
-    const [selectedDate, setSelectedDate] = useState(moment().startOf('week').day(0));
+  //const today = moment(); 
+  const [selectedDate, setSelectedDate] = useState(moment().startOf('week').day(0));
 
-    const updateDateRange = (date: Moment) => {
-        setSelectedDate(date);
-        //TODO - Refactor this to use the constant in merge with contants branch 
-        setCurrentTimesheetsToDisplay(userTimesheets, date);
-    }
+  const updateDateRange = (date: Moment) => {
+    setSelectedDate(date);
+    //TODO - Refactor this to use the constant in merge with contants branch 
+    setCurrentTimesheetsToDisplay(userTimesheets, date);
+  }
 
-    // fetch the information of the user whos timesheet is being displayed
-    // if user is an employee selected and user would be the same
-    // if user is a supervisor/admin then selected would contain the information of the user
-    // whos timesheet is being looked at and user would contain the supervisor/admins information
-    // by default the first user is selected
-    const [selectedUser, setSelectedUser] = useState<UserSchema>();
-    const [user, setUser] = useState<UserSchema>();
+  // fetch the information of the user whos timesheet is being displayed
+  // if user is an employee selected and user would be the same
+  // if user is a supervisor/admin then selected would contain the information of the user
+  // whos timesheet is being looked at and user would contain the supervisor/admins information
+  // by default the first user is selected
+  const [selectedUser, setSelectedUser] = useState<UserSchema>();
+  const [user, setUser] = useState<UserSchema>();
 
-    // associates is only used by supervisor/admin for the list of all associates they have access to
-    const [associates, setAssociates] = useState<UserSchema[]>([]);
+  // associates is only used by supervisor/admin for the list of all associates they have access to
+  const [associates, setAssociates] = useState<UserSchema[]>([]);
 
-    // A list of the timesheet objects 
-    // TODO: add types
-    const [userTimesheets, setUserTimesheets] = useState([]);
-    const [currentTimesheets, setCurrentTimesheets] = useState([]);
-    const [selectedTimesheet, setTimesheet] = useState(undefined);
+  // A list of the timesheet objects
+  // TODO: add types
+  const [userTimesheets, setUserTimesheets] = useState([]);
+  const [currentTimesheets, setCurrentTimesheets] = useState([]);
+  const [selectedTimesheet, setTimesheet] = useState(undefined);
+  const [selectedTab, setTab] = useState(undefined);
 
     const [weeklyComments, setWeeklyComments] = useState<CommentSchema[]>([]);
     const [weeklyReports, setWeeklyReports] = useState<CommentSchema[]>([]);
 
-    // this hook should always run first
-    useEffect(() => {
-        apiClient.getUser().then(userInfo => {
-            setUser(userInfo);
-            if (userInfo.Type === "Supervisor" || userInfo.Type === "Admin") {
-                apiClient.getAllUsers().then(users => {
-                    setAssociates(users);
-                    setSelectedUser(users[0]);
-                })
-            }
-            setSelectedUser(userInfo)
+  // this hook should always run first
+  useEffect(() => {
+    apiClient.getUser().then(userInfo => {
+      setUser(userInfo);
+      if (userInfo.Type === "Supervisor" || userInfo.Type === "Admin") {
+        apiClient.getAllUsers().then(users => {
+          setAssociates(users);
+          setSelectedUser(users[0]);
         })
-        // if employee setSelectedUSer to be userinfo
-        // if supervisor/admin get all users
-        // set selected user
-    }, [])
+      }
+      setSelectedUser(userInfo)
+    })
+    // if employee setSelectedUSer to be userinfo
+    // if supervisor/admin get all users
+    // set selected user
+  }, [])
 
-    // Pulls user timesheets, marking first returned as the active one
-    useEffect(() => {
-        // Uncomment this if you want the default one loaded 
-        //setUserTimesheets([EXAMPLE_TIMESHEET, EXAMPLE_TIMESHEET_2]);
+  // Pulls user timesheets, marking first returned as the active one
+  useEffect(() => {
+    apiClient.getUserTimesheets(selectedUser?.UserID).then(timesheets => {
+      setUserTimesheets(timesheets);
+      //By Default just render / select the first timesheet for now
+      setCurrentTimesheetsToDisplay(timesheets, selectedDate);
+    });
+  }, [selectedUser])
 
-        //setWeeklyComments(getAllActiveCommentsOfType(CommentType.Comment, EXAMPLE_TIMESHEET.WeekNotes))
-        //setWeeklyReports(getAllActiveCommentsOfType(CommentType.Report, EXAMPLE_TIMESHEET.WeekNotes))
+  const processTimesheetChange = (updated_sheet) => {
+    // Updating the rows of the selected timesheets from our list of timesheets
+    const modifiedTimesheets = userTimesheets.map((entry) => {
+      if (entry.TimesheetID === selectedTimesheet.TimesheetID) {
+        return {
+          ...entry,
+          TableData: updated_sheet.TableData
+        }
+      }
+      return entry
+    });
+    setUserTimesheets(modifiedTimesheets);
 
-        apiClient.getUserTimesheets(selectedUser?.UserID).then(timesheets => {
-            setUserTimesheets(timesheets); 
-        //    //By Default just render / select the first timesheet for now 
-            setCurrentTimesheetsToDisplay(timesheets, selectedDate);
-        });
-    }, [selectedUser])
-
-    const processTimesheetChange = (updated_sheet) => {
-        // Updating the rows of the selected timesheets from our list of timesheets 
-        const modifiedTimesheets = userTimesheets.map((entry) => {
-            if (entry.TimesheetID === selectedTimesheet.TimesheetID) {
-                return {
-                    ...entry,
-                    TableData: updated_sheet.TableData
-                }
-            }
-            return entry
-        });
-        setUserTimesheets(modifiedTimesheets);
-
-        //Also need to update our list of currently selected - TODO come up with a way to not need these duplicated lists 
-        setCurrentTimesheets(currentTimesheets.map(
-            (entry) => {
-                if (entry.TimesheetID === selectedTimesheet.TimesheetID) {
-                    return {
-                        ...entry,
-                        TableData: updated_sheet.TableData
-                    }
-                }
-                return entry
-            }
-        ));
+    //Also need to update our list of currently selected - TODO come up with a way to not need these duplicated lists
+    setCurrentTimesheets(currentTimesheets.map(
+      (entry) => {
+        if (entry.TimesheetID === selectedTimesheet.TimesheetID) {
+          return {
+            ...entry,
+            TableData: updated_sheet.TableData
+          }
+        }
+        return entry
+      }
+    ));
 
         // selectedTimesheet.TableData = rows; 
     }
@@ -275,42 +270,35 @@ export default function Page() {
     }
 
 
-    const setCurrentTimesheetsToDisplay = (timesheets, currentStartDate: Moment) => {
-        const newCurrentTimesheets = timesheets.filter(sheet => moment.unix(sheet.StartDate).isSame(currentStartDate, 'day'));
-
-        if (newCurrentTimesheets.length < 1) {
-            newCurrentTimesheets.push(createEmptyTable(currentStartDate.unix(), "new")); // TODO: change to make correct timesheets for the week
-        }
-
-        if (newCurrentTimesheets.length > 1) {
-            newCurrentTimesheets.push(createEmptyTable(currentStartDate.unix(), "Total"));
-        }
+  const setCurrentTimesheetsToDisplay = (timesheets, currentStartDate: Moment) => {
+    const newCurrentTimesheets = timesheets.filter(sheet => moment.unix(sheet.StartDate).isSame(currentStartDate, 'day'));
 
         setCurrentTimesheets(newCurrentTimesheets);
         changeTimesheet(newCurrentTimesheets[0])
 
     }
 
-    const renderWarning = () => {
-        const currentDate = moment().tz(TIMEZONE);
+  const renderWarning = () => {
+    const currentDate = moment().tz(TIMEZONE);
 
-        const dateToCheck = moment(selectedDate);
-        dateToCheck.add(TIMESHEET_DURATION, 'days');
-        if (currentDate.isAfter(dateToCheck, 'days')) {
-            return <Alert status='error'>
-                <AlertIcon />
-                <AlertTitle>Your timesheet is late!</AlertTitle>
-                <AlertDescription>Please submit this as soon as possible</AlertDescription>
-            </Alert>
-        } else {
-            const dueDuration = dateToCheck.diff(currentDate, 'days');
-            return <Alert status='info'>
-                <AlertIcon />
-                <AlertTitle>Your timesheet is due in {dueDuration} days!</AlertTitle>
-                <AlertDescription>Remember to press the submit button!</AlertDescription>
-            </Alert>
-        }
+    const dateToCheck = moment(selectedDate);
+    dateToCheck.add(TIMESHEET_DURATION, 'days');
+    if (currentDate.isAfter(dateToCheck, 'days')) {
+      return <Alert status='error'>
+        <AlertIcon />
+        <AlertTitle>Your timesheet is late!</AlertTitle>
+        <AlertDescription>Please submit this as soon as possible</AlertDescription>
+      </Alert>
+    } else {
+      const dueDuration = dateToCheck.diff(currentDate, 'days');
+      return <Alert status='info'>
+        <AlertIcon />
+        <AlertTitle>Your timesheet is due in {dueDuration} days!</AlertTitle>
+        <AlertDescription>Remember to press the submit button!</AlertDescription>
+      </Alert>
     }
+  }
+
 
 
     return (

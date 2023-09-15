@@ -1,12 +1,24 @@
 import React, { useState } from 'react';
-import { Card, Alert, Image, Button } from 'react-bootstrap';
-import { defaultColors } from '../../constants';
-import { IconContext } from 'react-icons';
+import { Card, CardHeader, CardBody, Alert, Image, Button, Icon, Flex, VStack, Spacer } from '@chakra-ui/react';
+import { DEFAULT_COLORS } from 'src/constants';
 import { TfiAnnouncement } from 'react-icons/tfi';
 
 const SAMPLE_EVENT_LIST = [
-  { name: 'LinkedIn Workshop', photo: 'https://schooloflanguages.sa.edu.au/wp-content/uploads/2017/11/placeholder-profile-sq.jpg', url: 'https://www.linkedin.com/', date: '2/30/2023' },
-  { name: 'Resume Workshop', photo: 'https://www.seinstitute.com/wp-content/uploads/2020/01/placeholder-female-300x300-1.jpg', url: 'https://en.wikipedia.org/wiki/Capybara', date: '4/31/2023' }];
+  {
+    name: "LinkedIn Workshop",
+    photo:
+      "https://schooloflanguages.sa.edu.au/wp-content/uploads/2017/11/placeholder-profile-sq.jpg",
+    url: "https://www.linkedin.com/",
+    date: "2/30/2023",
+  },
+  {
+    name: "Resume Workshop",
+    photo:
+      "https://www.seinstitute.com/wp-content/uploads/2020/01/placeholder-female-300x300-1.jpg",
+    url: "https://en.wikipedia.org/wiki/Capybara",
+    date: "4/31/2023",
+  },
+];
 
 export default function Announcements() {
   const [events, setEvents] = useState(SAMPLE_EVENT_LIST);
@@ -17,26 +29,28 @@ export default function Announcements() {
   // };
 
   return (
-    <div className='announcements' style={{ 'display': 'flex', 'gridColumnStart': 1, 'gridRowStart': 2 }}>
-      <Card style={{ 'width': '100%' }}>
-        <Card.Header as='h5' style={{ 'backgroundColor': defaultColors.BREAKTIME_BLUE, 'color': 'white', 'display': 'flex', 'gap': '1%', 'alignItems': 'center' }}>
-          <IconContext.Provider value={{ color: 'white' }}>
-            <TfiAnnouncement />
-          </IconContext.Provider>
-          Announcements
-        </Card.Header>
-        <Card.Body>
+    <Flex gridArea={'Announcements'}>
+      <Card width={'100%'} rounded={'lg'}>
+        <CardHeader as='h5' backgroundColor={DEFAULT_COLORS.BREAKTIME_BLUE} color={DEFAULT_COLORS.WHITE} rounded={'lg'}>
+          <Flex gap={'1%'}>
+            <Icon as={TfiAnnouncement} />
+            Announcements
+          </Flex >
+        </CardHeader>
+        <CardBody>
           {events[0] ?
-            <div>
+            <VStack>
               {events.map((event, index) => (
-                <Alert key={index} style={{ 'display': 'flex', 'gap': '1%', 'alignItems': 'center' }}>
-                  <Image src={event.photo} alt={event.name} rounded={true} style={{ 'width': '10%', 'height': 'auto' }} />
+                <Alert key={index} display={'flex'} gap={'1%'} alignItems={'center'} rounded={'lg'}>
+                  <Image src={event.photo} width={'10%'} />
                   {`${event.date}: ${event.name}`}
-                  <Button target='_blank' href={event.url} style={{ 'backgroundColor': defaultColors.BREAKTIME_BLUE, 'borderWidth': '0px' }}>Register</Button>
+                  <Spacer />
+                  <Button as='a' href={event.url} target='_blank'>Register</Button>
                 </Alert>))}
-            </div>
+            </VStack>
             : 'No announcements'}
-        </Card.Body>
+        </CardBody>
       </Card>
-    </div>);
+    </Flex>
+  );
 }
