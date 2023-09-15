@@ -44,30 +44,7 @@ import { CommentSchema, RowSchema } from 'src/schemas/RowSchema';
 import { getAllActiveCommentsOfType } from './utils';
 import { Stack } from 'react-bootstrap';
 import { Divider } from '@aws-amplify/ui-react';
-//TODO - Refactor to backend calls once setup to pull rows, etc. 
 
-
-//To test uploading a timesheet 
-// apiClient.updateUserTimesheet(testingTimesheetResp); 
-
-const createEmptyTable = (startDate, company) => {
-    // We assign uuid to provide a unique key identifier to each row for reacts rendering 
-
-    //TODO's: Pull UserID automatically
-    return {
-        UserID: "77566d69-3b61-452a-afe8-73dcda96f876",
-        TimesheetID: uuidv4(),
-        CompanyID: company,
-        StartDate: startDate,
-        Status: {
-            Stage: Review_Stages.APPROVED,
-            Timestamp: undefined
-        },
-        WeekComments: [],
-        TableData: [],
-        ScheduledData: undefined
-    }
-}
 
 const testingEmployees = [
   { UserID: "abc", FirstName: "joe", LastName: "jane", Type: "Employee", Picture: "https://upload.wikimedia.org/wikipedia/commons/4/49/Koala_climbing_tree.jpg" },
@@ -181,12 +158,6 @@ export default function Page() {
   //const today = moment(); 
   const [selectedDate, setSelectedDate] = useState(moment().startOf('week').day(0));
 
-  const updateDateRange = (date: Moment) => {
-    setSelectedDate(date);
-    //TODO - Refactor this to use the constant in merge with contants branch 
-    setCurrentTimesheetsToDisplay(userTimesheets, date);
-  }
-
   // fetch the information of the user whos timesheet is being displayed
   // if user is an employee selected and user would be the same
   // if user is a supervisor/admin then selected would contain the information of the user
@@ -203,10 +174,9 @@ export default function Page() {
   const [userTimesheets, setUserTimesheets] = useState([]);
   const [currentTimesheets, setCurrentTimesheets] = useState([]);
   const [selectedTimesheet, setTimesheet] = useState(undefined);
-  const [selectedTab, setTab] = useState(undefined);
 
-    const [weeklyComments, setWeeklyComments] = useState<CommentSchema[]>([]);
-    const [weeklyReports, setWeeklyReports] = useState<CommentSchema[]>([]);
+  const [weeklyComments, setWeeklyComments] = useState<CommentSchema[]>([]);
+  const [weeklyReports, setWeeklyReports] = useState<CommentSchema[]>([]);
 
   // this hook should always run first
   useEffect(() => {
@@ -259,23 +229,28 @@ export default function Page() {
         return entry
       }
     ));
-
-        // selectedTimesheet.TableData = rows; 
     }
 
-    const changeTimesheet = (sheet) => {
-        setTimesheet(sheet)
-        setWeeklyComments(getAllActiveCommentsOfType(CommentType.Comment, sheet.WeekNotes))
-        setWeeklyReports(getAllActiveCommentsOfType(CommentType.Report, sheet.WeekNotes))
-    }
+  const updateDateRange = (date: Moment) => {
+    setSelectedDate(date);
+    //TODO - Refactor this to use the constant in merge with contants branch 
+    setCurrentTimesheetsToDisplay(userTimesheets, date);
+  }
+
+  const changeTimesheet = (sheet) => {
+      setTimesheet(sheet)
+      setWeeklyComments(getAllActiveCommentsOfType(CommentType.Comment, sheet.WeekNotes))
+      setWeeklyReports(getAllActiveCommentsOfType(CommentType.Report, sheet.WeekNotes))
+  }
 
 
   const setCurrentTimesheetsToDisplay = (timesheets, currentStartDate: Moment) => {
     const newCurrentTimesheets = timesheets.filter(sheet => moment.unix(sheet.StartDate).isSame(currentStartDate, 'day'));
 
-        setCurrentTimesheets(newCurrentTimesheets);
-        changeTimesheet(newCurrentTimesheets[0])
-
+    setCurrentTimesheets(newCurrentTimesheets);
+    if (newCurrentTimesheets.length > 0) {
+      changeTimesheet(newCurrentTimesheets[0])
+    }
     }
 
   const renderWarning = () => {
@@ -312,7 +287,7 @@ export default function Page() {
                         <IconButton aria-label='Report' icon={<WarningIcon />} />
                     </> : <></>}
                 <DateSelectorCard onDateChange={updateDateRange} date={selectedDate} />
-                {selectedTimesheet && <SubmitCard setWeeklyComments={setWeeklyComments} setWeeklyReports={setWeeklyReports} weeklyComments={weeklyComments} weeklyReports={weeklyReports} />}
+                
             </HStack>
             {useMemo(() => renderWarning(), [selectedDate])}
             <Tabs>

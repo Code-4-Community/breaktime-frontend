@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react'
-import Card from 'react-bootstrap/Card';
-import Button from 'react-bootstrap/Button';
 import { WeeklyCommentModal } from './CommentModal';
-import { Box } from '@chakra-ui/react';
+import { Box, Card, CardHeader, CardBody, CardFooter, Button } from '@chakra-ui/react';
 import { CardState } from './types'
 import { CommentSchema } from 'src/schemas/RowSchema';
 
@@ -45,7 +43,7 @@ export default function SubmitCard({
     <Box className="col-md-2" style={{ display: "flex", justifyContent: 'flex-end' }}>
       <Card
         bg={(state === CardState.Completed) ? 'success' : ((state === CardState.InReviewBreaktime || state === CardState.InReviewEmployer) ? 'warning' : 'danger')}
-        textColor={DEFAULT_COLORS.WHITE}
+        textColor="white"
         key="submit_description"
         className="mb-2 text-center">
         <CardBody>
@@ -54,29 +52,10 @@ export default function SubmitCard({
         {submitted && <CardFooter>
           {submitDate}
           {state}
-          <CommentModal></CommentModal>
-
+          <WeeklyCommentModal setWeeklyComments={setWeeklyComments} setWeeklyReports={setWeeklyReports} weeklyComments={weeklyComments} weeklyReports={weeklyReports}/>
         </CardFooter>}
       </Card>
     </Box >
   );
-    return (
-        <Box className="col-md-2" style={{ display: "flex", justifyContent: 'flex-end' }}>
-            <Card
-                bg={(state === CardState.Completed) ? 'success' : ((state === CardState.InReviewBreaktime || state === CardState.InReviewEmployer) ? 'warning' : 'danger')}
-                text="white"
-                key="submit_description"
-                className="mb-2 text-center">
-                <Card.Body>
-                    <Button variant={'light'} onClick={submitAction}>{submitted ? "Resubmit" : "Submit!"}</Button>
-                </Card.Body>
-                {submitted && <Card.Footer>
-                    {submitDate}
-                    {state}
-                    <WeeklyCommentModal setWeeklyComments={setWeeklyComments} setWeeklyReports={setWeeklyReports} weeklyComments={weeklyComments} weeklyReports={weeklyReports}/>
-                </Card.Footer>}
-            </Card>
-        </Box >
-    )
 
 }

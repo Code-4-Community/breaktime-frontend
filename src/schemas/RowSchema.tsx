@@ -35,7 +35,6 @@ export type ReportSchema = z.infer<typeof ReportSchema>
 export const RowSchema = z.object({
     Type: z.nativeEnum(CellType), 
     UUID: z.string(), 
-    Type: RowType, 
     Date: z.number(), 
     Associate: TimeRowEntry, 
     Supervisor: TimeRowEntry, 
