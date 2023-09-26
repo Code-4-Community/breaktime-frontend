@@ -45,7 +45,7 @@ export const TimeEntrySchema = z.object({
 
 
 export enum CellType {
-  REGULAR = "Regular", 
+  REGULAR = "Time Worked", 
   PTO = "PTO"
 }
 
