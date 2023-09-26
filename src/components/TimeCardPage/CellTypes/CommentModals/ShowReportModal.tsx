@@ -118,7 +118,7 @@ export default function ShowReportModal({
                     onSubmit={(value) => saveEditedComment(setReports, reports, CommentType.Report, report, createNewComment(user, CommentType.Report, value))}
                   >
                     <EditablePreview />
-                    {` ${moment.unix(report.Timestamp).format("h:mm")}`}
+                    {` ${moment.unix(report.Timestamp).format("h:mm a")}`}
                     {isEditable && (
                       <>
                         <Input as={EditableInput} />
@@ -170,7 +170,7 @@ export default function ShowReportModal({
         console.log(createNewReport(user, remark, parseInt(selectedTime.format('X')))); // currently gmt TODO: fix later
       }
 
-      alert(`Your ${CommentType.Report} has been submitted!`);
+      // show a toast that its been submitted
       onCloseAdd()
       // TODO: call to db
     };

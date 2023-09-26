@@ -169,7 +169,7 @@ export default function ShowCommentModal({
       const handleSubmit = () => {
         // TODO: reuse comment validation
         setComments([...comments, createNewComment(user, CommentType.Comment, remark)]);
-        alert(`Your ${CommentType.Comment} has been submitted!`);
+        // show a toast that its been submitted
         onCloseAdd()
         // TODO: call to db
       };
