@@ -33,11 +33,11 @@ export default function SubmitCard() {
     <Box className="col-md-2" style={{ display: "flex", justifyContent: 'flex-end' }}>
       <Card
         bg={(state === CardState.Completed) ? 'success' : ((state === CardState.InReviewBreaktime || state === CardState.InReviewEmployer) ? 'warning' : 'danger')}
-        textColor={DEFAULT_COLORS.WHITE}
+        textColor={DEFAULT_COLORS.BREAKTIME_BLUE}
         key="submit_description"
         className="mb-2 text-center">
         <CardBody>
-          <Button variant={'light'} onClick={submitAction}>{submitted ? "Resubmit" : "Submit!"}</Button>
+          <Button onClick={submitAction}>{submitted ? "Resubmit" : "Submit!"}</Button>
         </CardBody>
         {submitted && <CardFooter>
           {submitDate}

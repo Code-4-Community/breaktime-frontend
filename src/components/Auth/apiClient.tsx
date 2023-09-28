@@ -92,7 +92,7 @@ export class ApiClient {
       UserID: "abc",
       FirstName: "john",
       LastName: "doe",
-      Type: "Supervisor",
+      Type: "Associate",
       Picture: "https://www.google.com/koala.png",
     };
   }
