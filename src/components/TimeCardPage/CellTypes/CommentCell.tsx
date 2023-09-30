@@ -1,44 +1,52 @@
-import moment from 'moment-timezone';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from "react";
+import { Stack } from "@chakra-ui/react";
 
-import { CommentSchema } from '../../../schemas/RowSchema';
-import { CommentType } from '../types';
-import { TIMEZONE } from '../../../constants';
+import { UserContext } from "../UserContext";
+import { CommentSchema } from "../../../schemas/RowSchema";
+import { CommentType } from "../types";
+import { getAllActiveCommentsOfType } from "../utils";
 
-import { Input } from '@chakra-ui/react';
+import ShowCommentModal from "./CommentModals/ShowCommentModal";
+import ShowReportModal from "./CommentModals/ShowReportModal";
 
 interface CommentProps {
   comments: CommentSchema[] | undefined;
-  setComment: Function;
+  date: number;
 }
 
-export function CommentCell(props: CommentProps) {
+export function CommentCell({
+  comments,
+  date
+}: CommentProps) {
+  const [currentComments, setCurrentComments] = useState(
+    getAllActiveCommentsOfType(CommentType.Comment, comments)
+  );
+  const [reports, setReports] = useState(
+    getAllActiveCommentsOfType(CommentType.Report, comments)
+  );
+  const [isEditable, setisEditable] = useState(false);
+  const user = useContext(UserContext);
 
-  const [comments, setComments] = useState(props.comments);
-
-  //TODO - Eventually refactor to handle multiple comments / process for grabbing user 
   useEffect(() => {
-    // If empty, create stubbed empty one to leave our comments at - eventually refactor to just add this to the end as the current users comments?
-    if (props.comments === undefined) {
-      //Create one empty comment 
-      setComments([{
-        AuthorID: "<TODO Fill this in at some point>",
-        Type: CommentType.Comment,
-        Timestamp: moment().tz(TIMEZONE).unix(),
-        Content: ""
-      }]);
+    //Supervisor/Admins have the right to edit comments/reports
+    if (user?.Type === "Supervisor" || user?.Type === "Admin") {
+      setisEditable(true);
     }
-  }, []);
+  }, [user?.Type]);
 
-
-  const onUpdate = (event) => {
-    comments[0].Content = event.target.value;
-    props.setComment("Comment", comments);
-  }
-
-  if (comments !== undefined && comments.length > 0) {
-    return <Input variant={'filled'} defaultValue={comments[0].Content} onChange={onUpdate} />
-  } else {
-    return <Input variant={'filled'} placeholder="Any comments?" onChange={onUpdate} />
-  }
+  return (
+    <Stack direction='row'>
+      <ShowCommentModal
+        setComments={setCurrentComments}
+        comments={currentComments}
+        isEditable={isEditable}
+      />
+      <ShowReportModal
+        date={date}
+        setReports={setReports}
+        reports={reports}
+        isEditable={isEditable}
+      />
+    </Stack>
+  );
 }

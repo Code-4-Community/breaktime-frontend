@@ -12,6 +12,18 @@ export function TimeEntry(props: TimeEntryProps) {
   const [minutes, setMinutes] = useState(undefined);
 
     const onChange = (time) => {
+        let calculatedTime;
+        // TODO: account for possible time deletions when updating DB and whatnot
+        if (time === null) {
+        calculatedTime = undefined;
+        } else {
+        const [currentHours, parsedMinutes] = time.split(":");
+        calculatedTime = Number(currentHours) * 60 + Number(parsedMinutes);
+        }
+
+        setMinutes(calculatedTime); 
+        
+        //Triggering parent class to update its references here as well 
         var rowToMutate = props.row.Associate; 
         if (rowToMutate === undefined) {
             rowToMutate = {

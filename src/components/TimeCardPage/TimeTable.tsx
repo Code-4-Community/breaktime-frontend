@@ -19,6 +19,8 @@ import { AddIcon, MinusIcon } from '@chakra-ui/icons';
 import * as rowSchemas from 'src/schemas/RowSchema'
 import ApiClient from '../Auth/apiClient';
 import * as updateSchemas from 'src/schemas/backend/UpdateTimesheet'
+import { UserSchema } from 'src/schemas/UserSchema';
+
 
 //Can expand upon this further by specifying input types - to allow only dates, numbers, etc for the input https://www.w3schools.com/bootstrap/bootstrap_forms_inputs.asp 
 
@@ -51,10 +53,10 @@ const createEmptyRow = (date) => {
 }
 
 interface TableProps {
-  timesheet: TimeSheetSchema;
-  columns: String[];
+  timesheet: TimeSheetSchema; 
+  columns: String[]; 
   onTimesheetChange: Function;
-}
+} 
 
 function TimeTable(props: TableProps) {
   //When a row is updated, replace it in our list of rows 
@@ -161,5 +163,4 @@ function TimeTable(props: TableProps) {
     </Table>
   );
 }
-
 export default TimeTable;

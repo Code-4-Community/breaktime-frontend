@@ -1,12 +1,22 @@
-import CommentModal from './CommentModal';
-import { CardState } from './types'
-
 import React, { useState, useEffect } from 'react'
+import { WeeklyCommentModal } from './CommentModal';
 import { Box, Card, CardHeader, CardBody, CardFooter, Button } from '@chakra-ui/react';
-import { DEFAULT_COLORS } from 'src/constants';
+import { CardState } from './types'
+import { CommentSchema } from 'src/schemas/RowSchema';
 
+interface SubmitCardProps {
+    setWeeklyComments: Function;
+    setWeeklyReports: Function;
+    weeklyComments: CommentSchema[];
+    weeklyReports: CommentSchema[];
+}
 
-export default function SubmitCard() {
+export default function SubmitCard({
+    setWeeklyComments,
+    setWeeklyReports,
+    weeklyComments,
+    weeklyReports
+}: SubmitCardProps) {
 
   const [submitted, setSubmitted] = useState(false);
   const [submitDate, setSubmitDate] = useState(null);
@@ -33,7 +43,7 @@ export default function SubmitCard() {
     <Box className="col-md-2" style={{ display: "flex", justifyContent: 'flex-end' }}>
       <Card
         bg={(state === CardState.Completed) ? 'success' : ((state === CardState.InReviewBreaktime || state === CardState.InReviewEmployer) ? 'warning' : 'danger')}
-        textColor={DEFAULT_COLORS.WHITE}
+        textColor="white"
         key="submit_description"
         className="mb-2 text-center">
         <CardBody>
@@ -42,10 +52,10 @@ export default function SubmitCard() {
         {submitted && <CardFooter>
           {submitDate}
           {state}
-          <CommentModal></CommentModal>
-
+          <WeeklyCommentModal setWeeklyComments={setWeeklyComments} setWeeklyReports={setWeeklyReports} weeklyComments={weeklyComments} weeklyReports={weeklyReports}/>
         </CardFooter>}
       </Card>
     </Box >
   );
+
 }

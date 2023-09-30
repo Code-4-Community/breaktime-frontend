@@ -3,6 +3,7 @@ import TimeTable from './TimeTable'
 import { useEffect } from 'react';
 import SubmitCard from './SubmitCard';
 import DateSelectorCard from './SelectWeekCard';
+import { UserContext } from './UserContext';
 
 import {
   Alert,
@@ -28,7 +29,7 @@ import {
 
 import { TIMESHEET_DURATION, TIMEZONE, EXAMPLE_TIMESHEET, EXAMPLE_TIMESHEET_2 } from 'src/constants';
 
-import { Review_Stages, TABLE_COLUMNS } from './types';
+import { Review_Stages, TABLE_COLUMNS , CommentType } from './types';
 import moment, { Moment } from 'moment-timezone';
 
 import apiClient from '../Auth/apiClient';
@@ -38,13 +39,16 @@ import { UserSchema } from '../../schemas/UserSchema'
 
 import { SearchIcon, WarningIcon, DownloadIcon } from '@chakra-ui/icons';
 import { Select, components } from 'chakra-react-select'
+import { TimeSheetSchema } from 'src/schemas/TimesheetSchema';
+import { CommentSchema, RowSchema } from 'src/schemas/RowSchema';
+import { getAllActiveCommentsOfType } from './utils';
+import { Stack } from 'react-bootstrap';
+import { Divider } from '@aws-amplify/ui-react';
 
-//TODO - Eventually automate this 
-const user = 'Example User'
 
 const testingEmployees = [
-  { UserID: "abc", FirstName: "joe", LastName: "jane", Type: "Employee", Picture: "https://www.google.com/koala.png" },
-  { UserID: "bcd", FirstName: "david", LastName: "lev", Type: "Employee", Picture: "https://www.google.com/panda.png" },
+  { UserID: "abc", FirstName: "joe", LastName: "jane", Type: "Employee", Picture: "https://upload.wikimedia.org/wikipedia/commons/4/49/Koala_climbing_tree.jpg" },
+  { UserID: "bcd", FirstName: "david", LastName: "lev", Type: "Employee", Picture: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0f/Grosser_Panda.JPG/1200px-Grosser_Panda.JPG" },
   { UserID: "cde", FirstName: "crys", LastName: "tal", Type: "Employee", Picture: "https://www.google.com/capybara.png" },
   { UserID: "def", FirstName: "ken", LastName: "ney", Type: "Employee", Picture: "https://www.google.com/koala.png" },
 ]
@@ -82,30 +86,77 @@ function SearchEmployeeTimesheet({ employees, setSelected }) {
     );
   };
 
-  return (
-    <Box width={'100%'}>
-      <Select isSearchable={true}
-        defaultValue={employees[0]}
-        chakraStyles={customStyles}
-        size="lg"
-        options={employees}
-        onChange={handleChange}
-        components={{ DropdownIndicator }}
-        getOptionLabel={option => `${option.FirstName + " " + option.LastName}`}
-        getOptionValue={option => `${option.FirstName + " " + option.LastName}`} />
-    </Box>
-  )
+    // TODO: fix styling
+    // at the moment defaultValue is the first user in the employees array
+    // which is currently an invariant that matches the useState in Page
+    return (
+        <div style={{ width: '600px' }}>
+            <Select isSearchable={true}
+                defaultValue={employees[0]}
+                chakraStyles={customStyles}
+                size="lg"
+                options={employees}
+                onChange={handleChange}
+                components={{ DropdownIndicator }}
+                getOptionLabel={option => `${option.FirstName + " " + option.LastName}`}
+                getOptionValue={option => `${option.FirstName + " " + option.LastName}`} />
+        </div>
+    )
+}
+
+interface WeeklyCommentSectionProps {
+    weeklyComments: CommentSchema[];
+    weeklyReports: CommentSchema[];
+}
+
+// TODO: idk if we're keeping up just gonna remove bc doesnt look great atm
+function WeeklyCommentSection({
+    weeklyComments, 
+    weeklyReports
+}: WeeklyCommentSectionProps) {
+    // row of Comments
+    // row of Reports
+
+    // repetitive but readable code and should be more extensible
+    return (
+        <HStack>
+            <Text>Weekly Feedback</Text>
+            <Divider orientation='vertical' />
+            <Stack>
+                <HStack>
+                    <Stack>
+                        {weeklyComments.map(
+                            (comment) => (
+                                <HStack>
+                                    {/* TODO: later replace w api call to get user from userID*/}
+                                    {/* also use display card once it gets merged in*/}
+                                    <ProfileCard employee={testingEmployees[0]} />
+                                    <Text>{comment.Content}</Text>
+                                </HStack>
+                            ))}
+                    </Stack>
+                </HStack>
+                <Divider/>
+                <HStack>
+                    <Stack>
+                        {weeklyReports.map(
+                            (report) => (
+                                <HStack>
+                                    {/* TODO: later replace w api call to get user from userID*/}
+                                    <ProfileCard employee={testingEmployees[1]} />
+                                    <Text>{report.Content}</Text>
+                                </HStack>
+                            ))}
+                    </Stack>
+                </HStack>
+            </Stack>
+        </HStack>
+    )
 }
 
 export default function Page() {
   //const today = moment(); 
   const [selectedDate, setSelectedDate] = useState(moment().startOf('week').day(0));
-
-  const updateDateRange = (date: Moment) => {
-    setSelectedDate(date);
-    //TODO - Refactor this to use the constant in merge with contants branch 
-    setCurrentTimesheetsToDisplay(userTimesheets, date);
-  }
 
   // fetch the information of the user whos timesheet is being displayed
   // if user is an employee selected and user would be the same
@@ -123,8 +174,9 @@ export default function Page() {
   const [userTimesheets, setUserTimesheets] = useState([]);
   const [currentTimesheets, setCurrentTimesheets] = useState([]);
   const [selectedTimesheet, setTimesheet] = useState(undefined);
-  const [selectedTab, setTab] = useState(undefined);
 
+  const [weeklyComments, setWeeklyComments] = useState<CommentSchema[]>([]);
+  const [weeklyReports, setWeeklyReports] = useState<CommentSchema[]>([]);
 
   // this hook should always run first
   useEffect(() => {
@@ -177,19 +229,29 @@ export default function Page() {
         return entry
       }
     ));
+    }
 
-    // selectedTimesheet.TableData = rows;
+  const updateDateRange = (date: Moment) => {
+    setSelectedDate(date);
+    //TODO - Refactor this to use the constant in merge with contants branch 
+    setCurrentTimesheetsToDisplay(userTimesheets, date);
   }
+
+  const changeTimesheet = (sheet) => {
+      setTimesheet(sheet)
+      setWeeklyComments(getAllActiveCommentsOfType(CommentType.Comment, sheet.WeekNotes))
+      setWeeklyReports(getAllActiveCommentsOfType(CommentType.Report, sheet.WeekNotes))
+  }
+
 
   const setCurrentTimesheetsToDisplay = (timesheets, currentStartDate: Moment) => {
     const newCurrentTimesheets = timesheets.filter(sheet => moment.unix(sheet.StartDate).isSame(currentStartDate, 'day'));
 
     setCurrentTimesheets(newCurrentTimesheets);
-    setTimesheet(newCurrentTimesheets[0]);
     if (newCurrentTimesheets.length > 0) {
-      setTab(newCurrentTimesheets[0].CompanyID)
+      changeTimesheet(newCurrentTimesheets[0])
     }
-  }
+    }
 
   const renderWarning = () => {
     const currentDate = moment().tz(TIMEZONE);
@@ -214,35 +276,34 @@ export default function Page() {
 
 
 
-  return (
-    <>
-      <HStack spacing="120px">
-        <ProfileCard employee={user} />
-        {(user?.Type === "Supervisor" || user?.Type === "Admin") ?
-          <>
-            <SearchEmployeeTimesheet employees={associates} setSelected={setSelectedUser} />
-            <IconButton aria-label='Download' icon={<DownloadIcon />} />
-            <IconButton aria-label='Report' icon={<WarningIcon />} />
-          </> : <></>}
-        <DateSelectorCard onDateChange={updateDateRange} date={selectedDate} />
-        {selectedTimesheet && <SubmitCard />}
-
-      </HStack>
-      {useMemo(() => renderWarning(), [selectedDate])}
-      <Tabs>
-        <TabList>
-          {currentTimesheets.map(
-            (sheet) => (
-              <Tab onClick={() => { setTimesheet(sheet); setTab(sheet.CompanyID) }}>{sheet.CompanyID}</Tab>
-            )
-          )}
-          {currentTimesheets.length > 1 && <Tab onClick={() => setTab("Total")}>Total</Tab>}
-        </TabList>
-      </Tabs>
-      {selectedTab === "Total" ?
-        (<AggregationTable Date={selectedDate} timesheets={currentTimesheets} />)
-        : (currentTimesheets.length > 0 && <TimeTable columns={TABLE_COLUMNS} timesheet={selectedTimesheet} onTimesheetChange={processTimesheetChange} />)}
-
-    </>
-  )
+    return (
+        <>
+            <HStack spacing="120px">
+                <ProfileCard employee={user} />
+                {(user?.Type === "Supervisor" || user?.Type === "Admin") ?
+                    <>
+                        <SearchEmployeeTimesheet employees={associates} setSelected={setSelectedUser} />
+                        <IconButton aria-label='Download' icon={<DownloadIcon />} />
+                        <IconButton aria-label='Report' icon={<WarningIcon />} />
+                    </> : <></>}
+                <DateSelectorCard onDateChange={updateDateRange} date={selectedDate} />
+                
+            </HStack>
+            {useMemo(() => renderWarning(), [selectedDate])}
+            <Tabs>
+                <TabList>
+                    {currentTimesheets.map(
+                        (sheet) => (
+                            <Tab onClick={() => changeTimesheet(sheet)}>{sheet.CompanyID}</Tab>
+                        )
+                    )}
+                </TabList>
+            </Tabs>
+            {selectedTimesheet?.CompanyID === "Total" ?
+                (<AggregationTable Date={selectedDate} timesheets={currentTimesheets} />)
+                : (<UserContext.Provider value={user}>
+                    <TimeTable columns={TABLE_COLUMNS} timesheet={selectedTimesheet} onTimesheetChange={processTimesheetChange} />
+                </UserContext.Provider>)}
+        </>
+    )
 }

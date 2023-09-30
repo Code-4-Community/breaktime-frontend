@@ -15,6 +15,7 @@ import ApiClient from 'src/components/Auth/apiClient'
 
 import * as updateSchemas from 'src/schemas/backend/UpdateTimesheet'
 import apiClient from 'src/components/Auth/apiClient';
+import { UserSchema } from 'src/schemas/UserSchema';
 
 interface RowProps {
     row: RowSchema;
@@ -66,7 +67,7 @@ function Row(props: RowProps) {
             "Clock-in": <TimeEntry row={fields} field={"Start"} updateFields={updateField} />,
             "Clock-out": <TimeEntry row={fields} field={"End"} updateFields={updateField} />,
             "Hours": <Duration row={fields} />,
-            "Comment": <CommentCell comments={fields.Comment} setComment={updateField} />,
+            "Comment": <CommentCell date={fields.Date} comments={fields.Comment}/>,
         }
         const itemOrdering = ["Type", "Date", "Clock-in", "Clock-out", "Hours", "Comment"];
 
@@ -80,5 +81,4 @@ function Row(props: RowProps) {
         </Fragment>
     }
 }
-
 export default Row;
