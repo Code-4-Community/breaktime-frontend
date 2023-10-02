@@ -35,6 +35,7 @@ import apiClient from '../Auth/apiClient';
 import AggregationTable from './AggregationTable';
 import { v4 as uuidv4 } from 'uuid';
 import { UserSchema } from '../../schemas/UserSchema'
+import { TimeSheetSchema } from 'src/schemas/TimesheetSchema';
 
 import { SearchIcon, WarningIcon, DownloadIcon } from '@chakra-ui/icons';
 import { Select, components } from 'chakra-react-select'
@@ -122,7 +123,7 @@ export default function Page() {
   // TODO: add types
   const [userTimesheets, setUserTimesheets] = useState([]);
   const [currentTimesheets, setCurrentTimesheets] = useState([]);
-  const [selectedTimesheet, setTimesheet] = useState(undefined);
+  const [selectedTimesheet, setTimesheet] = useState<TimeSheetSchema>(undefined);
   const [selectedTab, setTab] = useState(undefined);
 
 

@@ -74,12 +74,12 @@ export class ApiClient {
     return this.get("auth/timesheet") as Promise<TimeSheetSchema[]>;
   }
 
-  public async updateUserTimesheet(updatedEntry): Promise<Boolean> {
-    //TODO - Format json?
-    return this.post("/auth/timesheet", {
-      timesheet: updatedEntry,
-    }) as Promise<Boolean>;
-  }
+  // public async updateUserTimesheet(updatedEntry): Promise<Boolean> {
+  //   //TODO - Format json?
+  //   return this.post("/auth/timesheet", {
+  //     timesheet: updatedEntry,
+  //   }) as Promise<Boolean>;
+  // }
 
   public async getPasswordTest(): Promise<string> {
     return this.get("/auth/timesheet") as Promise<string>;

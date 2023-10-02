@@ -25,8 +25,14 @@ export const TABLE_COLUMNS = ['Type', 'Date', 'Clock-in', 'Clock-Out', 'Hours', 
 
 export enum CardState {
     Rejected = "Rejected",
-    InReviewEmployer = "In Review - Employer",
-    InReviewBreaktime = "In Review - Breaktime",
-    Completed = "Completed",
+    InReviewSupervisor = "In Review - Supervisor",
+    InReviewAdmin = "In Review - Admin",
+    AdminFinalized = "Admin Finalized",
     Unsubmitted = "Unsubmitted"
+}
+
+export enum UserTypes {
+    Associate = "Associate",
+    Supervisor = "Supervisor",
+    Admin = "Admin"
 }
