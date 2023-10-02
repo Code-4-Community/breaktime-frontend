@@ -1,94 +1,136 @@
-import CommentModal from './CommentModal';
-import { CardState } from './types'
+import CommentModal from "./CommentModal";
+import { CardState } from "./types";
 
-import React, { useState, useEffect } from 'react'
-import { Box, Card, CardHeader, CardBody, CardFooter, Button } from '@chakra-ui/react';
-import { DEFAULT_COLORS } from 'src/constants';
-import ApiClient from 'src/components/Auth/apiClient'
-import * as updateSchemas from 'src/schemas/backend/UpdateTimesheet'
-import { StatusType, StatusEntryType } from 'src/schemas/StatusSchema';
-import { UserTypes } from './types';
-import { TimesheetStatus } from 'src/schemas/backend/Timesheet';
-import moment from 'moment';
+import React, { useState, useEffect } from "react";
+import {
+  Box,
+  Card,
+  CardHeader,
+  CardBody,
+  CardFooter,
+  Button,
+} from "@chakra-ui/react";
+import { DEFAULT_COLORS } from "src/constants";
+import ApiClient from "src/components/Auth/apiClient";
+import * as updateSchemas from "src/schemas/backend/UpdateTimesheet";
+import { StatusType, StatusEntryType } from "src/schemas/StatusSchema";
+import { UserTypes } from "./types";
+import { TimesheetStatus } from "src/schemas/backend/Timesheet";
+import moment from "moment";
 
-interface submitCardProps{
-  timesheetId: number,
-  associateId: string,
-  userType: UserTypes,
-  timesheetStatus: StatusType
+interface submitCardProps {
+  timesheetId: number;
+  associateId: string;
+  userType: UserTypes; // TODO : This should really be in global context for react
+  timesheetStatus: StatusType;
 }
 
 export default function SubmitCard(props: submitCardProps) {
 
+  /** Whether or not the logged-in user has submitted this timesheet yet.*/
   const [submitted, setSubmitted] = useState(false);
-  const [submitDate, setSubmitDate] = useState(null);
-  const [state, setState] = useState(CardState.Unsubmitted);
 
-  let statusEntry: StatusEntryType = undefined;
+  /** The date and time (as a moment) that the logged-in user submitted/reviewed/finalized this timesheet.*/
+  const [submitDate, setSubmitDate] = useState(null);
+
+  /**
+   *   The card state which corresponds to the latest status update from the timesheet. Corresponds to card color.
+   *   Note that this is *not* dependent on the logged in user. I.e. if the latest status update was that 
+   *   the supervisor had submitted their timesheet review, the card state would be CardState.InReviewAdmin for
+   *   any associate, supervisor, or admin that was viewing the timesheet.
+   */
+  const [state, setState] = useState(CardState.Unsubmitted);
+  // TODO: Add information about who submitted when as state variables? i.e. included the authorIds somewhere
 
   useEffect(() => {
-    switch(props.userType){
+    let statusEntry: StatusEntryType = undefined;
+
+    // Determine the appropriate status entry to match up with the logged in user's role
+    switch (props.userType) {
       case UserTypes.Associate:
-        statusEntry = props.timesheetStatus.HoursSubmitted
+        statusEntry = props.timesheetStatus.HoursSubmitted;
         break;
-        
+
       case UserTypes.Supervisor:
-        statusEntry = props.timesheetStatus.HoursReviewed
+        statusEntry = props.timesheetStatus.HoursReviewed;
         break;
-        
+
       case UserTypes.Admin:
-        statusEntry = props.timesheetStatus.Finalized
+        statusEntry = props.timesheetStatus.Finalized;
         break;
     }
 
-    const isSubmitted = statusEntry === undefined
-    setSubmitted(isSubmitted)
+    const isSubmitted = statusEntry === undefined;
+    setSubmitted(isSubmitted);
+
+    // Set the submitted date to when this
     if (submitted) {
-      setSubmitDate(moment.unix(statusEntry.Date))
+      setSubmitDate(moment.unix(statusEntry.Date));
     }
 
-    if() {
-
+    // Determine the latest status update to set the card state
+    if (props.timesheetStatus.Finalized !== undefined) {
+      setState(CardState.AdminFinalized);
+    } else if (props.timesheetStatus.HoursReviewed !== undefined) {
+      setState(CardState.InReviewAdmin);
+    } else if (props.timesheetStatus.HoursSubmitted !== undefined) {
+      setState(CardState.InReviewSupervisor);
+    } else {
+      setState(CardState.Unsubmitted);
     }
-    
-    //TODO - API Call to determine if the table has been submitted or not.
-    //Will set submitted? here and also submitDate if it was submitted to grab the date     
-  }, [])
+  }, []);
 
   const submitAction = () => {
-    ApiClient.updateTimesheet(updateSchemas.StatusChangeRequest.parse({
-      TimesheetID: props.timesheetId,
-      AssociateID: props.associateId}))
+    // Update the current timesheet to be submitted 
+    ApiClient.updateTimesheet(
+      updateSchemas.StatusChangeRequest.parse({
+        TimesheetID: props.timesheetId,
+        AssociateID: props.associateId,
+      })
+    );
 
-     // TODO : setup info to read from current db entry
+    // TODO : setup info to read from current db entry
     setSubmitted(!submitted);
     const currentTime = new Date();
     setSubmitDate(currentTime.toString());
     if (state === CardState.Unsubmitted) {
       setState(CardState.InReviewSupervisor);
-    }
-    else {
+    } else {
       setState(CardState.Unsubmitted);
     }
-  }
+  };
 
   return (
-    <Box className="col-md-2" style={{ display: "flex", justifyContent: 'flex-end' }}>
+    <Box
+      className="col-md-2"
+      style={{ display: "flex", justifyContent: "flex-end" }}
+    >
       <Card
-        bg={(state === CardState.AdminFinalized) ? 'success' : ((state === CardState.InReviewAdmin || state === CardState.InReviewSupervisor) ? 'warning' : 'danger')}
+        bg={
+          state === CardState.AdminFinalized
+            ? "success"
+            : state === CardState.InReviewAdmin ||
+              state === CardState.InReviewSupervisor
+            ? "warning"
+            : "danger"
+        }
         textColor={DEFAULT_COLORS.BREAKTIME_BLUE}
         key="submit_description"
-        className="mb-2 text-center">
+        className="mb-2 text-center"
+      >
         <CardBody>
-          <Button onClick={submitAction}>{submitted ? "Resubmit" : "Submit!"}</Button>
+          <Button onClick={submitAction}>
+            {submitted ? "Resubmit" : "Submit!"}
+          </Button>
         </CardBody>
-        {submitted && <CardFooter>
-          {submitDate}
-          {state}
-          <CommentModal></CommentModal>
-
-        </CardFooter>}
+        {submitted && (
+          <CardFooter>
+            {submitDate}
+            {state}
+            <CommentModal></CommentModal>
+          </CardFooter>
+        )}
       </Card>
-    </Box >
+    </Box>
   );
 }
