@@ -26,7 +26,6 @@ interface submitCardProps {
 }
 
 export default function SubmitCard(props: submitCardProps) {
-
   /** Whether or not the logged-in user has submitted this timesheet yet.*/
   const [submitted, setSubmitted] = useState(false);
 
@@ -35,7 +34,7 @@ export default function SubmitCard(props: submitCardProps) {
 
   /**
    *   The card state which corresponds to the latest status update from the timesheet. Corresponds to card color.
-   *   Note that this is *not* dependent on the logged in user. I.e. if the latest status update was that 
+   *   Note that this is *not* dependent on the logged in user. I.e. if the latest status update was that
    *   the supervisor had submitted their timesheet review, the card state would be CardState.InReviewAdmin for
    *   any associate, supervisor, or admin that was viewing the timesheet.
    */
@@ -81,16 +80,20 @@ export default function SubmitCard(props: submitCardProps) {
   }, []);
 
   const submitAction = () => {
-    // Update the current timesheet to be submitted 
+    console.log(props);
+    // Update the current timesheet to be submitted by the logged-in user.
+    // The type of status can be determined on the backend by the user type
+    // TODO: Might be easiest to just include the user type here though tbh... otherwise more work for backend,
+    // and we have it readily available here already
     ApiClient.updateTimesheet(
       updateSchemas.StatusChangeRequest.parse({
-        TimesheetID: props.timesheetId,
-        AssociateID: props.associateId,
+        TimesheetId: props.timesheetId,
+        AssociateId: props.associateId,
       })
     );
 
-    // TODO : setup info to read from current db entry
-    setSubmitted(!submitted);
+    // TODO : setup info to read from current db entry, or at least based on response code from API POST
+    setSubmitted(submitted);
     const currentTime = new Date();
     setSubmitDate(currentTime.toString());
     if (state === CardState.Unsubmitted) {

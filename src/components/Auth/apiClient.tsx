@@ -2,6 +2,7 @@ import { Auth } from "aws-amplify";
 import axios, { AxiosInstance } from "axios";
 import { TimeSheetSchema } from "../../schemas/TimesheetSchema";
 import { UserSchema } from "../../schemas/UserSchema";
+import { UserTypes } from "../TimeCardPage/types";
 
 const defaultBaseUrl =
   process.env.REACT_APP_API_BASE_URL ?? "http://localhost:3000";
@@ -66,7 +67,7 @@ export class ApiClient {
   }
 
   public async updateTimesheet(req): Promise<unknown> {
-    return this.axiosInstance.post('/auth/timesheet', req)
+    return this.axiosInstance.post("/auth/timesheet", req);
   }
 
   // TODO: setup endpoint for associate/supervisor/admin so it returns a list of timesheets for given uuid
@@ -92,7 +93,7 @@ export class ApiClient {
       UserID: "abc",
       FirstName: "john",
       LastName: "doe",
-      Type: "Associate",
+      Type: UserTypes.Associate,
       Picture: "https://www.google.com/koala.png",
     };
   }
@@ -104,7 +105,7 @@ export class ApiClient {
         UserID: "bcd",
         FirstName: "joe",
         LastName: "jane",
-        Type: "Associate",
+        Type: UserTypes.Associate,
         Picture: "https://www.google.com/panda.png",
       },
     ];
