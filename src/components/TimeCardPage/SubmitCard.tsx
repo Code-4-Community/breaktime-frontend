@@ -17,15 +17,19 @@ import { StatusType, StatusEntryType } from "src/schemas/StatusSchema";
 import { UserTypes } from "./types";
 import { TimesheetStatus } from "src/schemas/backend/Timesheet";
 import moment from "moment";
+import { useToast } from "@chakra-ui/react";
 
 interface submitCardProps {
   timesheetId: number;
   associateId: string;
   userType: UserTypes; // TODO : This should really be in global context for react
   timesheetStatus: StatusType;
+  refreshTimesheetCallback: Function;
 }
 
 export default function SubmitCard(props: submitCardProps) {
+  const toast = useToast()
+
   /** Whether or not the logged-in user has submitted this timesheet yet.*/
   const [submitted, setSubmitted] = useState(false);
 
@@ -80,27 +84,36 @@ export default function SubmitCard(props: submitCardProps) {
   }, []);
 
   const submitAction = () => {
-    console.log(props);
     // Update the current timesheet to be submitted by the logged-in user.
     // The type of status can be determined on the backend by the user type
-    // TODO: Might be easiest to just include the user type here though tbh... otherwise more work for backend,
-    // and we have it readily available here already
-    ApiClient.updateTimesheet(
-      updateSchemas.StatusChangeRequest.parse({
-        TimesheetId: props.timesheetId,
-        AssociateId: props.associateId,
-      })
-    );
+    try{
+      ApiClient.updateTimesheet(
+        updateSchemas.StatusChangeRequest.parse({
+          TimesheetId: props.timesheetId,
+          AssociateId: props.associateId,
+        })
+      );
 
-    // TODO : setup info to read from current db entry, or at least based on response code from API POST
-    setSubmitted(submitted);
-    const currentTime = new Date();
-    setSubmitDate(currentTime.toString());
-    if (state === CardState.Unsubmitted) {
-      setState(CardState.InReviewSupervisor);
-    } else {
-      setState(CardState.Unsubmitted);
+      // TODO: Confirm successful 2xx code response from API
+      props.refreshTimesheetCallback();
+
+      toast({title: 'Successful submission!', status: 'success', duration: 3000, isClosable: true})
+    } catch(err) {
+      // TODO: Send toast error message
+      // toast.error('Uh oh - something went wrong with submitting...')
+      toast({title: 'Uh oh, something went wrong...', status: 'error', duration: 3000, isClosable: true})
+      return;
     }
+
+
+    // setSubmitted(submitted);
+    // const currentTime = new Date();
+    // setSubmitDate(currentTime.toString());
+    // if (state === CardState.Unsubmitted) {
+    //   setState(CardState.InReviewSupervisor);
+    // } else {
+    //   setState(CardState.Unsubmitted);
+    // }
   };
 
   return (

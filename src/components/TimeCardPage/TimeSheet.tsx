@@ -43,6 +43,7 @@ import { TimeSheetSchema } from "src/schemas/TimesheetSchema";
 
 import { SearchIcon, WarningIcon, DownloadIcon } from "@chakra-ui/icons";
 import { Select, components } from "chakra-react-select";
+import { useToast } from '@chakra-ui/react'
 
 //TODO - Eventually automate this
 const user = "Example User";
@@ -138,6 +139,7 @@ function SearchEmployeeTimesheet({ employees, setSelected }) {
 }
 
 export default function Page() {
+  const toast = useToast()
   //const today = moment();
   const [selectedDate, setSelectedDate] = useState(
     moment().startOf("week").day(0)
@@ -185,14 +187,28 @@ export default function Page() {
     // set selected user
   }, []);
 
-  // Pulls user timesheets, marking first returned as the active one
-  useEffect(() => {
-    apiClient.getUserTimesheets(selectedUser?.UserID).then((timesheets) => {
+  const getUpdatedTimesheet = (userId) => {
+    apiClient.getUserTimesheets(userId).then((timesheets) => {
       setUserTimesheets(timesheets);
       //By Default just render / select the first timesheet for now
       setCurrentTimesheetsToDisplay(timesheets, selectedDate);
     });
+  }
+
+  // Pulls user timesheets, marking first returned as the active one
+  useEffect(() => {
+    getUpdatedTimesheet(selectedUser?.UserID)
   }, [selectedUser]);
+
+  // Callback function that triggers GET request to the API to grab the most recent version of timesheets for the current selected user,
+  // and re-sets the current timesheet state variable
+  const forceRefreshTimesheet = () => {
+    if (selectedUser !== undefined) {
+      getUpdatedTimesheet(selectedUser.UserID);
+    } else {
+      toast({title: 'error', status: 'error', duration: 3000, isClosable: true})
+    }
+  }
 
   const processTimesheetChange = (updated_sheet) => {
     // Updating the rows of the selected timesheets from our list of timesheets
@@ -290,6 +306,7 @@ export default function Page() {
             associateId={selectedTimesheet.UserID}
             userType={user.Type}
             timesheetStatus={selectedTimesheet.Status}
+            refreshTimesheetCallback={forceRefreshTimesheet}
           />
         )}
       </HStack>
@@ -322,6 +339,18 @@ export default function Page() {
           />
         )
       )}
+      {/* <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+        /> */}
     </>
   );
 }
