@@ -27,7 +27,7 @@ import {
 } from '@chakra-ui/react'
 
 
-import { TIMESHEET_DURATION, TIMEZONE, EXAMPLE_TIMESHEET, EXAMPLE_TIMESHEET_2 } from 'src/constants';
+import { TIMESHEET_DURATION, TIMEZONE} from 'src/constants';
 
 import { Review_Stages, TABLE_COLUMNS , CommentType } from './types';
 import moment, { Moment } from 'moment-timezone';
@@ -45,6 +45,9 @@ import { getAllActiveCommentsOfType } from './utils';
 import { Stack } from 'react-bootstrap';
 import { Divider } from '@aws-amplify/ui-react';
 
+
+// Always adjust local timezone to Breaktime's timezone
+moment.tz.setDefault(TIMEZONE);
 
 const testingEmployees = [
   { UserID: "abc", FirstName: "joe", LastName: "jane", Type: "Employee", Picture: "https://upload.wikimedia.org/wikipedia/commons/4/49/Koala_climbing_tree.jpg" },
@@ -254,7 +257,7 @@ export default function Page() {
     }
 
   const renderWarning = () => {
-    const currentDate = moment().tz(TIMEZONE);
+    const currentDate = moment();
 
     const dateToCheck = moment(selectedDate);
     dateToCheck.add(TIMESHEET_DURATION, 'days');
