@@ -38,7 +38,7 @@ export function TimeEntry(props: TimeEntryProps) {
             const calculatedTime = Number(hours) * 60 + Number(parsedMinutes)
             setMinutes(calculatedTime); 
             console.log(calculatedTime);
-            //rowToMutate[props.field] = calculatedTime; 
+            rowToMutate[props.field] = calculatedTime; 
         } else {
             // Value is null, so mark it as undefined in our processing 
             rowToMutate[props.field] = undefined; 
@@ -53,6 +53,9 @@ export function TimeEntry(props: TimeEntryProps) {
       {
         // initialize an epoch that starts at 00:00 and add in the minutes
         // to string its hour and time
+        if (minutes == undefined) {
+          return undefined;
+        }
         const epoch = moment().set('hour', 0).set('minute', 0);
         epoch.add(minutes, 'minutes');
         return epoch.format("HH:mm");
@@ -60,7 +63,7 @@ export function TimeEntry(props: TimeEntryProps) {
   
   useEffect(() => {
     if (props.row.Associate !== undefined) {
-      setMinutes(minutesFrom00(props.row.Associate[props.field]));
+      setMinutes(props.row.Associate[props.field]);
     }
   }, []);
 
@@ -72,7 +75,7 @@ export function TimeEntry(props: TimeEntryProps) {
       onChange={(event) => {
         onChange(event.target.value);
       }}
-      value={minutes}
+      value={minutesFrom00(minutes)}
       
     />
   );
