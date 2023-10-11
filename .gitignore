@@ -7,7 +7,7 @@
 .env
 
 .vscode/
-
+.idea/
 .package-lock.json 
 
 # testing
