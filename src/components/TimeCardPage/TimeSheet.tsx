@@ -104,98 +104,17 @@ function SearchEmployeeTimesheet({ employees, setSelected }) {
     )
 }
 
-interface WeeklyCommentSectionProps {
-    weeklyComments: CommentSchema[];
-    weeklyReports: CommentSchema[];
-}
 
-<<<<<<< Updated upstream
-// TODO: idk if we're keeping up just gonna remove bc doesnt look great atm
-function WeeklyCommentSection({
-    weeklyComments, 
-    weeklyReports
-}: WeeklyCommentSectionProps) {
-    // row of Comments
-    // row of Reports
 
-    // repetitive but readable code and should be more extensible
-    return (
-        <HStack>
-            <Text>Weekly Feedback</Text>
-            <Divider orientation='vertical' />
-            <Stack>
-                <HStack>
-                    <Stack>
-                        {weeklyComments.map(
-                            (comment) => (
-                                <HStack>
-                                    {/* TODO: later replace w api call to get user from userID*/}
-                                    {/* also use display card once it gets merged in*/}
-                                    <ProfileCard employee={testingEmployees[0]} />
-                                    <Text>{comment.Content}</Text>
-                                </HStack>
-                            ))}
-                    </Stack>
-                </HStack>
-                <Divider/>
-                <HStack>
-                    <Stack>
-                        {weeklyReports.map(
-                            (report) => (
-                                <HStack>
-                                    {/* TODO: later replace w api call to get user from userID*/}
-                                    <ProfileCard employee={testingEmployees[1]} />
-                                    <Text>{report.Content}</Text>
-                                </HStack>
-                            ))}
-                    </Stack>
-                </HStack>
-            </Stack>
-        </HStack>
-    )
-}
-
-export default function Page() {
-  //const today = moment(); 
-  const [selectedDate, setSelectedDate] = useState(moment().startOf('week').day(0));
-
-  // fetch the information of the user whos timesheet is being displayed
-  // if user is an employee selected and user would be the same
-  // if user is a supervisor/admin then selected would contain the information of the user
-  // whos timesheet is being looked at and user would contain the supervisor/admins information
-  // by default the first user is selected
-  const [selectedUser, setSelectedUser] = useState<UserSchema>();
-  const [user, setUser] = useState<UserSchema>();
-=======
 
 export default function Page() {
     const [selectedDate, setSelectedDate] = useState(moment().startOf('week').day(0));
     const [selectedAssociate, setSelectedAssociate] = useState<UserSchema>();
     const [user, setUser] = useState<UserSchema>();
->>>>>>> Stashed changes
 
-  // associates is only used by supervisor/admin for the list of all associates they have access to
-  const [associates, setAssociates] = useState<UserSchema[]>([]);
+    // associates is only used by supervisor/admin for the list of all associates they have access to
+    const [associates, setAssociates] = useState<UserSchema[]>([]);
 
-<<<<<<< Updated upstream
-  // A list of the timesheet objects
-  // TODO: add types
-  const [userTimesheets, setUserTimesheets] = useState([]);
-  const [currentTimesheets, setCurrentTimesheets] = useState([]);
-  const [selectedTimesheet, setTimesheet] = useState(undefined);
-
-  const [weeklyComments, setWeeklyComments] = useState<CommentSchema[]>([]);
-  const [weeklyReports, setWeeklyReports] = useState<CommentSchema[]>([]);
-
-  // this hook should always run first
-  useEffect(() => {
-    apiClient.getUser().then(userInfo => {
-      setUser(userInfo);
-      if (userInfo.Type === "Supervisor" || userInfo.Type === "Admin") {
-        apiClient.getAllUsers().then(users => {
-          setAssociates(users);
-          setSelectedUser(users[0]);
-=======
     // A list of the timesheet objects
     const [userTimesheets, setUserTimesheets] = useState<TimeSheetSchema[]>([]);
     const [currentTimesheets, setCurrentTimesheets] = useState<TimeSheetSchema[]>([]);
@@ -212,34 +131,13 @@ export default function Page() {
                 })
             }
             setSelectedAssociate(userInfo)
->>>>>>> Stashed changes
         })
-      }
-      setSelectedUser(userInfo)
-    })
     // if employee setSelectedUSer to be userinfo
     // if supervisor/admin get all users
     // set selected user
   }, [])
 
-<<<<<<< Updated upstream
-  // Pulls user timesheets, marking first returned as the active one
-  useEffect(() => {
-    apiClient.getUserTimesheets(selectedUser?.UserID).then(timesheets => {
-      setUserTimesheets(timesheets);
-      //By Default just render / select the first timesheet for now
-      setCurrentTimesheetsToDisplay(timesheets, selectedDate);
-    });
-  }, [selectedUser])
 
-  const processTimesheetChange = (updated_sheet) => {
-    // Updating the rows of the selected timesheets from our list of timesheets
-    const modifiedTimesheets = userTimesheets.map((entry) => {
-      if (entry.TimesheetID === selectedTimesheet.TimesheetID) {
-        return {
-          ...entry,
-          TableData: updated_sheet.TableData
-=======
     // Pulls user timesheets, marking first returned as the active one
     useEffect(() => {
         apiClient.getUserTimesheets(selectedAssociate?.UserID).then(timesheets => {
@@ -263,55 +161,18 @@ export default function Page() {
         });
         setUserTimesheets(modifiedTimesheets);
 
+
         //Also need to update our list of currently selected - TODO come up with a way to not need these duplicated lists
         setCurrentTimesheets(currentTimesheets.map(
-            (entry) => {
-                if (entry.TimesheetID === selectedTimesheet.TimesheetID) {
-                    return {
-                        ...entry,
-                        TableData: updated_sheet.TableData
-                    }
-                }
-                return entry
-            }
-        ));
-    }
-
-    const updateDateRange = (date: Moment) => {
-        setSelectedDate(date);
-        //TODO - Return the timesheets within the given period
-        setCurrentTimesheetsToDisplay(userTimesheets, date);
-    }
-
-
-
-
-    const setCurrentTimesheetsToDisplay = (timesheets, currentStartDate: Moment) => {
-        // currently only returning timesheets for a week (duration can't be modified)
-        const newCurrentTimesheets = timesheets.filter(sheet => moment.unix(sheet.StartDate).isSame(currentStartDate, 'day'));
-
-        setCurrentTimesheets(newCurrentTimesheets);
-        //TODO - check that there are always timesheets
-        if (newCurrentTimesheets.length > 0) {
-            setTimesheet(newCurrentTimesheets[0])
->>>>>>> Stashed changes
-        }
-      }
-      return entry
-    });
-    setUserTimesheets(modifiedTimesheets);
-
-    //Also need to update our list of currently selected - TODO come up with a way to not need these duplicated lists
-    setCurrentTimesheets(currentTimesheets.map(
-      (entry) => {
-        if (entry.TimesheetID === selectedTimesheet.TimesheetID) {
-          return {
-            ...entry,
-            TableData: updated_sheet.TableData
-          }
-        }
-        return entry
-      }
+         (entry) => {
+             if (entry.TimesheetID === selectedTimesheet.TimesheetID) {
+                 return {
+                     ...entry,
+                     TableData: updated_sheet.TableData
+                 }
+             }
+             return entry
+         }
     ));
     }
 
@@ -321,11 +182,6 @@ export default function Page() {
     setCurrentTimesheetsToDisplay(userTimesheets, date);
   }
 
-  const changeTimesheet = (sheet) => {
-      setTimesheet(sheet)
-      setWeeklyComments(getAllActiveCommentsOfType(CommentType.Comment, sheet.WeekNotes))
-      setWeeklyReports(getAllActiveCommentsOfType(CommentType.Report, sheet.WeekNotes))
-  }
 
 
   const setCurrentTimesheetsToDisplay = (timesheets, currentStartDate: Moment) => {
@@ -333,7 +189,7 @@ export default function Page() {
 
     setCurrentTimesheets(newCurrentTimesheets);
     if (newCurrentTimesheets.length > 0) {
-      changeTimesheet(newCurrentTimesheets[0])
+        setTimesheet(newCurrentTimesheets[0])
     }
     }
 
@@ -359,22 +215,17 @@ export default function Page() {
   }
 
 
-
     return (
         <>
             <HStack spacing="120px">
                 <ProfileCard employee={user} />
                 {(user?.Type === "Supervisor" || user?.Type === "Admin") ?
                     <>
-<<<<<<< Updated upstream
-                        <SearchEmployeeTimesheet employees={associates} setSelected={setSelectedUser} />
-                        <IconButton aria-label='Download' icon={<DownloadIcon />} />
-                        <IconButton aria-label='Report' icon={<WarningIcon />} />
-=======
+
                         <SearchEmployeeTimesheet employees={associates} setSelected={setSelectedAssociate}/>
                         <IconButton aria-label='Download' icon={<DownloadIcon/>}/>
                         <IconButton aria-label='Report' icon={<WarningIcon/>}/>
->>>>>>> Stashed changes
+
                     </> : <></>}
                 <DateSelectorCard onDateChange={updateDateRange} date={selectedDate} />
                 
