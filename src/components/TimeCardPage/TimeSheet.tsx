@@ -109,6 +109,7 @@ interface WeeklyCommentSectionProps {
     weeklyReports: CommentSchema[];
 }
 
+<<<<<<< Updated upstream
 // TODO: idk if we're keeping up just gonna remove bc doesnt look great atm
 function WeeklyCommentSection({
     weeklyComments, 
@@ -165,10 +166,18 @@ export default function Page() {
   // by default the first user is selected
   const [selectedUser, setSelectedUser] = useState<UserSchema>();
   const [user, setUser] = useState<UserSchema>();
+=======
+
+export default function Page() {
+    const [selectedDate, setSelectedDate] = useState(moment().startOf('week').day(0));
+    const [selectedAssociate, setSelectedAssociate] = useState<UserSchema>();
+    const [user, setUser] = useState<UserSchema>();
+>>>>>>> Stashed changes
 
   // associates is only used by supervisor/admin for the list of all associates they have access to
   const [associates, setAssociates] = useState<UserSchema[]>([]);
 
+<<<<<<< Updated upstream
   // A list of the timesheet objects
   // TODO: add types
   const [userTimesheets, setUserTimesheets] = useState([]);
@@ -186,6 +195,24 @@ export default function Page() {
         apiClient.getAllUsers().then(users => {
           setAssociates(users);
           setSelectedUser(users[0]);
+=======
+    // A list of the timesheet objects
+    const [userTimesheets, setUserTimesheets] = useState<TimeSheetSchema[]>([]);
+    const [currentTimesheets, setCurrentTimesheets] = useState<TimeSheetSchema[]>([]);
+    const [selectedTimesheet, setTimesheet] = useState<TimeSheetSchema>(undefined);
+
+    // this hook should always run first
+    useEffect(() => {
+        apiClient.getUser().then(userInfo => {
+            setUser(userInfo);
+            if (userInfo.Type === "Supervisor" || userInfo.Type === "Admin") {
+                apiClient.getAllUsers().then(users => {
+                    setAssociates(users);
+                    setSelectedAssociate(users[0]);
+                })
+            }
+            setSelectedAssociate(userInfo)
+>>>>>>> Stashed changes
         })
       }
       setSelectedUser(userInfo)
@@ -195,6 +222,7 @@ export default function Page() {
     // set selected user
   }, [])
 
+<<<<<<< Updated upstream
   // Pulls user timesheets, marking first returned as the active one
   useEffect(() => {
     apiClient.getUserTimesheets(selectedUser?.UserID).then(timesheets => {
@@ -211,6 +239,62 @@ export default function Page() {
         return {
           ...entry,
           TableData: updated_sheet.TableData
+=======
+    // Pulls user timesheets, marking first returned as the active one
+    useEffect(() => {
+        apiClient.getUserTimesheets(selectedAssociate?.UserID).then(timesheets => {
+            setUserTimesheets(timesheets);
+            //By Default just render / select the first timesheet for now
+            setCurrentTimesheetsToDisplay(timesheets, selectedDate);
+        });
+    }, [selectedAssociate])
+
+    //update userTimesheets when selectedTimesheet is updated
+    const processTimesheetChange = (updated_sheet) => {
+        // Updating the rows of the selected timesheets from our list of timesheets
+        const modifiedTimesheets = userTimesheets.map((entry) => {
+            if (entry.TimesheetID === selectedTimesheet.TimesheetID) {
+                return {
+                    ...entry,
+                    TableData: updated_sheet.TableData
+                }
+            }
+            return entry
+        });
+        setUserTimesheets(modifiedTimesheets);
+
+        //Also need to update our list of currently selected - TODO come up with a way to not need these duplicated lists
+        setCurrentTimesheets(currentTimesheets.map(
+            (entry) => {
+                if (entry.TimesheetID === selectedTimesheet.TimesheetID) {
+                    return {
+                        ...entry,
+                        TableData: updated_sheet.TableData
+                    }
+                }
+                return entry
+            }
+        ));
+    }
+
+    const updateDateRange = (date: Moment) => {
+        setSelectedDate(date);
+        //TODO - Return the timesheets within the given period
+        setCurrentTimesheetsToDisplay(userTimesheets, date);
+    }
+
+
+
+
+    const setCurrentTimesheetsToDisplay = (timesheets, currentStartDate: Moment) => {
+        // currently only returning timesheets for a week (duration can't be modified)
+        const newCurrentTimesheets = timesheets.filter(sheet => moment.unix(sheet.StartDate).isSame(currentStartDate, 'day'));
+
+        setCurrentTimesheets(newCurrentTimesheets);
+        //TODO - check that there are always timesheets
+        if (newCurrentTimesheets.length > 0) {
+            setTimesheet(newCurrentTimesheets[0])
+>>>>>>> Stashed changes
         }
       }
       return entry
@@ -282,9 +366,15 @@ export default function Page() {
                 <ProfileCard employee={user} />
                 {(user?.Type === "Supervisor" || user?.Type === "Admin") ?
                     <>
+<<<<<<< Updated upstream
                         <SearchEmployeeTimesheet employees={associates} setSelected={setSelectedUser} />
                         <IconButton aria-label='Download' icon={<DownloadIcon />} />
                         <IconButton aria-label='Report' icon={<WarningIcon />} />
+=======
+                        <SearchEmployeeTimesheet employees={associates} setSelected={setSelectedAssociate}/>
+                        <IconButton aria-label='Download' icon={<DownloadIcon/>}/>
+                        <IconButton aria-label='Report' icon={<WarningIcon/>}/>
+>>>>>>> Stashed changes
                     </> : <></>}
                 <DateSelectorCard onDateChange={updateDateRange} date={selectedDate} />
                 
@@ -294,7 +384,7 @@ export default function Page() {
                 <TabList>
                     {currentTimesheets.map(
                         (sheet) => (
-                            <Tab onClick={() => changeTimesheet(sheet)}>{sheet.CompanyID}</Tab>
+                            <Tab onClick={() => setTimesheet(sheet)}>{sheet.CompanyID}</Tab>
                         )
                     )}
                 </TabList>
