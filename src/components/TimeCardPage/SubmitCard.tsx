@@ -154,6 +154,10 @@ export default function SubmitCard(props: submitCardProps) {
           <CardFooter>
             {submitDate}
             {state}
+            {/* TODO: this should come from each StatusEntry in the props.timesheetStatus object */}
+            Associate: abcb34993-1289378457-abdbd, 10-12-2023
+            Supervisor: some-toher-id, 10-14-2023
+            Admin: not submitted
             <CommentModal></CommentModal>
           </CardFooter>
         )}
