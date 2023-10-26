@@ -73,14 +73,12 @@ export const StatusEntryType = z.union(
   z.undefined()]); 
 
 // Status type contains the four stages of the pipeline we have defined 
-export const TimesheetStatus = z.object({
+export const TimesheetStatusSchema = z.object({
   HoursSubmitted: StatusEntryType, 
   HoursReviewed: StatusEntryType,
   ScheduleSubmitted: StatusEntryType, 
   Finalized: StatusEntryType 
 });
-
-
 
 /**
  * Represents the database schema for a weekly timesheet
@@ -89,14 +87,14 @@ export const TimeSheetSchema = z.object({
   TimesheetID: z.number(), 
   UserID: z.string(), 
   StartDate: z.number(),
-  Status: TimesheetStatus,
+  Status: TimesheetStatusSchema,
   CompanyID: z.string(), 
   HoursData: z.array(TimesheetEntrySchema).default([]), 
   ScheduleData: z.array(ScheduleEntrySchema).default([]),
   WeekNotes: z.array(NoteSchema).default([]),
 })
 
-export type TimesheetStatus = z.infer<typeof TimesheetStatus>
+export type TimesheetStatus = z.infer<typeof TimesheetStatusSchema>
 export type TimeEntrySchema = z.infer<typeof TimeEntrySchema> 
 export type ScheduleEntrySchema = z.infer<typeof ScheduleEntrySchema> 
 export type NoteSchema = z.infer<typeof NoteSchema>
