@@ -87,6 +87,7 @@ export default function SubmitCard(props: submitCardProps) {
     // Update the current timesheet to be submitted by the logged-in user.
     // The type of status can be determined on the backend by the user type
     try {
+      // TODO comment this out if not testing end-to-end functionality
       ApiClient.updateTimesheet(
         // TODO: This needs to get updated; match up status change request schema with backend)
         updateSchemas.StatusChangeRequest.parse({
