@@ -73,12 +73,20 @@ export const StatusEntryType = z.union(
   z.undefined()]); 
 
 // Status type contains the four stages of the pipeline we have defined 
-export const TimesheetStatus = z.object({
-  HoursSubmitted: StatusEntryType, 
-  HoursReviewed: StatusEntryType,
-  ScheduleSubmitted: StatusEntryType, 
-  Finalized: StatusEntryType 
-});
+// export const TimesheetStatus = z.object({
+//   HoursSubmitted: StatusEntryType, 
+//   HoursReviewed: StatusEntryType,
+//   ScheduleSubmitted: StatusEntryType, 
+//   Finalized: StatusEntryType 
+// });
+
+export enum TimesheetStatusType {
+  HOURS_SUBMITTED="HoursSubmitted",
+  HOURS_REVIEWED="HoursReviewed",
+  FINALIZED="Finalized"
+}
+
+
 
 
 
@@ -89,7 +97,11 @@ export const TimeSheetSchema = z.object({
   TimesheetID: z.number(), 
   UserID: z.string(), 
   StartDate: z.number(),
-  Status: TimesheetStatus,
+  Status: z.union([
+    z.literal(TimesheetStatusType.HOURS_SUBMITTED),
+    z.literal(TimesheetStatusType.HOURS_REVIEWED),
+    z.literal(TimesheetStatusType.FINALIZED)
+  ]),
   CompanyID: z.string(), 
   HoursData: z.array(TimesheetEntrySchema).default([]), 
   ScheduleData: z.array(ScheduleEntrySchema).default([]),

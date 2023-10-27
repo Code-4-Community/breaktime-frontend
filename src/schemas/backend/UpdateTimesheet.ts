@@ -86,10 +86,16 @@ export type UpdateRequest = z.infer<typeof UpdateRequest>
     Schema for changing the status of a timesheet 
         @TimesheetId: The id of the timesheet we are updating 
         @AssociateId: The id of the associate whose timesheet is being submitted
+        @authorId: 
+        @dateSubmitted: The date the timesheet was submitted
+        @statusType: 
 */
 export const StatusChangeRequest = z.object({
     TimesheetId: z.number(),
-    AssociateId: z.string()
+    AssociateId: z.string(),
+    authorId: z.number(),
+    dateSubmitted: z.number(),
+    statusType: z.enum([dbtypes.TimesheetStatusType.HOURS_SUBMITTED, dbtypes.TimesheetStatusType.HOURS_REVIEWED, dbtypes.TimesheetStatusType.FINALIZED]),
 })
 export type StatusChangeRequest = z.infer<typeof StatusChangeRequest>
 

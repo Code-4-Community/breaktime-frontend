@@ -91,6 +91,9 @@ export default function SubmitCard(props: submitCardProps) {
         updateSchemas.StatusChangeRequest.parse({
           TimesheetId: props.timesheetId,
           AssociateId: props.associateId,
+          authorId: 12345, // TODO: Implement authorId functionality instead of dummy data
+          Status: props.timesheetStatus,
+          Date: moment().unix(),
         })
       );
 
