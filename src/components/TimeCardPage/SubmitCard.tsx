@@ -15,7 +15,7 @@ import ApiClient from "src/components/Auth/apiClient";
 import * as updateSchemas from "src/schemas/backend/UpdateTimesheet";
 import { StatusType, StatusEntryType } from "src/schemas/StatusSchema";
 import { UserTypes } from "./types";
-import { TimesheetStatus } from "src/schemas/backend/Timesheet";
+import { TimesheetStatusSchema } from "src/schemas/backend/Timesheet";
 import moment from "moment";
 import { useToast } from "@chakra-ui/react";
 
@@ -28,7 +28,7 @@ interface submitCardProps {
 }
 
 export default function SubmitCard(props: submitCardProps) {
-  const toast = useToast()
+  const toast = useToast();
 
   /** Whether or not the logged-in user has submitted this timesheet yet.*/
   const [submitted, setSubmitted] = useState(false);
@@ -86,8 +86,10 @@ export default function SubmitCard(props: submitCardProps) {
   const submitAction = () => {
     // Update the current timesheet to be submitted by the logged-in user.
     // The type of status can be determined on the backend by the user type
-    try{
+    try {
+      // TODO comment this out if not testing end-to-end functionality
       ApiClient.updateTimesheet(
+        // TODO: This needs to get updated; match up status change request schema with backend)
         updateSchemas.StatusChangeRequest.parse({
           TimesheetId: props.timesheetId,
           AssociateId: props.associateId,
@@ -100,14 +102,23 @@ export default function SubmitCard(props: submitCardProps) {
       // TODO: Confirm successful 2xx code response from API
       props.refreshTimesheetCallback();
 
-      toast({title: 'Successful submission!', status: 'success', duration: 3000, isClosable: true})
-    } catch(err) {
+      toast({
+        title: "Successful submission!",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+      });
+    } catch (err) {
       // TODO: Send toast error message
       // toast.error('Uh oh - something went wrong with submitting...')
-      toast({title: 'Uh oh, something went wrong...', status: 'error', duration: 3000, isClosable: true})
+      toast({
+        title: "Uh oh, something went wrong...",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
       return;
     }
-
 
     // setSubmitted(submitted);
     // const currentTime = new Date();

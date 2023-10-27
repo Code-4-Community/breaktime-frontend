@@ -86,10 +86,6 @@ export enum TimesheetStatusType {
   FINALIZED="Finalized"
 }
 
-
-
-
-
 /**
  * Represents the database schema for a weekly timesheet
  */
@@ -108,7 +104,7 @@ export const TimeSheetSchema = z.object({
   WeekNotes: z.array(NoteSchema).default([]),
 })
 
-export type TimesheetStatus = z.infer<typeof TimesheetStatus>
+export type TimesheetStatus = z.infer<typeof TimesheetStatusSchema>
 export type TimeEntrySchema = z.infer<typeof TimeEntrySchema> 
 export type ScheduleEntrySchema = z.infer<typeof ScheduleEntrySchema> 
 export type NoteSchema = z.infer<typeof NoteSchema>
