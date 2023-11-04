@@ -12,11 +12,13 @@ import ShowReportModal from "./CommentModals/ShowReportModal";
 interface CommentProps {
   comments: CommentSchema[] | undefined;
   date: number;
+  timesheetID: number;
 }
 
 export function CommentCell({
   comments,
-  date
+  date,
+  timesheetID
 }: CommentProps) {
   const [currentComments, setCurrentComments] = useState(
     getAllActiveCommentsOfType(CommentType.Comment, comments)
@@ -40,12 +42,14 @@ export function CommentCell({
         setComments={setCurrentComments}
         comments={currentComments}
         isEditable={isEditable}
+        timesheetID={timesheetID}
       />
       <ShowReportModal
         date={date}
         setReports={setReports}
         reports={reports}
         isEditable={isEditable}
+        timesheetID={timesheetID}
       />
     </Stack>
   );

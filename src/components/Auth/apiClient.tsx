@@ -109,6 +109,11 @@ export class ApiClient {
       },
     ];
   }
-}
 
+  //TODO: hook up to backend
+  public async saveComment(comment: string, timesheetID: number): Promise<Boolean> {
+    return true;
+  }
+
+}
 export default new ApiClient();

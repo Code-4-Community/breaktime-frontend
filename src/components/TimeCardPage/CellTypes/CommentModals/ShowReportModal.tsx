@@ -21,7 +21,8 @@ import {
   VStack,
   Text,
   Select,
-  IconButton
+  IconButton,
+  useToast
 } from "@chakra-ui/react";
 
 import {
@@ -39,6 +40,7 @@ import { CommentSchema } from "../../../../schemas/RowSchema";
 import { CommentType, CellStatus, Color } from "../../types";
 import { ReportOptions } from "../../types";
 import { getAllActiveCommentsOfType, createNewComment, createNewReport } from "../../utils";
+import apiClient from "src/components/Auth/apiClient";
 
 const saveEditedComment = (
   setComments: Function, 
@@ -72,13 +74,15 @@ interface ShowReportModalProps {
   reports: CommentSchema[];
   setReports: Function;
   isEditable: boolean;
+  timesheetID: number;
 }
 
 export default function ShowReportModal({
   date,
   reports,
   setReports,
-  isEditable
+  isEditable,
+  timesheetID
 }: ShowReportModalProps) {
   const { isOpen: isOpenDisplay, onOpen: onOpenDisplay, onClose: onCloseDisplay } = useDisclosure();
   const { isOpen: isOpenAdd, onOpen: onOpenAdd, onClose: onCloseAdd } = useDisclosure();
@@ -146,7 +150,7 @@ export default function ShowReportModal({
     const [submitDisabled, setSubmitDisabled] =  useState(true);
     const [selectedTime, setSelectedTime] = useState(moment(date)); // fix this rn
     const user = useContext(UserContext);
-    
+    const toast = useToast();
 
     const handleRemarkChange = (e) => {
       setRemark(e.target.value);
@@ -169,10 +173,12 @@ export default function ShowReportModal({
         setReports([...reports, createNewReport(user, remark, selectedTime.unix())]);
         console.log(createNewReport(user, remark, parseInt(selectedTime.format('X')))); // currently gmt TODO: fix later
       }
-
-      // show a toast that its been submitted
+      toast.promise(apiClient.saveComment(remark, timesheetID), {
+        success: { title: 'Report saved', description: 'Your report has been saved.' },
+          error: { title: 'Something went wrong.', description: 'Please submit your report again.' },
+          loading: { title: 'Your report is being saved', description: 'Please wait' },
+      })
       onCloseAdd()
-      // TODO: call to db
     };
 
     return (

@@ -295,7 +295,7 @@ export default function Page() {
             </HStack>
             {useMemo(() => renderWarning(), [selectedDate])}
         <div>
-          <fieldset disabled={disabled}>
+          <fieldset disabled={false}>
             <Tabs>
                 <TabList>
                     {currentTimesheets.map(
