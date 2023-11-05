@@ -178,6 +178,7 @@ export default function ShowCommentModal({
         apiClient.saveComment(remark, timesheetID).then((resp) =>
           {if (resp) { 
               toast({
+                position: 'bottom-right',
                 title: 'success.',
                 description: "Your comment has been saved.",
                 status: 'success',
@@ -186,6 +187,7 @@ export default function ShowCommentModal({
               })
           } else {
             toast({
+              position: 'bottom-right',
               title: 'failed',
               description: "An error occured. Please try again.",
               status: 'error',
@@ -195,6 +197,7 @@ export default function ShowCommentModal({
           }} 
         ).catch((err) => 
           toast({
+            position: 'bottom-right',
             title: 'failed',
             description: "An error occured. Please try again.",
             status: 'error',

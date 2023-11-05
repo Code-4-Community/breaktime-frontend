@@ -176,6 +176,7 @@ export default function ShowReportModal({
       apiClient.saveReport(remark, timesheetID).then((resp) =>
           {if (resp) { 
               toast({
+                position: 'bottom-right',
                 title: 'success.',
                 description: "Your report has been saved.",
                 status: 'success',
@@ -184,6 +185,7 @@ export default function ShowReportModal({
               })
           } else {
             toast({
+              position: 'bottom-right',
               title: 'failed',
               description: "An error occured. Please try again.",
               status: 'error',
@@ -193,6 +195,7 @@ export default function ShowReportModal({
           }} 
         ).catch((err) => 
           toast({
+            position: 'bottom-right',
             title: 'failed',
             description: "An error occured. Please try again.",
             status: 'error',
