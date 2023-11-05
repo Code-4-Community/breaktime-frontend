@@ -118,7 +118,7 @@ export class ApiClient {
 
   //TODO: hook up to backend
   public async saveReport(report: ReportOptions, timesheetID: number): Promise<Boolean> {
-    return true;
+    return false;
   }
 
 }

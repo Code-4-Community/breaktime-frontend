@@ -175,11 +175,32 @@ export default function ShowCommentModal({
       const handleSubmit = () => {
         // TODO: reuse comment validation
         setComments([...comments, createNewComment(user, CommentType.Comment, remark)]);
-        toast.promise(apiClient.saveComment(remark, timesheetID), {
-          success: { title: 'Comment saved', description: 'Your comment has been saved.' },
-          error: { title: 'Something went wrong.', description: 'Please submit your comment again.' },
-          loading: { title: 'Your comment is being saved', description: 'Please wait' },
-        })
+        apiClient.saveComment(remark, timesheetID).then((resp) =>
+          {if (resp) { 
+              toast({
+                title: 'success.',
+                description: "Your comment has been saved.",
+                status: 'success',
+                duration: 9000,
+                isClosable: true,
+              })
+          } else {
+            toast({
+              title: 'failed',
+              description: "An error occured. Please try again.",
+              status: 'error',
+              duration: 9000,
+              isClosable: true,
+            })
+          }} 
+        ).catch((err) => 
+          toast({
+            title: 'failed',
+            description: "An error occured. Please try again.",
+            status: 'error',
+            duration: 9000,
+            isClosable: true,
+          }))
         onCloseAdd()
       };
   

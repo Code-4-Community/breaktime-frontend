@@ -173,11 +173,32 @@ export default function ShowReportModal({
         setReports([...reports, createNewReport(user, remark, selectedTime.unix())]);
         console.log(createNewReport(user, remark, parseInt(selectedTime.format('X')))); // currently gmt TODO: fix later
       }
-      toast.promise(apiClient.saveReport(remark, timesheetID), {
-        success: { title: 'Report saved', description: 'Your report has been saved.' },
-          error: { title: 'Something went wrong.', description: 'Please submit your report again.' },
-          loading: { title: 'Your report is being saved', description: 'Please wait' },
-      })
+      apiClient.saveReport(remark, timesheetID).then((resp) =>
+          {if (resp) { 
+              toast({
+                title: 'success.',
+                description: "Your report has been saved.",
+                status: 'success',
+                duration: 9000,
+                isClosable: true,
+              })
+          } else {
+            toast({
+              title: 'failed',
+              description: "An error occured. Please try again.",
+              status: 'error',
+              duration: 9000,
+              isClosable: true,
+            })
+          }} 
+        ).catch((err) => 
+          toast({
+            title: 'failed',
+            description: "An error occured. Please try again.",
+            status: 'error',
+            duration: 9000,
+            isClosable: true,
+          }))
       onCloseAdd()
     };
 
