@@ -79,6 +79,25 @@ const testingEmployees = [
   },
 ];
 
+
+const mockStatusObject ={
+  HoursSubmitted:{
+    Date:1698590844,
+    AuthorID: "John",
+  },
+  HoursReviewed: {
+    Date: 1698590844,
+    AuthorID: "Jane",
+  },
+  Finalized: {
+    Date: 1698590844,
+    AuthorID: "Jackie",
+  },
+
+};
+
+
+
 function ProfileCard({ employee }) {
   return (
     <Card direction="row" width="50%">
@@ -306,6 +325,7 @@ export default function Page() {
             associateId={selectedTimesheet.UserID}
             userType={user.Type}
             timesheetStatus={selectedTimesheet.Status}
+            //timesheetStatus={mockStatusObject}
             refreshTimesheetCallback={forceRefreshTimesheet}
           />
         )}

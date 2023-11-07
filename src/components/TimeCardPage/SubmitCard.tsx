@@ -27,7 +27,10 @@ interface submitCardProps {
   refreshTimesheetCallback: Function;
 }
 
+
+
 export default function SubmitCard(props: submitCardProps) {
+
   const toast = useToast();
 
   /** Whether or not the logged-in user has submitted this timesheet yet.*/
@@ -153,15 +156,58 @@ export default function SubmitCard(props: submitCardProps) {
         {submitted && (
           <CardFooter>
             {submitDate}
-            {state}
+            {/*{state}*/}
             {/* TODO: this should come from each StatusEntry in the props.timesheetStatus object */}
-            Associate: abcb34993-1289378457-abdbd, 10-12-2023
-            Supervisor: some-toher-id, 10-14-2023
-            Admin: not submitted
-            <CommentModal></CommentModal>
+            {/*Associate: abcb34993-1289378457-abdbd, 10-12-2023*/}
+            {/*Supervisor: some-toher-id, 10-14-2023*/}
+            {/*Admin: not submitted*/}
+
+            <div>
+            {props.timesheetStatus.HoursSubmitted && props.timesheetStatus.HoursSubmitted.Date ? (
+                <p>
+                  Associate: {props.timesheetStatus.HoursSubmitted.AuthorID}, {customDateFormat(props.timesheetStatus.HoursSubmitted.Date)}
+                </p>
+            ) : (<p>Associate: Unsubmitted</p>)}
+
+            {props.timesheetStatus.HoursReviewed && props.timesheetStatus.HoursReviewed.Date ? (
+                <p>
+                  Supervsior: {props.timesheetStatus.HoursReviewed.AuthorID}, {customDateFormat(props.timesheetStatus.HoursReviewed.Date)}
+                </p>
+            ) : (<p>Supervsior:Unsubmitted</p>)}
+
+            {props.timesheetStatus.Finalized && props.timesheetStatus.Finalized.Date ? (
+                <p>
+                  Admin: {props.timesheetStatus.Finalized.AuthorID}, {customDateFormat(props.timesheetStatus.Finalized.Date)}
+                </p>
+            ) :( <p>Admin: Unsubmitted</p>)}
+
+
+              <CommentModal></CommentModal>
+            </div>
+
+
+
+
+
+
+
+
           </CardFooter>
         )}
       </Card>
     </Box>
   );
+}
+
+// function customDateFormat(date) {
+//   const dateX = new Date(date * 1000);
+//   const year = dateX.getFullYear(); // Get the full year (e.g., 2023)
+//   const month = (dateX.getMonth() + 1).toString().padStart(2, '0'); // Get the month (1-12) and pad with leading zero if needed
+//   const day = dateX.getDate().toString().padStart(2, '0'); // Get the day of the month (1-31) and pad with leading zero if needed
+//
+//   return `${month}/${day}/${year.toString().slice(-2)}`;
+// }
+function customDateFormat(date) {
+  const dateX = new Date(date * 1000);
+  return dateX.toLocaleDateString('en-US', { year: '2-digit', month: '2-digit', day: '2-digit' });
 }
