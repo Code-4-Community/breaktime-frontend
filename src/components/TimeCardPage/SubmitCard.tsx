@@ -46,7 +46,7 @@ export default function SubmitCard(props: submitCardProps) {
    *   any associate, supervisor, or admin that was viewing the timesheet.
    */
   const [state, setState] = useState(CardState.Unsubmitted);
-  // TODO: Add information about who submitted when as state variables? i.e. included the authorIds somewhere
+  //  TODO: Add information about who submitted when as state variables? i.e. included the authorIds somewhere
 
   useEffect(() => {
     let statusEntry: StatusEntryType = undefined;
