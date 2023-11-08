@@ -1,6 +1,6 @@
-import React, { useState, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import TimeTable from './TimeTable'
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import SubmitCard from './SubmitCard';
 import DateSelectorCard from './SelectWeekCard';
 import { UserContext } from './UserContext';
@@ -44,6 +44,7 @@ import { CommentSchema, RowSchema } from 'src/schemas/RowSchema';
 import { getAllActiveCommentsOfType } from './utils';
 import { Stack } from 'react-bootstrap';
 import { Divider } from '@aws-amplify/ui-react';
+
 
 
 const testingEmployees = [
@@ -274,6 +275,8 @@ export default function Page() {
     }
   }
 
+  // use this to control whether the timesheet is disabled or not
+  const disabled = true
 
 
     return (
@@ -288,9 +291,11 @@ export default function Page() {
                     </> : <></>}
                 <DateSelectorCard onDateChange={updateDateRange} date={selectedDate} />
                 
+                
             </HStack>
             {useMemo(() => renderWarning(), [selectedDate])}
-            <Tabs>
+        <div>     
+            <Tabs>      
                 <TabList>
                     {currentTimesheets.map(
                         (sheet) => (
@@ -299,11 +304,15 @@ export default function Page() {
                     )}
                 </TabList>
             </Tabs>
+          <fieldset disabled={disabled}>
             {selectedTimesheet?.CompanyID === "Total" ?
                 (<AggregationTable Date={selectedDate} timesheets={currentTimesheets} />)
                 : (<UserContext.Provider value={user}>
                     <TimeTable columns={TABLE_COLUMNS} timesheet={selectedTimesheet} onTimesheetChange={processTimesheetChange} />
                 </UserContext.Provider>)}
+            </fieldset>
+          
+      </div>
         </>
     )
 }
