@@ -1,5 +1,5 @@
 export enum CellType {
-    Regular = "Regular",
+    Regular = "Time Worked",
     PTO = "PTO"
 };
 
