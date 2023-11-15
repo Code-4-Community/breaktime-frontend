@@ -31,6 +31,8 @@ export const createNewComment = (
 export const createNewReport = (
   user: UserSchema,
   content: ReportOptions,
+  notified: string,
+  explanation: string,
   correctTime: number
 ) => {
   return {
@@ -38,6 +40,8 @@ export const createNewReport = (
     Type: CommentType.Report,
     Timestamp: correctTime, // TODO: possibly change it to be more specific formatting
     Content: content,
+    Notified: notified,
+    Explanation: explanation,
     State: CellStatus.Active,
   };
 };

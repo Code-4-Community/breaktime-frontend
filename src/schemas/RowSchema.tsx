@@ -24,9 +24,12 @@ export type CommentSchema = z.infer<typeof CommentSchema>
 
 export const ReportSchema = z.object({
     AuthorID:z.string(), 
-    Timestamp: z.number(), 
+    Timestamp: z.number(),
+    Type: z.nativeEnum(CommentType), 
     CorrectTime: z.number(),
     Content: z.nativeEnum(ReportOptions), 
+    Notified: z.string(),
+    Explanation: z.string(),
     State: z.nativeEnum(CellStatus), 
 }); 
 

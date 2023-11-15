@@ -20,8 +20,11 @@ import {
   HStack,
   VStack,
   Text,
-  Select,
-  IconButton
+  RadioGroup,
+  Radio,
+  Stack,
+  IconButton,
+  useToast
 } from "@chakra-ui/react";
 
 import {
@@ -35,10 +38,11 @@ import {
   DeleteIcon
 } from "@chakra-ui/icons";
 
-import { CommentSchema } from "../../../../schemas/RowSchema";
+import { CommentSchema, ReportSchema } from "../../../../schemas/RowSchema";
 import { CommentType, CellStatus, Color } from "../../types";
 import { ReportOptions } from "../../types";
 import { getAllActiveCommentsOfType, createNewComment, createNewReport } from "../../utils";
+import { Popover } from "react-bootstrap";
 
 const saveEditedComment = (
   setComments: Function, 
@@ -51,6 +55,11 @@ const saveEditedComment = (
   setComments(getAllActiveCommentsOfType(typeOfComment, [...comments, newComment]));
   // TODO: save to DB
 };
+
+const savedEditedReport = ( ) => {
+  
+
+}
 
 const deleteComment = (
   onCloseDisplay: Function, 
@@ -93,7 +102,9 @@ export default function ShowReportModal({
   }
 
   const DisplayReportsModal = () => {
+    console.log("Reports: ", reports)
 
+    console.log("Data: ", reports[0])
     return (
       <Modal isOpen={isOpenDisplay} onClose={onCloseDisplay}>
         <ModalOverlay />
@@ -109,28 +120,64 @@ export default function ShowReportModal({
           <ModalCloseButton />
           <ModalBody>
             {reports.map(
-              (report) => (
-                <HStack>
+              (report: ReportSchema) => (
+                <VStack spacing={4} align="stretch">
                   {/* TODO: add UserDisplay card once pr merged in*/}
-                  <Editable
+                  <FormControl>
+                    <FormLabel>
+                      Reason for report:
+                    </FormLabel>
+                    <Editable
+                      isDisabled={!isEditable}
+                      defaultValue={report.Content}
+                      // TODO: issue with saveEditedComment losing notify data and explanation data - probably should make an entirely different method
+                      onSubmit={(value) => saveEditedComment(setReports, reports, CommentType.Report, report, createNewComment(user, CommentType.Report, value))}
+                    >
+                      <EditablePreview />
+                      {` ${moment.unix(report.Timestamp).format("h:mm a")}`}
+                      {isEditable && (
+                        <>
+                          <Input as={EditableInput} />
+                        </>
+                      )}
+                    </Editable>
+                  </FormControl>
+                  <FormControl>
+                    <FormLabel>
+                      Supervisor notified? : 
+                    </FormLabel>
+                    <Editable
+                      isDisabled={!isEditable}
+                      defaultValue = {report.Notified}>
+                        <EditablePreview />
+                        {isEditable && (
+                          <>
+                            <Input as={EditableInput} />
+                          </>
+                        )}
+                    </Editable>
+                  </FormControl>
+                  
+                  <FormControl>
+                    <FormLabel>
+                      Explanation: 
+                    </FormLabel>
+                    <Editable
                     isDisabled={!isEditable}
-                    defaultValue={report.Content}
-                    onSubmit={(value) => saveEditedComment(setReports, reports, CommentType.Report, report, createNewComment(user, CommentType.Report, value))}
-                  >
-                    <EditablePreview />
-                    {` ${moment.unix(report.Timestamp).format("h:mm a")}`}
-                    {isEditable && (
-                      <>
-                        <Input as={EditableInput} />
-                        <HStack>
-                          {/* TODO: add editable controls specifically with only enum options*/}
-                          <IconButton aria-label="Delete" icon={<DeleteIcon />} onClick={() => deleteComment(onCloseDisplay, setReports, reports, CommentType.Report, report)} />
-                        </HStack>
-                      </>
-                    )}
+                    defaultValue = {report.Explanation}>
+                      <EditablePreview />
+                      {isEditable && (
+                          <>
+                            <Input as={EditableInput} />
+                          </>
+                        )}
                   </Editable>
-
-                </HStack>
+                  <HStack>
+                            {/* TODO: add editable controls specifically with only enum options*/}
+                            <IconButton aria-label="Delete" icon={<DeleteIcon />} onClick={() => deleteComment(onCloseDisplay, setReports, reports, CommentType.Report, report)} />
+                          </HStack>
+                  </FormControl>
+                </VStack>
               ))}
           </ModalBody>
 
@@ -141,36 +188,63 @@ export default function ShowReportModal({
     )
   }
 
+   // base functionality based off this
   const AddReportModal = () => {
     const [remark, setRemark] = useState<ReportOptions>(ReportOptions.Late);
-    const [submitDisabled, setSubmitDisabled] =  useState(true);
+    const [submitDisabled, setSubmitDisabled] =  useState(false);
     const [selectedTime, setSelectedTime] = useState(moment(date)); // fix this rn
+
+    const [reason, setReason] = useState<ReportOptions>(ReportOptions.Late);
+    const [notify, setNotify] = useState('Yes');
+    const [explanation, setExplanation] = useState('');
+
     const user = useContext(UserContext);
-    
+    const toast = useToast();
 
-    const handleRemarkChange = (e) => {
-      setRemark(e.target.value);
+    //Not sure if we need this
+    // const handleRemarkChange = (e) => {
+    //   setRemark(e.target.value);
       
-      if (e.target.value === ReportOptions.Absent) {
-        setSubmitDisabled(false);
-      }
-    };
+    //   if (e.target.value === ReportOptions.Absent) {
+    //     setSubmitDisabled(false);
+    //   }
+    // };
 
-    const handleTimeChange = (e) => {
-      if (e.target.value) {
-        setSubmitDisabled(false);
-        setSelectedTime(selectedTime.hour(e.target.value.split(":")[0]))
-        setSelectedTime(selectedTime.minute(e.target.value.split(":")[1]))
-      }
-    };
+    //Not sure if we need this
+    // const handleTimeChange = (e) => {
+    //   if (e.target.value) {
+    //     setSubmitDisabled(false);
+    //     setSelectedTime(selectedTime.hour(e.target.value.split(":")[0]))
+    //     setSelectedTime(selectedTime.minute(e.target.value.split(":")[1]))
+    //   }
+    // };
 
-    const handleSubmit = () => {
-      if (reports.filter(report => report.Content === remark).length === 0) {
-        setReports([...reports, createNewReport(user, remark, selectedTime.unix())]);
-        console.log(createNewReport(user, remark, parseInt(selectedTime.format('X')))); // currently gmt TODO: fix later
-      }
+    const handleReasonChange = (option) => {
+      setReason(option as ReportOptions);
+    }
 
-      // show a toast that its been submitted
+    //make sure submission works like this
+    const handleSubmit = (e) => {
+      e.preventDefault();
+      if (reports.filter(report => report.Content === reason).length === 0) {
+        setReports([...reports, createNewReport(user, reason, notify, explanation, selectedTime.unix())]);
+        toast({
+          title: 'Report submitted.',
+          description: "We've received your report.",
+          status: 'success',
+          duration: 9000,
+          isClosable: true,
+        });
+        console.log(createNewReport(user, reason, notify, explanation, parseInt(selectedTime.format('X')))); // currently gmt TODO: fix later
+      } else {
+        toast({
+          title: 'Report submission failed.',
+          description: "There was a problem with your report. Please try again",
+          status: 'error',
+          duration: 9000,
+          isClosable: true,
+        });
+      }
       onCloseAdd()
       // TODO: call to db
     };
@@ -181,30 +255,39 @@ export default function ShowReportModal({
           <VStack spacing={4} divider={<StackDivider />}>
             <ModalHeader>{CommentType.Report}</ModalHeader>
 
-            <FormControl onSubmit={handleSubmit}>
-              <FormLabel htmlFor="reports">Reports</FormLabel>
-              <Select onChange={handleRemarkChange}>
-                <option value={ReportOptions.Late}>{ReportOptions.Late}</option>
-                <option value={ReportOptions.LeftEarly}>{ReportOptions.LeftEarly}</option>
-                <option value={ReportOptions.Absent}>{ReportOptions.Absent}</option>
-              </Select>
-              {remark !== ReportOptions.Absent &&
-                <>
-                  <Text>
-                    Enter time employee was meant to 
-                    {remark === ReportOptions.LeftEarly ? 
-                    " leave" : " arrive"
-                    } 
-                  </Text>
-                  <Input
-                    placeholder="Select Date and Time"
-                    size="md"
-                    type="time"
-                    onChange={handleTimeChange}
-                    />
-                </> }
-            </FormControl>
+            <Box p={4} boxShadow='md' borderRadius='md'>
+              <form onSubmit={handleSubmit}>
+                <FormControl as='fieldset'>
+                  <FormLabel as='legend'>Select reason for report:</FormLabel>
+                  <RadioGroup onChange={handleReasonChange} value={reason}>
+                    <Stack direction='row'>
+                      <Radio value={ReportOptions.Late}>Tardy</Radio>
+                      <Radio value={ReportOptions.Absent}>Absent</Radio>
+                    </Stack>
+                  </RadioGroup>
+                </FormControl>
 
+                <FormControl mt={4}>
+                  <FormLabel>Did the associate notify the supervisor reasonably in advance?</FormLabel>
+                  <RadioGroup onChange={setNotify} value={notify}>
+                    <Stack direction='row'>
+                      <Radio value='Yes'>Yes</Radio>
+                      <Radio value='No'>No</Radio>
+                    </Stack>
+                  </RadioGroup>
+                </FormControl>
+
+                <FormControl mt={4}>
+                  <FormLabel>Why did the associate arrive late/leave early?</FormLabel>
+                  <Input
+                    placeholder='Enter answer'
+                    value={explanation}
+                    onChange={(e) => setExplanation(e.target.value)}
+                  />
+                </FormControl>
+
+              </form>
+            </Box>
             <ModalFooter>
               <HStack spacing={10}>
                 <Button onClick={onCloseAdd}>Close</Button>
