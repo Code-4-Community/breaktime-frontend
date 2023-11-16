@@ -25,9 +25,7 @@ import {
   IconButton,
   useToast,
   InputRightElement,
-  Icon,
   InputGroup,
-  Flex,
   FormLabel,
   FormControl,
 } from "@chakra-ui/react";
@@ -42,8 +40,7 @@ import {
 import { CommentSchema, ReportSchema } from "../../../../schemas/RowSchema";
 import { CommentType, CellStatus, Color } from "../../types";
 import { ReportOptions } from "../../types";
-import { getAllActiveCommentsOfType, createNewComment, createNewReport } from "../../utils";
-import { Popover } from "react-bootstrap";
+import { getAllActiveCommentsOfType, createNewReport } from "../../utils";
 
 const saveEditedReport = (
   setReports: Function, 
@@ -102,8 +99,8 @@ export default function ShowReportModal({
     console.log("Data: ", reports[0])
 
     return (
-      <Modal isOpen={isOpenDisplay} onClose={onCloseDisplay}>
-        <ModalOverlay />
+      <Modal isOpen={isOpenDisplay} onClose={onCloseDisplay} isCentered>
+        <ModalOverlay/>
         <ModalContent>
           <ModalHeader>
             <HStack>
@@ -126,15 +123,9 @@ export default function ShowReportModal({
                     <Editable
                       isDisabled={!isEditable}
                       defaultValue={report.Content}
-                      onSubmit={(value) => saveEditedReport(setReports, reports, report, createNewReport(user, value as ReportOptions, report.Notified, report.Explanation, report.Timestamp))}
+                      onSubmit={(value) => saveEditedReport(setReports, reports, report, createNewReport(user, value as ReportOptions, report.Notified, report.Explanation))}
                     >
                       <EditablePreview />
-                      {` ${moment.unix(report.Timestamp).format("h:mm a")}`}
-                      {isEditable && (
-                        <>
-                          <Input as={EditableInput} />
-                        </>
-                      )}
                     </Editable>
                   </FormControl>
                   <FormControl>
@@ -144,7 +135,7 @@ export default function ShowReportModal({
                     <Editable
                       isDisabled={!isEditable}
                       defaultValue = {report.Notified}
-                      onSubmit={(value) => saveEditedReport(setReports, reports, report, createNewReport(user, report.Content, value, report.Explanation, report.Timestamp))}
+                      onSubmit={(value) => saveEditedReport(setReports, reports, report, createNewReport(user, report.Content, value, report.Explanation))}
                       >
                         <EditablePreview />
                         {isEditable && (
@@ -162,7 +153,7 @@ export default function ShowReportModal({
                     <Editable
                     isDisabled={!isEditable}
                     defaultValue = {report.Explanation}
-                    onSubmit={(value) => saveEditedReport(setReports, reports, report, createNewReport(user, report.Content, report.Notified, value, report.Timestamp))}
+                    onSubmit={(value) => saveEditedReport(setReports, reports, report, createNewReport(user, report.Content, report.Notified, value))}
                     >
                       <EditablePreview />
                       {isEditable && (
@@ -187,10 +178,8 @@ export default function ShowReportModal({
     )
   }
 
-   // base functionality based off this
   const AddReportModal = () => {
     const [submitDisabled, setSubmitDisabled] =  useState(false);
-    const [selectedTime, setSelectedTime] = useState(moment(date)); // fix this rn
 
     const [reason, setReason] = useState<ReportOptions>(ReportOptions.Late);
     const [notify, setNotify] = useState('Yes');
@@ -199,24 +188,14 @@ export default function ShowReportModal({
     const user = useContext(UserContext);
     const toast = useToast();
 
-    //Not sure if we need this
-    // const handleTimeChange = (e) => {
-    //   if (e.target.value) {
-    //     setSubmitDisabled(false);
-    //     setSelectedTime(selectedTime.hour(e.target.value.split(":")[0]))
-    //     setSelectedTime(selectedTime.minute(e.target.value.split(":")[1]))
-    //   }
-    // };
-
     const handleReasonChange = (option) => {
       setReason(option as ReportOptions);
     }
 
-    //make sure submission works like this
     const handleSubmit = (e) => {
       e.preventDefault();
       if (reports.filter(report => report.Content === reason).length === 0) {
-        setReports([...reports, createNewReport(user, reason, notify, explanation, selectedTime.unix())]);
+        setReports([...reports, createNewReport(user, reason, notify, explanation)]);
         toast({
           title: 'Report submitted.',
           description: "We've received your report.",
@@ -224,8 +203,7 @@ export default function ShowReportModal({
           duration: 9000,
           isClosable: true,
         });
-        console.log(createNewReport(user, reason, notify, explanation, parseInt(selectedTime.format('X')))); // currently gmt TODO: fix later
-      } else {
+     } else {
         toast({
           title: 'Report submission failed.',
           description: "There was a problem with your report. Please try again",
@@ -239,8 +217,9 @@ export default function ShowReportModal({
     };
 
     return (
-      <Modal isOpen={isOpenAdd} onClose={onCloseAdd}>
-        <ModalContent borderRadius="xl"  maxW="400px">
+      <Modal isOpen={isOpenAdd} onClose={onCloseAdd} isCentered>
+        <ModalOverlay />
+        <ModalContent borderRadius="xl"  maxW="500px">
           <VStack spacing={1}>
           <Box bg="#1C1A6C" w="100%" pt={1} pb={1} pl={2} pr={2} color="white" borderTopRadius="xl">
             <ModalHeader textAlign="center" p={1} m={1}>{CommentType.Report}</ModalHeader>
