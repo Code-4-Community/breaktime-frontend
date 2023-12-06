@@ -94,10 +94,6 @@ export default function ShowReportModal({
   }
 
   const DisplayReportsModal = () => {
-    console.log("Reports: ", reports)
-
-    console.log("Data: ", reports[0])
-
     return (
       <Modal isOpen={isOpenDisplay} onClose={onCloseDisplay} isCentered>
         <ModalOverlay/>
@@ -117,13 +113,16 @@ export default function ShowReportModal({
                 <VStack spacing={4} align="stretch">
                   {/* TODO: add UserDisplay card once pr merged in*/}
                   <FormControl>
+                  {/* <Text> {TODO: show time}</Text> */}
                     <FormLabel>
                       Reason for report:
                     </FormLabel>
                     <Editable
                       isDisabled={!isEditable}
                       defaultValue={report.Content}
-                      onSubmit={(value) => saveEditedReport(setReports, reports, report, createNewReport(user, value as ReportOptions, report.Notified, report.Explanation))}
+                      onSubmit={(value) => 
+                        saveEditedReport(setReports, reports, report, 
+                        createNewReport(user, value as ReportOptions, report.Notified, report.Explanation))}
                     >
                       <EditablePreview />
                     </Editable>
@@ -135,7 +134,9 @@ export default function ShowReportModal({
                     <Editable
                       isDisabled={!isEditable}
                       defaultValue = {report.Notified}
-                      onSubmit={(value) => saveEditedReport(setReports, reports, report, createNewReport(user, report.Content, value, report.Explanation))}
+                      onSubmit={(value) => 
+                        saveEditedReport(setReports, reports, report, 
+                        createNewReport(user, report.Content, value, report.Explanation))}
                       >
                         <EditablePreview />
                         {isEditable && (
@@ -153,7 +154,9 @@ export default function ShowReportModal({
                     <Editable
                     isDisabled={!isEditable}
                     defaultValue = {report.Explanation}
-                    onSubmit={(value) => saveEditedReport(setReports, reports, report, createNewReport(user, report.Content, report.Notified, value))}
+                    onSubmit={(value) => 
+                      saveEditedReport(setReports, reports, report, 
+                      createNewReport(user, report.Content, report.Notified, value))}
                     >
                       <EditablePreview />
                       {isEditable && (
