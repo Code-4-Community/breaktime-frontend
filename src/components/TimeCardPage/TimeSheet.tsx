@@ -305,12 +305,14 @@ export default function Page() {
                     )}
                 </TabList>
             </Tabs>
+          <fieldset disabled={disabled}>
             {selectedTimesheet?.CompanyID === "Total" ?
                 (<AggregationTable Date={selectedDate} timesheets={currentTimesheets} />)
                 : (<UserContext.Provider value={user}>
                     <TimeTable columns={TABLE_COLUMNS} timesheet={selectedTimesheet} onTimesheetChange={processTimesheetChange} />
                 </UserContext.Provider>)}
-          </fieldset>
+            </fieldset>
+          
       </div>
         </>
     )
