@@ -41,7 +41,7 @@ import { CommentType, CellStatus, Color } from "../../types";
 import { ReportOptions } from "../../types";
 import { getAllActiveCommentsOfType, createNewComment, createNewReport } from "../../utils";
 import apiClient from "src/components/Auth/apiClient";
-
+import { createToast } from "../../utils";
 const saveEditedComment = (
   setComments: Function, 
   comments: CommentSchema[], 
@@ -175,33 +175,13 @@ export default function ShowReportModal({
       }
       apiClient.saveReport(remark, timesheetID).then((resp) =>
           {if (resp) { 
-              toast({
-                position: 'bottom-right',
-                title: 'success.',
-                description: "Your report has been saved.",
-                status: 'success',
-                duration: 9000,
-                isClosable: true,
-              })
+            toast(createToast({position: 'bottom-right',title:'success.', description: "Your report has been saved.", status: "success"})) 
+
           } else {
-            toast({
-              position: 'bottom-right',
-              title: 'failed',
-              description: "An error occured. Please try again.",
-              status: 'error',
-              duration: 9000,
-              isClosable: true,
-            })
+            toast(createToast({position: 'bottom-right',title:'failed', description: "An error occured. Please try again.", status: "error"})) 
           }} 
         ).catch((err) => 
-          toast({
-            position: 'bottom-right',
-            title: 'failed',
-            description: "An error occured. Please try again.",
-            status: 'error',
-            duration: 9000,
-            isClosable: true,
-          }))
+        toast(createToast({position: 'bottom-right',title:'failed', description: "An error occured. Please try again.", status: "error"})))
       onCloseAdd()
     };
 
