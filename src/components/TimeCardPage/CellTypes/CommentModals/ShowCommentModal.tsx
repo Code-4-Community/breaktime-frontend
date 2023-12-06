@@ -22,7 +22,8 @@ import {
   HStack,
   VStack,
   Text,
-  IconButton
+  IconButton,
+  Textarea
 } from "@chakra-ui/react";
 
 import {
@@ -183,10 +184,9 @@ export default function ShowCommentModal({
               <form id="Form" onSubmit={handleSubmit}>
                 <HStack spacing={4}>
                   <label htmlFor="remarks">Remarks</label>
-                  <Input
+                  <Textarea
                     id="remarks"
                     name="remarks"
-                    type="text"
                     onChange={handleRemarkChange}
                     autoComplete="off"
                   />

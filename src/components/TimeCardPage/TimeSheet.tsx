@@ -37,13 +37,14 @@ import AggregationTable from './AggregationTable';
 import {v4 as uuidv4} from 'uuid';
 import {UserSchema} from '../../schemas/UserSchema'
 
-import {SearchIcon, WarningIcon, DownloadIcon} from '@chakra-ui/icons';
-import {Select, components} from 'chakra-react-select'
-import {TimeSheetSchema} from 'src/schemas/TimesheetSchema';
-import {CommentSchema, RowSchema} from 'src/schemas/RowSchema';
-import {getAllActiveCommentsOfType} from './utils';
-import {Stack} from 'react-bootstrap';
-import {Divider} from '@aws-amplify/ui-react';
+import { SearchIcon, WarningIcon, DownloadIcon } from '@chakra-ui/icons';
+import { Select, components } from 'chakra-react-select'
+import { TimeSheetSchema } from 'src/schemas/TimesheetSchema';
+import { CommentSchema, RowSchema } from 'src/schemas/RowSchema';
+import { getAllActiveCommentsOfType } from './utils';
+import { Stack } from 'react-bootstrap';
+import { Divider } from '@aws-amplify/ui-react';
+
 
 
 // Always adjust local timezone to Breaktime's timezone
@@ -296,6 +297,9 @@ export default function Page() {
         }
     }
 
+  // use this to control whether the timesheet is disabled or not
+  const disabled = true
+
 
     return (
         <>
@@ -307,11 +311,13 @@ export default function Page() {
                         <IconButton aria-label='Download' icon={<DownloadIcon/>}/>
                         <IconButton aria-label='Report' icon={<WarningIcon/>}/>
                     </> : <></>}
-                <DateSelectorCard onDateChange={updateDateRange} date={selectedDate}/>
-
+                <DateSelectorCard onDateChange={updateDateRange} date={selectedDate} />
+                
+                
             </HStack>
             {useMemo(() => renderWarning(), [selectedDate])}
-            <Tabs>
+        <div>     
+            <Tabs>      
                 <TabList>
                     {currentTimesheets.map(
                         (sheet) => (
@@ -320,12 +326,16 @@ export default function Page() {
                     )}
                 </TabList>
             </Tabs>
+          <fieldset disabled={disabled}>
             {selectedTimesheet?.CompanyID === "Total" ?
                 (<AggregationTable Date={selectedDate} timesheets={currentTimesheets}/>)
                 : (<UserContext.Provider value={user}>
                     <TimeTable columns={TABLE_COLUMNS} timesheet={selectedTimesheet}
                                onTimesheetChange={processTimesheetChange}/>
                 </UserContext.Provider>)}
+            </fieldset>
+          
+      </div>
         </>
     )
 }
