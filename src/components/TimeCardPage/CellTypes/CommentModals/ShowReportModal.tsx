@@ -16,41 +16,41 @@ import {
   Input,
   Box,
   useDisclosure,
-  StackDivider,
   HStack,
   VStack,
   Text,
-  Select,
+  RadioGroup,
+  Radio,
+  Stack,
   IconButton,
-  useToast
-} from "@chakra-ui/react";
+  useToast,
+  InputRightElement,
+  InputGroup,
 
-import {
-  FormControl,
   FormLabel,
-} from '@chakra-ui/react'
+  FormControl,
+} from "@chakra-ui/react";
 
 import {
   WarningIcon,
   AddIcon,
-  DeleteIcon
+  DeleteIcon,
+  EditIcon,
 } from "@chakra-ui/icons";
 
-import { CommentSchema } from "../../../../schemas/RowSchema";
+import { CommentSchema, ReportSchema } from "../../../../schemas/RowSchema";
 import { CommentType, CellStatus, Color } from "../../types";
 import { ReportOptions } from "../../types";
-import { getAllActiveCommentsOfType, createNewComment, createNewReport } from "../../utils";
-import apiClient from "src/components/Auth/apiClient";
-import { createToast } from "../../utils";
-const saveEditedComment = (
-  setComments: Function, 
-  comments: CommentSchema[], 
-  typeOfComment: CommentType, 
-  prevComment: CommentSchema, 
-  newComment: CommentSchema) => {
+import { getAllActiveCommentsOfType, createNewReport } from "../../utils";
+
+const saveEditedReport = (
+  setReports: Function, 
+  comments: ReportSchema[], 
+  prevComment: ReportSchema, 
+  newComment: ReportSchema) => {
   // previous comment edited over so set it to deleted
   prevComment.State = CellStatus.Deleted
-  setComments(getAllActiveCommentsOfType(typeOfComment, [...comments, newComment]));
+  setReports(getAllActiveCommentsOfType(CommentType.Report, [...comments, newComment]) as ReportSchema[]);
   // TODO: save to DB
 };
 
@@ -71,7 +71,7 @@ const deleteComment = (
 
 interface ShowReportModalProps {
   date: number;
-  reports: CommentSchema[];
+  reports: ReportSchema[];
   setReports: Function;
   isEditable: boolean;
   timesheetID: number;
@@ -97,10 +97,9 @@ export default function ShowReportModal({
   }
 
   const DisplayReportsModal = () => {
-
     return (
-      <Modal isOpen={isOpenDisplay} onClose={onCloseDisplay}>
-        <ModalOverlay />
+      <Modal isOpen={isOpenDisplay} onClose={onCloseDisplay} isCentered>
+        <ModalOverlay/>
         <ModalContent>
           <ModalHeader>
             <HStack>
@@ -114,27 +113,67 @@ export default function ShowReportModal({
           <ModalBody>
             {reports.map(
               (report) => (
-                <HStack>
+                <VStack spacing={4} align="stretch">
                   {/* TODO: add UserDisplay card once pr merged in*/}
-                  <Editable
+                  <FormControl>
+                  {/* <Text> {TODO: show time}</Text> */}
+                    <FormLabel>
+                      Reason for report:
+                    </FormLabel>
+                    <Editable
+                      isDisabled={!isEditable}
+                      defaultValue={report.Content}
+                      onSubmit={(value) => 
+                        saveEditedReport(setReports, reports, report, 
+                        createNewReport(user, value as ReportOptions, report.Notified, report.Explanation))}
+                    >
+                      <EditablePreview />
+                    </Editable>
+                  </FormControl>
+                  <FormControl>
+                    <FormLabel>
+                      Supervisor notified reasonably in advance: 
+                    </FormLabel>
+                    <Editable
+                      isDisabled={!isEditable}
+                      defaultValue = {report.Notified}
+                      onSubmit={(value) => 
+                        saveEditedReport(setReports, reports, report, 
+                        createNewReport(user, report.Content, value, report.Explanation))}
+                      >
+                        <EditablePreview />
+                        {isEditable && (
+                          <>
+                            <Input as={EditableInput} />
+                          </>
+                        )}
+                    </Editable>
+                  </FormControl>
+                  
+                  <FormControl>
+                    <FormLabel>
+                      Explanation: 
+                    </FormLabel>
+                    <Editable
                     isDisabled={!isEditable}
-                    defaultValue={report.Content}
-                    onSubmit={(value) => saveEditedComment(setReports, reports, CommentType.Report, report, createNewComment(user, CommentType.Report, value))}
-                  >
-                    <EditablePreview />
-                    {` ${moment.unix(report.Timestamp).format("h:mm a")}`}
-                    {isEditable && (
-                      <>
-                        <Input as={EditableInput} />
-                        <HStack>
-                          {/* TODO: add editable controls specifically with only enum options*/}
-                          <IconButton aria-label="Delete" icon={<DeleteIcon />} onClick={() => deleteComment(onCloseDisplay, setReports, reports, CommentType.Report, report)} />
-                        </HStack>
-                      </>
-                    )}
+                    defaultValue = {report.Explanation}
+                    onSubmit={(value) => 
+                      saveEditedReport(setReports, reports, report, 
+                      createNewReport(user, report.Content, report.Notified, value))}
+                    >
+                      <EditablePreview />
+                      {isEditable && (
+                          <>
+                            <Input as={EditableInput} />
+                          </>
+                        )}
                   </Editable>
-
-                </HStack>
+                  <HStack>
+                            {/* TODO: add editable controls specifically with only enum options*/}
+                            <IconButton aria-label="Delete" icon={<DeleteIcon />} onClick={() => deleteComment(onCloseDisplay, setReports, reports, CommentType.Report, report)} />
+                          </HStack>
+                  </FormControl>
+                </VStack>
               ))}
           </ModalBody>
 
@@ -146,79 +185,97 @@ export default function ShowReportModal({
   }
 
   const AddReportModal = () => {
-    const [remark, setRemark] = useState<ReportOptions>(ReportOptions.Late);
-    const [submitDisabled, setSubmitDisabled] =  useState(true);
-    const [selectedTime, setSelectedTime] = useState(moment(date)); // fix this rn
+    const [submitDisabled, setSubmitDisabled] =  useState(false);
+    const [reason, setReason] = useState<ReportOptions>(ReportOptions.Late);
+    const [notify, setNotify] = useState('Yes');
+    const [explanation, setExplanation] = useState('');
+
     const user = useContext(UserContext);
     const toast = useToast();
 
-    const handleRemarkChange = (e) => {
-      setRemark(e.target.value);
-      
-      if (e.target.value === ReportOptions.Absent) {
-        setSubmitDisabled(false);
-      }
-    };
+    const handleReasonChange = (option) => {
+      setReason(option as ReportOptions);
+    }
 
-    const handleTimeChange = (e) => {
-      if (e.target.value) {
-        setSubmitDisabled(false);
-        setSelectedTime(selectedTime.hour(e.target.value.split(":")[0]))
-        setSelectedTime(selectedTime.minute(e.target.value.split(":")[1]))
+    const handleSubmit = (e) => {
+      e.preventDefault();
+      if (reports.filter(report => report.Content === reason).length === 0) {
+        setReports([...reports, createNewReport(user, reason, notify, explanation)]);
+        toast({
+          title: 'Report submitted.',
+          description: "We've received your report.",
+          status: 'success',
+          duration: 9000,
+          isClosable: true,
+        });
+     } else {
+        toast({
+          title: 'Report submission failed.',
+          description: "There was a problem with your report. Please try again",
+          status: 'error',
+          duration: 9000,
+          isClosable: true,
+        });
       }
-    };
-
-    const handleSubmit = () => {
-      if (reports.filter(report => report.Content === remark).length === 0) {
-        setReports([...reports, createNewReport(user, remark, selectedTime.unix())]);
-        console.log(createNewReport(user, remark, parseInt(selectedTime.format('X')))); // currently gmt TODO: fix later
-      }
-      apiClient.saveReport(remark, timesheetID).then((resp) =>
-          {if (resp) { 
-            toast(createToast({position: 'bottom-right',title:'success.', description: "Your report has been saved.", status: "success"})) 
-
-          } else {
-            toast(createToast({position: 'bottom-right',title:'failed', description: "An error occured. Please try again.", status: "error"})) 
-          }} 
-        ).catch((err) => 
-        toast(createToast({position: 'bottom-right',title:'failed', description: "An error occured. Please try again.", status: "error"})))
       onCloseAdd()
     };
 
     return (
-      <Modal isOpen={isOpenAdd} onClose={onCloseAdd}>
-        <ModalContent>
-          <VStack spacing={4} divider={<StackDivider />}>
-            <ModalHeader>{CommentType.Report}</ModalHeader>
+      <Modal isOpen={isOpenAdd} onClose={onCloseAdd} isCentered>
+        <ModalOverlay />
+        <ModalContent borderRadius="xl"  maxW="500px">
+          <VStack spacing={1}>
+          <Box bg="#1C1A6C" w="100%" pt={1} pb={1} pl={2} pr={2} color="white" borderTopRadius="xl">
+            <ModalHeader textAlign="center" p={1} m={1}>{CommentType.Report}</ModalHeader>
+          </Box>
 
-            <FormControl onSubmit={handleSubmit}>
-              <FormLabel htmlFor="reports">Reports</FormLabel>
-              <Select onChange={handleRemarkChange}>
-                <option value={ReportOptions.Late}>{ReportOptions.Late}</option>
-                <option value={ReportOptions.LeftEarly}>{ReportOptions.LeftEarly}</option>
-                <option value={ReportOptions.Absent}>{ReportOptions.Absent}</option>
-              </Select>
-              {remark !== ReportOptions.Absent &&
-                <>
-                  <Text>
-                    Enter time employee was meant to 
-                    {remark === ReportOptions.LeftEarly ? 
-                    " leave" : " arrive"
-                    } 
-                  </Text>
-                  <Input
-                    placeholder="Select Date and Time"
-                    size="md"
-                    type="time"
-                    onChange={handleTimeChange}
-                    />
-                </> }
-            </FormControl>
+            <Box p={4} >
+              <form onSubmit={handleSubmit}>
+                <FormControl as='fieldset'>
+                  <FormLabel as='legend'>Select reason for report:</FormLabel>
+                  <RadioGroup onChange={handleReasonChange} value={reason}>
+                    <Stack direction='column'>
+                      <Radio value={ReportOptions.Late}>Tardy</Radio>
+                      <Radio value={ReportOptions.Absent}>Absent</Radio>
+                      <Radio value={ReportOptions.LeftEarly}>Left Early</Radio>
+                    </Stack>
+                  </RadioGroup>
+                </FormControl>
 
+                <FormControl mt={4}>
+                    <FormLabel>Did the associate notify the supervisor reasonably in advance?</FormLabel>
+                    <RadioGroup onChange={setNotify} value={notify}>
+                      <Stack direction='row'>
+                        <Radio value='Yes'>Yes</Radio>
+                        <Radio value='No'>No</Radio>
+                      </Stack>
+                    </RadioGroup>
+                </FormControl>
+
+                <FormControl mt={4}>
+                  <FormLabel>Why did the associate arrive late/no show/leave early?</FormLabel>
+                    <InputGroup width='150px' borderRadius="2xl">
+                      <Input
+                        placeholder="Enter answer"
+                        borderRadius="2xl"
+                        padding="1rem"
+                        borderColor="gray.300"
+                        _placeholder={{ opacity: 1, color: 'gray.500' }}
+                        value={explanation}
+                        onChange={(e) => setExplanation(e.target.value)}
+                      />
+                      <InputRightElement
+                        children={<EditIcon/>}
+                      />
+                    </InputGroup>
+                </FormControl>
+
+              </form>
+            </Box>
             <ModalFooter>
               <HStack spacing={10}>
-                <Button onClick={onCloseAdd}>Close</Button>
-                <Button isDisabled={submitDisabled} type="submit" onClick={handleSubmit}>
+                <Button style={{borderRadius:'15px'}} onClick={onCloseAdd}>Close</Button>
+                <Button style={{borderRadius:'15px'}} isDisabled={submitDisabled} type="submit" onClick={handleSubmit}>
                   Submit
                 </Button>
               </HStack>

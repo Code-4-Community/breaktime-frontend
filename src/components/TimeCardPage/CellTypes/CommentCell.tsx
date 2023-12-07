@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from "react";
 import { Stack } from "@chakra-ui/react";
 
 import { UserContext } from "../UserContext";
-import { CommentSchema } from "../../../schemas/RowSchema";
+import { CommentSchema, ReportSchema } from "../../../schemas/RowSchema";
 import { CommentType } from "../types";
 import { getAllActiveCommentsOfType } from "../utils";
 
@@ -24,7 +24,7 @@ export function CommentCell({
     getAllActiveCommentsOfType(CommentType.Comment, comments)
   );
   const [reports, setReports] = useState(
-    getAllActiveCommentsOfType(CommentType.Report, comments)
+    getAllActiveCommentsOfType(CommentType.Report, comments) as ReportSchema[]
   );
   const [isEditable, setisEditable] = useState(false);
   const user = useContext(UserContext);

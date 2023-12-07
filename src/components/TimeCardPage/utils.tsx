@@ -43,13 +43,16 @@ export const createNewComment = (
 export const createNewReport = (
   user: UserSchema,
   content: ReportOptions,
-  correctTime: number
+  notified: string,
+  explanation: string,
 ) => {
   return {
     AuthorID: user?.UserID, // TODO: need to add loading logic so user is defined before anything occurs
     Type: CommentType.Report,
-    Timestamp: correctTime, // TODO: possibly change it to be more specific formatting
     Content: content,
+    Notified: notified,
+    Explanation: explanation,
     State: CellStatus.Active,
+    time: moment().unix(),
   };
 };
