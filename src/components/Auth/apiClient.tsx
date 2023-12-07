@@ -93,8 +93,9 @@ export class ApiClient {
       UserID: "abc",
       FirstName: "john",
       LastName: "doe",
-      Type: "Admin",
-      Picture: "https://imgs.search.brave.com/DZmzoTAPlNT9HUb2ISfyTd_sPZab1hG4VcyupoK2gwE/rs:fit:860:0:0/g:ce/aHR0cHM6Ly90My5m/dGNkbi5uZXQvanBn/LzAwLzYxLzU0LzA4/LzM2MF9GXzYxNTQw/ODU1X3lFYmIwTlRr/d3ZJVzdaZG1KeThM/aHU1WHJPMXlweURl/LmpwZw",
+      Type: "Supervisor",
+      // Type: "Associate",
+      Picture: "https://www.google.com/koala.png",
     };
   }
 
