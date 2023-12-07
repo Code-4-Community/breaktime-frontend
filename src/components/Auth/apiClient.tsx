@@ -3,6 +3,7 @@ import axios, { AxiosInstance } from "axios";
 import { TimeSheetSchema } from "../../schemas/TimesheetSchema";
 import { UserSchema } from "../../schemas/UserSchema";
 import { ReportOptions } from "../TimeCardPage/types";
+import { UserTypes } from "../TimeCardPage/types";
 
 const defaultBaseUrl =
   process.env.REACT_APP_API_BASE_URL ?? "http://localhost:3000";
@@ -93,7 +94,7 @@ export class ApiClient {
       UserID: "abc",
       FirstName: "john",
       LastName: "doe",
-      Type: "Supervisor",
+      Type: UserTypes.Associate,
       // Type: "Associate",
       Picture: "https://www.google.com/koala.png",
     };
@@ -106,7 +107,7 @@ export class ApiClient {
         UserID: "bcd",
         FirstName: "joe",
         LastName: "jane",
-        Type: "Associate",
+        Type: UserTypes.Associate,
         Picture: "https://www.google.com/panda.png",
       },
     ];

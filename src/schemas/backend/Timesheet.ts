@@ -8,7 +8,6 @@ import { z } from "zod";
 -------------------------------------------------------------------------------------------------------------------
 -------------------------------------------------------------------------------------------------------------------
 */
-
 /**
  * Represents the database schema for a note. This can be one of the following types:
  * -- Comment: a general comment made for an entry or whole timesheet.
@@ -31,7 +30,7 @@ export const ScheduleEntrySchema = z.object({
   Date: z.number(), 
   StartDateTime: z.number().optional(),
   EndDateTime: z.number().optional(),
-  AuthorUUID: z.string()
+  AuthorUUID: z.string() 
 })
 
 /**
@@ -39,13 +38,19 @@ export const ScheduleEntrySchema = z.object({
  */
 export const TimeEntrySchema = z.object({
   StartDateTime: z.number().optional(),
-  EndDateTime: z.number().optional(), 
+  EndDateTime: z.number().optional(),
   AuthorUUID: z.string(),
 })
 
 
+/* 
+  Supported type of cells for each row in a timesheet 
+    @REGULAR - a regular cell
+    @PTO - Cell signifying paid time off (PTO) 
+*/
 export enum CellType {
-  REGULAR = "Time Worked", 
+  REGULAR_LEGACY = "Regular", // No longer using this format for data, but some older timesheet entries may have the 'legacy' type
+  REGULAR = "Time Worked",
   PTO = "PTO"
 }
 
@@ -53,7 +58,7 @@ export enum CellType {
  * Represents the database schema for a single shift or entry in the weekly timesheet. 
  */
 export const TimesheetEntrySchema = z.object({
-  Type: z.enum([CellType.REGULAR, CellType.PTO]),
+  Type: z.enum([CellType.REGULAR, CellType.REGULAR_LEGACY, CellType.PTO]).transform((cellType) => cellType === CellType.REGULAR_LEGACY ? CellType.REGULAR : cellType),
   EntryID: z.string(), 
   Date: z.number(), 
   AssociateTimes: TimeEntrySchema.optional(),
@@ -72,15 +77,18 @@ export const StatusEntryType = z.union(
   }), 
   z.undefined()]); 
 
-// Status type contains the four stages of the pipeline we have defined 
-export const TimesheetStatus = z.object({
+// Status type contains the three stages of the pipeline we have defined 
+export const TimesheetStatusSchema = z.object({
   HoursSubmitted: StatusEntryType, 
   HoursReviewed: StatusEntryType,
-  ScheduleSubmitted: StatusEntryType, 
   Finalized: StatusEntryType 
 });
 
-
+export enum TimesheetStatusType {
+  HOURS_SUBMITTED="HoursSubmitted",
+  HOURS_REVIEWED="HoursReviewed",
+  FINALIZED="Finalized"
+}
 
 /**
  * Represents the database schema for a weekly timesheet
@@ -89,14 +97,14 @@ export const TimeSheetSchema = z.object({
   TimesheetID: z.number(), 
   UserID: z.string(), 
   StartDate: z.number(),
-  Status: TimesheetStatus,
+  Status: TimesheetStatusSchema,
   CompanyID: z.string(), 
   HoursData: z.array(TimesheetEntrySchema).default([]), 
   ScheduleData: z.array(ScheduleEntrySchema).default([]),
   WeekNotes: z.array(NoteSchema).default([]),
 })
 
-export type TimesheetStatus = z.infer<typeof TimesheetStatus>
+export type TimesheetStatus = z.infer<typeof TimesheetStatusSchema>
 export type TimeEntrySchema = z.infer<typeof TimeEntrySchema> 
 export type ScheduleEntrySchema = z.infer<typeof ScheduleEntrySchema> 
 export type NoteSchema = z.infer<typeof NoteSchema>
