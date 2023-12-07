@@ -298,7 +298,7 @@ export default function Page() {
     }
 
   // use this to control whether the timesheet is disabled or not
-  const disabled = true
+  const disabled = false
 
 
     return (
@@ -316,8 +316,8 @@ export default function Page() {
                 
             </HStack>
             {useMemo(() => renderWarning(), [selectedDate])}
-        <div>     
-            <Tabs>      
+        <div>
+            <Tabs>
                 <TabList>
                     {currentTimesheets.map(
                         (sheet) => (

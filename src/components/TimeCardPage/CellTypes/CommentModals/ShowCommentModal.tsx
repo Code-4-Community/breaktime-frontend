@@ -23,7 +23,8 @@ import {
   VStack,
   Text,
   IconButton,
-  Textarea
+  Textarea,
+  useToast
 } from "@chakra-ui/react";
 
 import {
@@ -38,6 +39,8 @@ import {
 import { CommentSchema } from "../../../../schemas/RowSchema";
 import { CommentType, CellStatus, Color } from "../../types";
 import { getAllActiveCommentsOfType, createNewComment } from "../../utils";
+import apiClient from "src/components/Auth/apiClient";
+import { createToast } from "../../utils";
 
 const saveEditedComment = (
   setComments: Function, 
@@ -70,12 +73,14 @@ interface ShowCommentModalProps {
     comments: CommentSchema[];
     setComments: Function;
     isEditable: boolean;
+    timesheetID: number;
   }
   
 export default function ShowCommentModal({
     comments,
     setComments,
     isEditable,
+    timesheetID
   }: ShowCommentModalProps) {
     const { isOpen: isOpenDisplay, onOpen: onOpenDisplay, onClose: onCloseDisplay } = useDisclosure();
     const { isOpen: isOpenAdd, onOpen: onOpenAdd, onClose: onCloseAdd } = useDisclosure();
@@ -162,6 +167,7 @@ export default function ShowCommentModal({
     const AddCommentModal = () => {
       const [remark, setRemark] = useState();
       const user = useContext(UserContext);
+      const toast = useToast();
   
       const handleRemarkChange = (e) => {
         setRemark(e.target.value);
@@ -170,9 +176,29 @@ export default function ShowCommentModal({
       const handleSubmit = () => {
         // TODO: reuse comment validation
         setComments([...comments, createNewComment(user, CommentType.Comment, remark)]);
-        // show a toast that its been submitted
+        apiClient.saveComment(remark, timesheetID).then((resp) =>
+          {if (resp) { 
+            toast(createToast({position: 'bottom-right',title:'success.', description: "Your report has been saved.", status: "success"}))
+          } else {
+            toast(createToast({
+              position: 'bottom-right',
+              title: 'failed',
+              description: "An error occured. Please try again.",
+              status: 'error',
+              duration: 9000,
+              isClosable: true,
+            }))
+          }} 
+        ).catch((err) => 
+        toast(createToast({
+          position: 'bottom-right',
+          title: 'failed',
+          description: "An error occured. Please try again.",
+          status: 'error',
+          duration: 9000,
+          isClosable: true,
+        })))
         onCloseAdd()
-        // TODO: call to db
       };
   
       return (
