@@ -179,7 +179,7 @@ export default function SubmitCard(props: submitCardProps) {
                 <p>
                   Admin: {props.timesheetStatus.Finalized.AuthorID}, {customDateFormat(props.timesheetStatus.Finalized.Date)}
                 </p>
-            ) :( <p>Admin: Unsubmitted</p>)}
+            ) :( <p>Admin:  Unsubmitted</p>)}
 
 
               <CommentModal></CommentModal>
