@@ -1,13 +1,6 @@
 import { CardState } from "./types";
-
-import React, { useState, useEffect } from "react";
-import {
-  Box,
-  Card,
-  CardBody,
-  CardFooter,
-  Button,
-} from "@chakra-ui/react";
+import React, { useState, useEffect, useContext } from "react";
+import { Box, Card, CardBody, CardFooter, Button } from "@chakra-ui/react";
 import { DEFAULT_COLORS } from "src/constants";
 import ApiClient from "src/components/Auth/apiClient";
 import * as updateSchemas from "src/schemas/backend/UpdateTimesheet";
@@ -15,16 +8,20 @@ import { StatusType, StatusEntryType } from "src/schemas/StatusSchema";
 import { UserTypes } from "./types";
 import moment from "moment";
 import { useToast } from "@chakra-ui/react";
+import { UserContext } from "./UserContext";
+import { UserSchema } from "src/schemas/UserSchema";
+import { getCurrentUser } from "../Auth/UserUtils";
 
 interface submitCardProps {
   timesheetId: number;
   associateId: string;
-  userType: UserTypes; // TODO : This should really be in global context for react
   timesheetStatus: StatusType;
   refreshTimesheetCallback: Function;
 }
 
 export default function SubmitCard(props: submitCardProps) {
+  const currUser = useContext(UserContext);
+
   const toast = useToast();
 
   /** Whether or not the logged-in user has submitted this timesheet yet.*/
@@ -32,7 +29,6 @@ export default function SubmitCard(props: submitCardProps) {
 
   /** The date and time (as a moment) that the logged-in user submitted/reviewed/finalized this timesheet.*/
   const [submitDate, setSubmitDate] = useState(null);
-
   /**
    *   The card state which corresponds to the latest status update from the timesheet. Corresponds to card color.
    *   Note that this is *not* dependent on the logged in user. I.e. if the latest status update was that
@@ -42,11 +38,16 @@ export default function SubmitCard(props: submitCardProps) {
   const [state, setState] = useState(CardState.Unsubmitted);
   // TODO: Add information about who submitted when as state variables? i.e. included the authorIds somewhere
 
+  // Run whenever there's an update to the current logged in user (i.e. re-render the correct submission status for the user type)
   useEffect(() => {
+    if (currUser === undefined) {
+      return;
+    }
+
     let statusEntry: StatusEntryType = undefined;
 
     // Determine the appropriate status entry to match up with the logged in user's role
-    switch (props.userType) {
+    switch (currUser.Type) {
       case UserTypes.Associate:
         statusEntry = props.timesheetStatus.HoursSubmitted;
         break;
@@ -78,25 +79,24 @@ export default function SubmitCard(props: submitCardProps) {
     } else {
       setState(CardState.Unsubmitted);
     }
-  }, []);
+  }, [currUser]);
 
-  const submitAction = () => {
+  const submitAction = async () => {
+    console.log("Current user id:", currUser.UserID);
     // Update the current timesheet to be submitted by the logged-in user.
     // The type of status can be determined on the backend by the user type
     try {
-      // TODO comment this out if not testing end-to-end functionality
-      ApiClient.updateTimesheet(
-        // TODO: This needs to get updated; match up status change request schema with backend)
+      const reponse = await ApiClient.updateTimesheet(
         updateSchemas.StatusChangeRequest.parse({
           TimesheetId: props.timesheetId,
           AssociateId: props.associateId,
-          authorId: 12345, // TODO: Implement authorId functionality instead of dummy data
+          authorId: currUser.UserID, // TODO: Implement authorId functionality instead of dummy data
           Status: props.timesheetStatus,
           Date: moment().unix(),
         })
       );
 
-      // TODO: Confirm successful 2xx code response from API
+      // TODO: Confirm successful 2xx code responSse from API
       props.refreshTimesheetCallback();
 
       toast({
@@ -106,8 +106,6 @@ export default function SubmitCard(props: submitCardProps) {
         isClosable: true,
       });
     } catch (err) {
-      // TODO: Send toast error message
-      // toast.error('Uh oh - something went wrong with submitting...')
       toast({
         title: "Uh oh, something went wrong...",
         status: "error",
@@ -116,15 +114,6 @@ export default function SubmitCard(props: submitCardProps) {
       });
       return;
     }
-
-    // setSubmitted(submitted);
-    // const currentTime = new Date();
-    // setSubmitDate(currentTime.toString());
-    // if (state === CardState.Unsubmitted) {
-    //   setState(CardState.InReviewSupervisor);
-    // } else {
-    //   setState(CardState.Unsubmitted);
-    // }
   };
 
   return (

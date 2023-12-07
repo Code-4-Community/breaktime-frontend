@@ -5,25 +5,22 @@ import SubmitCard from "./SubmitCard";
 import DateSelectorCard from "./SelectWeekCard";
 import { UserContext } from "./UserContext";
 
+import { getCurrentUser } from "../Auth/UserUtils";
+
 import {
   Alert,
   AlertIcon,
   AlertTitle,
   AlertDescription,
-  Box,
   IconButton,
   Card,
   CardBody,
   Avatar,
-  Flex,
   Text,
   Tabs,
   TabList,
   Tab,
-  Spacer,
   HStack,
-  VStack,
-  ButtonGroup,
   Stack,
   Button,
   Modal,
@@ -39,12 +36,11 @@ import {
 
 import { TIMESHEET_DURATION, TIMEZONE } from "src/constants";
 
-import { Review_Stages, TABLE_COLUMNS, CommentType } from "./types";
+import { TABLE_COLUMNS, CommentType } from "./types";
 import moment, { Moment } from "moment-timezone";
 
 import apiClient from "../Auth/apiClient";
 import AggregationTable from "./AggregationTable";
-import { v4 as uuidv4 } from "uuid";
 import { UserSchema } from "../../schemas/UserSchema";
 
 import {
@@ -52,12 +48,11 @@ import {
   WarningIcon,
   DownloadIcon,
   ChatIcon,
-  ArrowForwardIcon,
   EditIcon,
 } from "@chakra-ui/icons";
 import { Select, components } from "chakra-react-select";
 import { TimeSheetSchema } from "src/schemas/TimesheetSchema";
-import { CommentSchema, RowSchema } from "src/schemas/RowSchema";
+import { CommentSchema } from "src/schemas/RowSchema";
 import { createNewComment, getAllActiveCommentsOfType } from "./utils";
 // import { Stack } from 'react-bootstrap';
 import { Divider } from "@aws-amplify/ui-react";
@@ -229,6 +224,7 @@ export default function Page() {
 
   // associates is only used by supervisor/admin for the list of all associates they have access to
   const [associates, setAssociates] = useState<UserSchema[]>([]);
+
   // A list of the timesheet objects
   // TODO: add types
   const [userTimesheets, setUserTimesheets] = useState([]);
@@ -241,8 +237,13 @@ export default function Page() {
 
   // this hook should always run first
   useEffect(() => {
+    // Get the current logged in user
+    getCurrentUser().then((currentUser) => {
+      console.log("Current user: ", currentUser);
+      setUser(currentUser);
+    });
+
     apiClient.getUser().then((userInfo) => {
-      setUser(userInfo);
       if (userInfo.Type === "Supervisor" || userInfo.Type === "Admin") {
         apiClient.getAllUsers().then((users) => {
           setAssociates(users);
@@ -463,138 +464,147 @@ export default function Page() {
   ];
 
   return (
-    <>
-      <HStack spacing="120px">
-        <ProfileCard employee={user} />
-        {user?.Type === "Supervisor" || user?.Type === "Admin" ? (
-          <>
-            <SearchEmployeeTimesheet
-              employees={associates}
-              setSelected={setSelectedUser}
-            />
-
-            <Button
-              aria-label="Weekly Comments"
-              leftIcon={<ChatIcon />}
-              onClick={openEvaluationForm}
-              minW="200px"
-            >
-              Weekly Comments
-            </Button>
-
-            <Modal isOpen={isOpenCommentForm} onClose={closeCommentForm}>
-              <ModalContent>
-                <ModalHeader> Weekly Performance Evaluation</ModalHeader>
-
-                <ModalBody>
-                  <form onSubmit={handleSubmit}>
-                    <FormLabel>
-                      How would you describe this associate's overall work
-                      performance this week?
-                    </FormLabel>
-                    <RadioGroup
-                      onChange={handleOptionChange}
-                      value={selectedOption}
-                    >
-                      <Stack spacing={2}>
-                        <Radio value="option1">
-                          This associate was a total rock star this week!
-                        </Radio>
-                        <Radio value="option2">
-                          This associate did just okay this week{" "}
-                        </Radio>
-                        <Radio value="option3">
-                          Lack of professionalism and/or poor behavior{" "}
-                        </Radio>
-                        <Radio value="option4">N/A</Radio>
-                        <Radio value="option5">Other</Radio>
-                        {selectedOption === "option5" && (
-                          <Input
-                            placeholder="Enter answer"
-                            value={otherText}
-                            onChange={handleInputOption}
-                          />
-                        )}
-                      </Stack>
-                    </RadioGroup>
-                  </form>
-                  <Button onClick={handleDelete} type="submit" mr={3} ml={110}>
-                    Delete
-                  </Button>
-                  {/*<Button  onClick={cancelForm} type="submit" mr={3} ml={110}>*/}
-                  {/*    Cancel*/}
-                  {/*</Button>*/}
-                  <Button onClick={handleSubmit} type="submit">
-                    Submit
-                  </Button>
-                  <ModalCloseButton />
-                </ModalBody>
-              </ModalContent>
-            </Modal>
-
-            <IconButton aria-label="Download" icon={<DownloadIcon />} />
-            <IconButton aria-label="Report" icon={<WarningIcon />} />
-          </>
-        ) : (
-          <></>
-        )}
-        <DateSelectorCard onDateChange={updateDateRange} date={selectedDate} />
-        {selectedTimesheet && (
-          <SubmitCard
-            timesheetId={selectedTimesheet.TimesheetID}
-            associateId={selectedTimesheet.UserID}
-            userType={user.Type}
-            timesheetStatus={selectedTimesheet.Status}
-            refreshTimesheetCallback={forceRefreshTimesheet}
-          />
-        )}
-      </HStack>
-      {useMemo(() => renderWarning(), [selectedDate])}
-      <div>
-        <Tabs>
-          <TabList>
-            {currentTimesheets.map((sheet) => (
-              <Tab onClick={() => changeTimesheet(sheet)}>
-                {sheet.CompanyID}
-              </Tab>
-            ))}
-          </TabList>
-        </Tabs>
-        <fieldset disabled={disabled}>
-          {selectedTimesheet?.CompanyID === "Total" ? (
-            <AggregationTable
-              Date={selectedDate}
-              timesheets={currentTimesheets}
-            />
-          ) : (
-            <UserContext.Provider value={user}>
-              <TimeTable
-                columns={TABLE_COLUMNS}
-                timesheet={selectedTimesheet}
-                onTimesheetChange={processTimesheetChange}
+    <UserContext.Provider value={user}>
+      <>
+        <HStack spacing="120px">
+          <ProfileCard employee={user} />
+          {user?.Type === "Supervisor" || user?.Type === "Admin" ? (
+            <>
+              <SearchEmployeeTimesheet
+                employees={associates}
+                setSelected={setSelectedUser}
               />
-            </UserContext.Provider>
-          )}
-        </fieldset>
 
-        <div className="mt-2 mx-5 mb-4">
-          {commentList.length > 0 && (
-            <div>
-              <h4>Weekly Comments</h4>
-              {commentList.map((comment, index) => (
-                <Button
-                  key={index}
-                  rightIcon={<EditIcon />}
-                  className="btn mb-6 p-2 mx-3 mt-3"
-                  onClick={() => openCommentForm(comment)}
-                >
-                  {comment.Content}
-                </Button>
-              ))}
-            </div>
+              <Button
+                aria-label="Weekly Comments"
+                leftIcon={<ChatIcon />}
+                onClick={openEvaluationForm}
+                minW="200px"
+              >
+                Weekly Comments
+              </Button>
+
+              <Modal isOpen={isOpenCommentForm} onClose={closeCommentForm}>
+                <ModalContent>
+                  <ModalHeader> Weekly Performance Evaluation</ModalHeader>
+
+                  <ModalBody>
+                    <form onSubmit={handleSubmit}>
+                      <FormLabel>
+                        How would you describe this associate's overall work
+                        performance this week?
+                      </FormLabel>
+                      <RadioGroup
+                        onChange={handleOptionChange}
+                        value={selectedOption}
+                      >
+                        <Stack spacing={2}>
+                          <Radio value="option1">
+                            This associate was a total rock star this week!
+                          </Radio>
+                          <Radio value="option2">
+                            This associate did just okay this week{" "}
+                          </Radio>
+                          <Radio value="option3">
+                            Lack of professionalism and/or poor behavior{" "}
+                          </Radio>
+                          <Radio value="option4">N/A</Radio>
+                          <Radio value="option5">Other</Radio>
+                          {selectedOption === "option5" && (
+                            <Input
+                              placeholder="Enter answer"
+                              value={otherText}
+                              onChange={handleInputOption}
+                            />
+                          )}
+                        </Stack>
+                      </RadioGroup>
+                    </form>
+                    <Button
+                      onClick={handleDelete}
+                      type="submit"
+                      mr={3}
+                      ml={110}
+                    >
+                      Delete
+                    </Button>
+                    {/*<Button  onClick={cancelForm} type="submit" mr={3} ml={110}>*/}
+                    {/*    Cancel*/}
+                    {/*</Button>*/}
+                    <Button onClick={handleSubmit} type="submit">
+                      Submit
+                    </Button>
+                    <ModalCloseButton />
+                  </ModalBody>
+                </ModalContent>
+              </Modal>
+
+              <IconButton aria-label="Download" icon={<DownloadIcon />} />
+              <IconButton aria-label="Report" icon={<WarningIcon />} />
+            </>
+          ) : (
+            <></>
           )}
+          <DateSelectorCard
+            onDateChange={updateDateRange}
+            date={selectedDate}
+          />
+          {selectedTimesheet && (
+            <SubmitCard
+              timesheetId={selectedTimesheet.TimesheetID}
+              associateId={selectedTimesheet.UserID}
+              timesheetStatus={selectedTimesheet.Status}
+              refreshTimesheetCallback={forceRefreshTimesheet}
+            />
+          )}
+        </HStack>
+        {useMemo(() => renderWarning(), [selectedDate])}
+        <div>
+          <Tabs>
+            <TabList>
+              {currentTimesheets.map((sheet) => (
+                <Tab onClick={() => changeTimesheet(sheet)}>
+                  {sheet.CompanyID}
+                </Tab>
+              ))}
+            </TabList>
+          </Tabs>
+          <fieldset disabled={disabled}>
+            {selectedTimesheet?.CompanyID === "Total" ? (
+              <AggregationTable
+                Date={selectedDate}
+                timesheets={currentTimesheets}
+              />
+            ) : (
+              <UserContext.Provider value={user}>
+                <TimeTable
+                  columns={TABLE_COLUMNS}
+                  timesheet={selectedTimesheet}
+                  onTimesheetChange={processTimesheetChange}
+                />
+              </UserContext.Provider>
+            )}
+          </fieldset>
+
+          <div className="mt-2 mx-5 mb-4">
+            {commentList.length > 0 && (
+              <div>
+                <h4>Weekly Comments</h4>
+                {commentList.map((comment, index) => (
+                  <Button
+                    key={index}
+                    rightIcon={<EditIcon />}
+                    className="btn mb-6 p-2 mx-3 mt-3"
+                    onClick={() => openCommentForm(comment)}
+                  >
+                    {comment.Content}
+                  </Button>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
-      </div>
-    </>
+      </>
+    </UserContext.Provider>
   );
 }
