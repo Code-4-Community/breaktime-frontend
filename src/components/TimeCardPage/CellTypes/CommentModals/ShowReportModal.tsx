@@ -26,6 +26,7 @@ import {
   useToast,
   InputRightElement,
   InputGroup,
+
   FormLabel,
   FormControl,
 } from "@chakra-ui/react";
@@ -73,13 +74,15 @@ interface ShowReportModalProps {
   reports: ReportSchema[];
   setReports: Function;
   isEditable: boolean;
+  timesheetID: number;
 }
 
 export default function ShowReportModal({
   date,
   reports,
   setReports,
-  isEditable
+  isEditable,
+  timesheetID
 }: ShowReportModalProps) {
   const { isOpen: isOpenDisplay, onOpen: onOpenDisplay, onClose: onCloseDisplay } = useDisclosure();
   const { isOpen: isOpenAdd, onOpen: onOpenAdd, onClose: onCloseAdd } = useDisclosure();
@@ -183,7 +186,6 @@ export default function ShowReportModal({
 
   const AddReportModal = () => {
     const [submitDisabled, setSubmitDisabled] =  useState(false);
-
     const [reason, setReason] = useState<ReportOptions>(ReportOptions.Late);
     const [notify, setNotify] = useState('Yes');
     const [explanation, setExplanation] = useState('');
@@ -216,7 +218,6 @@ export default function ShowReportModal({
         });
       }
       onCloseAdd()
-      // TODO: call to db
     };
 
     return (
