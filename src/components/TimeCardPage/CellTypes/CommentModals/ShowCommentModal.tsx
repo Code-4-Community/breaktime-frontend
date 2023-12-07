@@ -40,6 +40,7 @@ import { CommentSchema } from "../../../../schemas/RowSchema";
 import { CommentType, CellStatus, Color } from "../../types";
 import { getAllActiveCommentsOfType, createNewComment } from "../../utils";
 import apiClient from "src/components/Auth/apiClient";
+import { createToast } from "../../utils";
 
 const saveEditedComment = (
   setComments: Function, 
@@ -177,33 +178,26 @@ export default function ShowCommentModal({
         setComments([...comments, createNewComment(user, CommentType.Comment, remark)]);
         apiClient.saveComment(remark, timesheetID).then((resp) =>
           {if (resp) { 
-              toast({
-                position: 'bottom-right',
-                title: 'success.',
-                description: "Your comment has been saved.",
-                status: 'success',
-                duration: 9000,
-                isClosable: true,
-              })
+            toast(createToast({position: 'bottom-right',title:'success.', description: "Your report has been saved.", status: "success"}))
           } else {
-            toast({
+            toast(createToast({
               position: 'bottom-right',
               title: 'failed',
               description: "An error occured. Please try again.",
               status: 'error',
               duration: 9000,
               isClosable: true,
-            })
+            }))
           }} 
         ).catch((err) => 
-          toast({
-            position: 'bottom-right',
-            title: 'failed',
-            description: "An error occured. Please try again.",
-            status: 'error',
-            duration: 9000,
-            isClosable: true,
-          }))
+        toast(createToast({
+          position: 'bottom-right',
+          title: 'failed',
+          description: "An error occured. Please try again.",
+          status: 'error',
+          duration: 9000,
+          isClosable: true,
+        })))
         onCloseAdd()
       };
   

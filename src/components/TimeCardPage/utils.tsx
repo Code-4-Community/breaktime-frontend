@@ -13,8 +13,6 @@ export const getAllActiveCommentsOfType = (type: CommentType, commentArray: Comm
     }
   };
 
-export const toast = createStandaloneToast();
-
 export const createToast = (props: UseToastOptions) => {
   return {
     position: props.position,
