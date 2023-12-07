@@ -168,11 +168,56 @@ export default function SubmitCard(props: submitCardProps) {
         </CardBody>
         {submitted && (
           <CardFooter>
-            {/*submitDate*/}
-            {state}
+            {/* TODO: The AuthorIDs below should all be replaced with calls to the API and then have a User profile card there instead (or at least the name, rather than ID lol) */}
+
+            <div>
+              {props.timesheetStatus.HoursSubmitted &&
+              props.timesheetStatus.HoursSubmitted.Date ? (
+                <p>
+                  Associate: {props.timesheetStatus.HoursSubmitted.AuthorID},{" "}
+                  <br />
+                  Submitted on:{" "}
+                  {customDateFormat(props.timesheetStatus.HoursSubmitted.Date)}
+                </p>
+              ) : (
+                <p>Associate: Unsubmitted</p>
+              )}
+
+              {props.timesheetStatus.HoursReviewed &&
+              props.timesheetStatus.HoursReviewed.Date ? (
+                <p>
+                  Supervsior: {props.timesheetStatus.HoursReviewed.AuthorID},{" "}
+                  <br />
+                  Submitted on:{" "}
+                  {customDateFormat(props.timesheetStatus.HoursReviewed.Date)}
+                </p>
+              ) : (
+                <p>Supervisor: Unsubmitted</p>
+              )}
+
+              {props.timesheetStatus.Finalized &&
+              props.timesheetStatus.Finalized.Date ? (
+                <p>
+                  Admin: {props.timesheetStatus.Finalized.AuthorID}, <br />
+                  Submitted on:{" "}
+                  {customDateFormat(props.timesheetStatus.Finalized.Date)}
+                </p>
+              ) : (
+                <p>Admin: Unsubmitted</p>
+              )}
+            </div>
           </CardFooter>
         )}
       </Card>
     </Box>
   );
+}
+
+function customDateFormat(date) {
+  const dateX = new Date(date * 1000);
+  return dateX.toLocaleDateString("en-US", {
+    year: "2-digit",
+    month: "2-digit",
+    day: "2-digit",
+  });
 }

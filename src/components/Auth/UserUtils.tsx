@@ -37,7 +37,7 @@ const convertCognitoUser = function (user: CognitoUser): UserSchema {
     FirstName: firstName,
     LastName: lastName,
     UserID: sub,
-    Type: UserTypes.Associate,
+    Type: UserTypes.Supervisor,
   };
 };
 
