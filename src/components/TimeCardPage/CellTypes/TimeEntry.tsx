@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { RowSchema } from "../../../schemas/RowSchema";
-import TimePicker from "react-time-picker";
+import { Input } from '@chakra-ui/react';
+import moment from 'moment';
 
 interface TimeEntryProps {
   field: string;
@@ -36,6 +37,7 @@ export function TimeEntry(props: TimeEntryProps) {
             const [hours, parsedMinutes] = time.split(":");   
             const calculatedTime = Number(hours) * 60 + Number(parsedMinutes)
             setMinutes(calculatedTime); 
+            console.log(calculatedTime);
             rowToMutate[props.field] = calculatedTime; 
         } else {
             // Value is null, so mark it as undefined in our processing 
@@ -45,6 +47,19 @@ export function TimeEntry(props: TimeEntryProps) {
         //Triggering parent class to update its references here as well 
         props.updateFields("Associate", rowToMutate); 
     }
+
+    // converts minutes from 00:00 to the current hour and minute it represents
+    const minutesFrom00 = (minutes) =>
+      {
+        // initialize an epoch that starts at 00:00 and add in the minutes
+        // to string its hour and time
+        if (minutes == undefined) {
+          return undefined;
+        }
+        const epoch = moment().set('hour', 0).set('minute', 0);
+        epoch.add(minutes, 'minutes');
+        return epoch.format("HH:mm");
+      }
   
   useEffect(() => {
     if (props.row.Associate !== undefined) {
@@ -52,31 +67,17 @@ export function TimeEntry(props: TimeEntryProps) {
     }
   }, []);
 
-  return renderClockTime(minutes, onChange);
-}
-
-const renderClockTime = (minutes: number, updateClockTime) => {
-  if (minutes !== undefined) {
-    const convertedTime = new Date();
-    convertedTime.setHours(Math.round(minutes / 60));
-    convertedTime.setMinutes(minutes % 60);
-    return (
-      <TimePicker
-        onChange={(value) => {
-          updateClockTime(value);
-        }}
-        value={convertedTime}
-        disableClock={true}
-      />
-    );
-  }
   return (
-    <TimePicker
-      onChange={(value) => {
-        updateClockTime(value);
+    <Input
+      placeholder="Select Date and Time"
+      size="md"
+      type="time"
+      onChange={(event) => {
+        onChange(event.target.value);
       }}
-      value={null}
-      disableClock={true}
+      value={minutesFrom00(minutes)}
+      
     />
   );
-};
+}
+
