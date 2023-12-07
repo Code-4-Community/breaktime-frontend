@@ -94,7 +94,7 @@ export type UpdateRequest = z.infer<typeof UpdateRequest>
 export const StatusChangeRequest = z.object({
     TimesheetId: z.number(),
     AssociateId: z.string(),
-    authorId: z.number(),
+    authorId: z.string(),
     dateSubmitted: z.number(),
     statusType: z.enum([dbtypes.TimesheetStatusType.HOURS_SUBMITTED, dbtypes.TimesheetStatusType.HOURS_REVIEWED, dbtypes.TimesheetStatusType.FINALIZED]),
 })

@@ -11,6 +11,7 @@ import { useToast } from "@chakra-ui/react";
 import { UserContext } from "./UserContext";
 import { UserSchema } from "src/schemas/UserSchema";
 import { getCurrentUser } from "../Auth/UserUtils";
+import { TimesheetStatus } from "src/schemas/TimesheetSchema";
 
 interface submitCardProps {
   timesheetId: number;
@@ -44,6 +45,9 @@ export default function SubmitCard(props: submitCardProps) {
       return;
     }
 
+    console.log("submit card user", currUser);
+    console.log(props.timesheetStatus);
+
     let statusEntry: StatusEntryType = undefined;
 
     // Determine the appropriate status entry to match up with the logged in user's role
@@ -61,11 +65,11 @@ export default function SubmitCard(props: submitCardProps) {
         break;
     }
 
-    const isSubmitted = statusEntry === undefined;
+    const isSubmitted = statusEntry !== undefined;
     setSubmitted(isSubmitted);
 
-    // Set the submitted date to when this
-    if (submitted) {
+    // Set the submitted date to when
+    if (isSubmitted && statusEntry.Date !== undefined) {
       setSubmitDate(moment.unix(statusEntry.Date));
     }
 
@@ -79,20 +83,42 @@ export default function SubmitCard(props: submitCardProps) {
     } else {
       setState(CardState.Unsubmitted);
     }
-  }, [currUser]);
+  }, [currUser, props.timesheetStatus]);
 
   const submitAction = async () => {
     console.log("Current user id:", currUser.UserID);
+
+    let statusSubmissionType: string;
+
+    // Determine the appropriate status entry to match up with the logged in user's role
+    switch (currUser.Type) {
+      case UserTypes.Associate:
+        statusSubmissionType = TimesheetStatus.HOURS_SUBMITTED;
+        break;
+
+      case UserTypes.Supervisor:
+        statusSubmissionType = TimesheetStatus.HOURS_REVIEWED;
+        break;
+
+      case UserTypes.Admin:
+        statusSubmissionType = TimesheetStatus.HOURS_SUBMITTED;
+        break;
+    }
+
     // Update the current timesheet to be submitted by the logged-in user.
     // The type of status can be determined on the backend by the user type
     try {
-      const reponse = await ApiClient.updateTimesheet(
-        updateSchemas.StatusChangeRequest.parse({
-          TimesheetId: props.timesheetId,
-          AssociateId: props.associateId,
-          authorId: currUser.UserID, // TODO: Implement authorId functionality instead of dummy data
-          Status: props.timesheetStatus,
-          Date: moment().unix(),
+      const response = await ApiClient.updateTimesheet(
+        updateSchemas.TimesheetUpdateRequest.parse({
+          TimesheetID: props.timesheetId,
+          Operation: updateSchemas.TimesheetOperations.STATUS_CHANGE,
+          Payload: updateSchemas.StatusChangeRequest.parse({
+            TimesheetId: props.timesheetId,
+            AssociateId: props.associateId,
+            authorId: currUser.UserID, // TODO: Implement authorId functionality instead of dummy data
+            statusType: statusSubmissionType,
+            dateSubmitted: moment().unix(),
+          }),
         })
       );
 
@@ -106,6 +132,7 @@ export default function SubmitCard(props: submitCardProps) {
         isClosable: true,
       });
     } catch (err) {
+      console.log(err);
       toast({
         title: "Uh oh, something went wrong...",
         status: "error",
@@ -141,7 +168,7 @@ export default function SubmitCard(props: submitCardProps) {
         </CardBody>
         {submitted && (
           <CardFooter>
-            {submitDate}
+            {/*submitDate*/}
             {state}
           </CardFooter>
         )}
