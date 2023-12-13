@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import { Stack } from "@chakra-ui/react";
+import {IconButton, Stack} from "@chakra-ui/react";
 
 import { UserContext } from "../UserContext";
 import { CommentSchema, ReportSchema } from "../../../schemas/RowSchema";
@@ -8,6 +8,7 @@ import { getAllActiveCommentsOfType } from "../utils";
 
 import ShowCommentModal from "./CommentModals/ShowCommentModal";
 import ShowReportModal from "./CommentModals/ShowReportModal";
+import {AddIcon, WarningIcon} from "@chakra-ui/icons";
 
 interface CommentProps {
   comments: CommentSchema[] | undefined;
@@ -36,6 +37,7 @@ export function CommentCell({
     }
   }, [user?.Type]);
 
+
   return (
     <Stack direction='row'>
       <ShowCommentModal
@@ -44,6 +46,7 @@ export function CommentCell({
         isEditable={isEditable}
         timesheetID={timesheetID}
       />
+
       <ShowReportModal
         date={date}
         setReports={setReports}
