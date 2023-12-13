@@ -4,6 +4,7 @@ import { TimeSheetSchema } from "../../schemas/TimesheetSchema";
 import { UserSchema } from "../../schemas/UserSchema";
 import { ReportOptions } from "../TimeCardPage/types";
 import { UserTypes } from "../TimeCardPage/types";
+import { UserModel } from "src/schemas/backend/UserModel";
 
 const defaultBaseUrl =
   process.env.REACT_APP_API_BASE_URL ?? "http://localhost:3000";
@@ -90,6 +91,18 @@ export class ApiClient {
   // TODO: setup endpoint for getting user information
   // all roles -> return UserSchema for the current user that is logged in
   public async getUser(): Promise<UserSchema> {
+    const userId = '4c8c5ad4-a8ab-4c92-b33f-b8f932b9e0b5'
+    let user: UserModel = undefined;
+    this.get(`/user/usersById?userIds[]=${userId}`).then((userList) => {
+      user = userList[0];
+      console.log('getUser reponse: ', user);
+      const userConverted = { 
+        UserID: user.userID, 
+        FirstName: user.firstName, 
+        LastName: user.lastName,
+        Type: UserTypes.Associate, //TODO : convert
+      };
+    })
     return {
       UserID: "abc",
       FirstName: "john",

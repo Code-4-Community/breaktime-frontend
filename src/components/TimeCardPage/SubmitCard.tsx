@@ -166,10 +166,8 @@ export default function SubmitCard(props: submitCardProps) {
             {submitted ? "Resubmit" : "Submit!"}
           </Button>
         </CardBody>
-        {submitted && (
           <CardFooter>
             {/* TODO: The AuthorIDs below should all be replaced with calls to the API and then have a User profile card there instead (or at least the name, rather than ID lol) */}
-
             <div>
               {props.timesheetStatus.HoursSubmitted &&
               props.timesheetStatus.HoursSubmitted.Date ? (
@@ -207,7 +205,6 @@ export default function SubmitCard(props: submitCardProps) {
               )}
             </div>
           </CardFooter>
-        )}
       </Card>
     </Box>
   );
